@@ -5,7 +5,7 @@
 
 #include <QObject>
 
-#include "../server.h"
+#include "Server.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpServer;
@@ -25,13 +25,14 @@ protected:
     virtual QHostAddress getAddress();
 
 private slots:
-    void openSession(quint16 port, QHostAddress ipAddress);
     void sendFortune();
 
 private:
     std::shared_ptr<QTcpServer> tcpServer_;
     std::shared_ptr<QNetworkSession> networkSession_;
     QStringList fortunes;
+
+    void openSession(quint16 port, QHostAddress ipAddress);
 };
 
 }

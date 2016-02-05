@@ -1,0 +1,5 @@
+package SimpleChat;
+
+message BasicMessage {
+
+}

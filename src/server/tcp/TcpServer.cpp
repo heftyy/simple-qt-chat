@@ -1,4 +1,4 @@
-#include "tcp_server.h"
+#include "TcpServer.h"
 
 #include <QtNetwork>
 

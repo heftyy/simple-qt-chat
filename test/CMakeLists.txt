@@ -8,7 +8,7 @@ set(PROJECT_TEST_NAME ${PROJECT_NAME_STR}_test)
 include_directories(${GTEST_INCLUDE_DIRS} ${QT_CHAT_INCLUDES})
 
 set(TEST_SRC_FILES
-        server/server_test.cpp
+        server/ServerTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})
@@ -32,6 +32,6 @@ else ()
             )
 endif ()
 
-target_link_libraries(${PROJECT_TEST_NAME} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${PROJECT_TEST_NAME} ${CMAKE_THREAD_LIBS_INIT} shared)
 
 add_test(test1 ${PROJECT_TEST_NAME})

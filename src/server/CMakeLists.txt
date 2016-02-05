@@ -4,11 +4,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 include_directories(${QT_CHAT_INCLUDES})
 
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+
 set(SERVER_SOURCE_FILES
         main.cpp
-        server.h
-        tcp/tcp_server.h
-        tcp/tcp_server.cpp
+        Server.h
+        tcp/TcpServer.h
+        tcp/TcpServer.cpp
         )
 
 add_executable(chat_server ${SERVER_SOURCE_FILES})
