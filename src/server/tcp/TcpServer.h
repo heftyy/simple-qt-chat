@@ -20,12 +20,13 @@ public:
     TcpServer();
 
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) override;
+	virtual void sendMessage(std::unique_ptr<AbstractMessage> message) override;
 
 protected:
-    virtual QHostAddress getAddress();
+    virtual QHostAddress getAddress() override;
 
 private slots:
-    void sendFortune();
+    void sendFortune() const;
 
 private:
     std::shared_ptr<QTcpServer> tcpServer_;

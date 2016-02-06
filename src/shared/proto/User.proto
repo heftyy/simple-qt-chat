@@ -1,0 +1,45 @@
+syntax = "proto2";
+
+package SimpleChat;
+
+enum UserStatus {
+	ACTIVE = 0;
+	AFK = 1;
+	BUSY = 2;
+	MUTED = 3;
+	JOINED = 4;
+	LEFT = 5;
+}
+
+message User {
+	required int32 id = 1;
+	required string name = 2;
+	required UserStatus status = 3;
+}
+
+message UserJoinRequest {
+	required string name = 1;
+}
+
+message UserJoinResponse {	
+	required string name = 1;
+	required bool success = 2;
+
+	optional string message = 3;
+	optional int32 user_id = 4;
+}
+
+message UserListRequest {
+	required string name = 1;
+}
+
+message UserListResponse {
+	repeated User users = 1;
+	optional string message = 2;
+}
+
+message UserChange {
+	required string id = 1;
+	required string name = 2;
+	required UserStatus status = 3;
+}

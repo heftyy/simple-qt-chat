@@ -1,13 +1,18 @@
 cmake_minimum_required(VERSION 3.2)
 
 include(FindProtobuf)
-find_package(Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIR})
+find_package(Protobuf CONFIG REQUIRED)
 
 set(PROTO_FILES
         ChatMessage.proto
+        User.proto
         )
 
+
 PROTOBUF_GENERATE_CPP(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
-add_library(proto ${PROTO_HEADER} ${PROTO_SRC})
+
+# adding PROTO_FILES to library so IDEs recognize them
+add_library(proto ${PROTO_HEADER} ${PROTO_SRC} ${PROTO_FILES})
 target_link_libraries(proto ${PROTOBUF_LIBRARY})
+target_include_directories(proto PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${PROTOBUF_INCLUDE_DIR})
+

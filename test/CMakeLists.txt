@@ -1,14 +1,19 @@
 cmake_minimum_required(VERSION 3.2)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 add_definitions(${MSVC_COMPILER_DEFS})
 
 set(PROJECT_TEST_NAME ${PROJECT_NAME_STR}_test)
 include_directories(${GTEST_INCLUDE_DIRS} ${QT_CHAT_INCLUDES})
 
+include_directories(../src/shared)
+include_directories(../src/client)
+include_directories(../src/server)
+
 set(TEST_SRC_FILES
         server/ServerTest.cpp
+        shared/MessageSerializationTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})

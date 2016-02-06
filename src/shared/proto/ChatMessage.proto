@@ -1,5 +1,27 @@
+syntax = "proto2";
+
 package SimpleChat;
 
-extends BasicMessage {
+message ChatMessage {
+	required string from = 1;
+	required string text = 2;
+	required int64 timestamp = 3;
 
+	optional string target = 4;
+}
+
+message Authorize {
+	required string name = 1;
+	required string password = 2;
+}
+
+enum CommandType {
+	MOTD = 0;
+	KICK = 1;
+	MUTE = 2;
+}
+
+message Command {
+	required CommandType type = 1;
+	repeated string arguments = 2;
 }

@@ -8,6 +8,7 @@ namespace SimpleChat {
 class AbstractMessage {
 public:
     virtual std::string serialize() = 0;
+	virtual ~AbstractMessage() {};
 };
 
 }

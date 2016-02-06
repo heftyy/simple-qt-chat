@@ -7,11 +7,15 @@
 
 namespace SimpleChat {
 
-class Message {
+class Message : public AbstractMessage {
     using protoMsg = google::protobuf::Message;
 
-private:
-    std::unique_ptr<BasicMessage> message_;
+public:
+	explicit Message(std::unique_ptr<protoMsg> message);
+
+	std::string serialize() override;
+
+	std::unique_ptr<protoMsg> message_;
 };
 
 }
