@@ -6,6 +6,7 @@ find_package(Protobuf CONFIG REQUIRED)
 set(PROTO_FILES
         ChatMessage.proto
         User.proto
+        NetworkMessage.proto
         )
 
 
@@ -15,4 +16,3 @@ PROTOBUF_GENERATE_CPP(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
 add_library(proto ${PROTO_HEADER} ${PROTO_SRC} ${PROTO_FILES})
 target_link_libraries(proto ${PROTOBUF_LIBRARY})
 target_include_directories(proto PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${PROTOBUF_INCLUDE_DIR})
-

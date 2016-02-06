@@ -14,6 +14,7 @@ include_directories(../src/server)
 set(TEST_SRC_FILES
         server/ServerTest.cpp
         shared/MessageSerializationTest.cpp
+        shared/NetworkMessageTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})

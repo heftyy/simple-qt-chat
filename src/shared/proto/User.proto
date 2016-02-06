@@ -21,10 +21,10 @@ message UserJoinRequest {
 	required string name = 1;
 }
 
-message UserJoinResponse {	
-	required string name = 1;
-	required bool success = 2;
+message UserJoinResponse {
+	required bool success = 1;
 
+	optional string name = 2;
 	optional string message = 3;
 	optional int32 user_id = 4;
 }
