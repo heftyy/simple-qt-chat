@@ -39,7 +39,7 @@ void TcpServer::connectionEstabilished() const {
 				clientConnection, SLOT(deleteLater()));	
 }
 
-void TcpServer::dataReceived(const std::shared_ptr<QTcpSocket>& tcpSocket) {
+void TcpServer::dataReceived(const std::shared_ptr<QTcpSocket>& tcpSocket) const {
 	QDataStream inStream(tcpSocket.get());
 	inStream.setVersion(QDataStream::Qt_5_5);
 
