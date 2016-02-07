@@ -20,12 +20,12 @@ public:
 	int getUserId() const;
 	std::string getUserName() const;
 
-	virtual void setAuthorized(bool authorized) = 0;
-	virtual void sendMessage(std::unique_ptr<AbstractMessage> message) = 0;
+	virtual void setAuthorized(bool authorized) {};
+	virtual void sendMessage(std::unique_ptr<AbstractMessage> message) {};
 
 	void sendMessage(const std::string& message, const std::string& target = "");
 	void sendCommand(const std::string& command);
-	void authorize(const std::string& password);	
+	void authorize(const std::string& password);
 
 private:
 	std::unique_ptr<User> user_;
@@ -34,7 +34,7 @@ private:
 	virtual std::unique_ptr<ChatTarget> getSelf();
 	virtual std::unique_ptr<ChatTarget> getTarget(const std::string& target);
 
-	virtual void sendMessage(std::unique_ptr<google::protobuf::Message> message) = 0;
+	virtual void sendMessage(std::unique_ptr<google::protobuf::Message> message) {};
 };
 
 }

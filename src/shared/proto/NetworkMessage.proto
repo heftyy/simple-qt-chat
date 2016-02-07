@@ -11,8 +11,8 @@ enum NetworkMessageType {
 	USER_LIST_CHANGE = 5;
 	
 	CHAT_MESSAGE = 10;
-	AUTHORIZE = 11;
-	COMMAND = 12;
+	CHAT_AUTHORIZE = 11;
+	CHAT_COMMAND = 12;
 }
 
 message NetworkMessageHeader {

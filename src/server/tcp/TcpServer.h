@@ -6,10 +6,12 @@
 #include <QObject>
 
 #include "Server.h"
+#include "chat/Chatroom.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpServer;
 class QNetworkSession;
+class QTcpSocket;
 QT_END_NAMESPACE
 
 namespace SimpleChat {
@@ -26,11 +28,13 @@ protected:
     virtual QHostAddress getAddress() override;
 
 private slots:
-    void sendFortune() const;
+    void connectionEstabilished() const;
+	void dataReceived(const std::shared_ptr<QTcpSocket>& tcpSocket);
 
 private:
     std::shared_ptr<QTcpServer> tcpServer_;
     std::shared_ptr<QNetworkSession> networkSession_;
+	std::shared_ptr<Chatroom> chatroom_;
     QStringList fortunes;
 
     void openSession(quint16 port, QHostAddress ipAddress);

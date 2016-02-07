@@ -4,9 +4,8 @@
 
 namespace SimpleChat {
 
-TcpServer::TcpServer()
-	: tcpServer_(nullptr),
-	networkSession_(nullptr) {
+TcpServer::TcpServer() : tcpServer_(nullptr), networkSession_(nullptr) {
+	chatroom_ = std::make_shared<Chatroom>();
 }
 
 void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
@@ -27,30 +26,45 @@ void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
 }
 
 
-void TcpServer::sendFortune() const {
-	QByteArray block;
-	QDataStream out(&block, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_5_5);
-
-	out << static_cast<quint16>(0);
-	out << fortunes.at(qrand() % fortunes.size());
-	out.device()->seek(0);
-	out << static_cast<quint16>(block.size() - sizeof(quint16));
-
+void TcpServer::connectionEstabilished() const {
 	auto clientConnection = tcpServer_->nextPendingConnection();
-	clientConnection->
-	connect(clientConnection, SIGNAL(disconnected()),
-			clientConnection, SLOT(deleteLater()));
+	std::shared_ptr<QTcpSocket> socket(clientConnection);
 
-	clientConnection->write(block);
-	clientConnection->disconnectFromHost();
+	clientConnection->
+		connect(clientConnection, SIGNAL(readyRead()), 
+				clientConnection, SLOT(dataReceived(socket)));
+
+	clientConnection->
+		connect(clientConnection, SIGNAL(disconnected()),
+				clientConnection, SLOT(deleteLater()));	
+}
+
+void TcpServer::dataReceived(const std::shared_ptr<QTcpSocket>& tcpSocket) {
+	QDataStream inStream(tcpSocket.get());
+	inStream.setVersion(QDataStream::Qt_5_5);
+
+	quint16 blockSize = 0;
+
+	if (blockSize == 0) {
+		if (tcpSocket->bytesAvailable() < static_cast<int>(sizeof(quint16)))
+			return;
+
+		inStream >> blockSize;
+	}
+
+	if (tcpSocket->bytesAvailable() < blockSize)
+		return;
+
+	QString serializedMessage;
+	inStream >> serializedMessage;
+
 }
 
 void TcpServer::listen(quint16 port, QHostAddress ipAddress) {
 	openSession(port, ipAddress);
 
 	connect(tcpServer_.get(), SIGNAL(newConnection()),
-			this, SLOT(sendFortune()));
+			this, SLOT(connectionEstabilished()));
 }
 
 void TcpServer::sendMessage(std::unique_ptr<AbstractMessage> message) {

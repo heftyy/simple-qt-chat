@@ -16,4 +16,8 @@ std::string Message::serialize() {
 	return nullptr;
 }
 
+void Message::setMessage(std::unique_ptr<protoMsg> protoMsg) {
+	this->message_ = std::move(protoMsg);
+}
+
 }
