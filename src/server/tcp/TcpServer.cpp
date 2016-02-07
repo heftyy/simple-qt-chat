@@ -2,6 +2,9 @@
 
 #include <QtNetwork>
 
+#include "chat/Chatroom.h"
+#include "communication/MessageDeserializer.h"
+
 namespace SimpleChat {
 
 TcpServer::TcpServer() : tcpServer_(nullptr), networkSession_(nullptr) {
@@ -58,6 +61,7 @@ void TcpServer::dataReceived(const std::shared_ptr<QTcpSocket>& tcpSocket) const
 	QString serializedMessage;
 	inStream >> serializedMessage;
 
+	MessageDeserializer deserializer(serializedMessage.toStdString());
 }
 
 void TcpServer::listen(quint16 port, QHostAddress ipAddress) {

@@ -6,7 +6,6 @@
 #include <QObject>
 
 #include "Server.h"
-#include "chat/Chatroom.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpServer;
@@ -15,6 +14,8 @@ class QTcpSocket;
 QT_END_NAMESPACE
 
 namespace SimpleChat {
+
+class Chatroom;
 
 class TcpServer : public Server {
     Q_OBJECT
@@ -29,7 +30,7 @@ protected:
 
 private slots:
     void connectionEstabilished() const;
-	void dataReceived(const std::shared_ptr<QTcpSocket>& tcpSocket);
+	void dataReceived(const std::shared_ptr<QTcpSocket>& tcpSocket) const;
 
 private:
     std::shared_ptr<QTcpServer> tcpServer_;

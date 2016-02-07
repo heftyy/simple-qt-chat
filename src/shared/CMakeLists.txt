@@ -11,11 +11,11 @@ set(SHARED_SOURCE_FILES
     communication/MessageDeserializer.h
     communication/MessageDeserializer.cpp
 
-		chat/Chatroom.h
-		chat/Chatroom.cpp
-		chat/Chatee.h
-		chat/Chatee.cpp
-		chat/ChatConnection.h
+	chat/Chatroom.h
+	chat/Chatroom.cpp
+	chat/Chatee.h
+	chat/Chatee.cpp
+	chat/ChatConnection.h
     chat/CommandParser.h
     chat/CommandParser.cpp
 
