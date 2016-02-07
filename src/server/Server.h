@@ -9,12 +9,15 @@
 
 namespace SimpleChat {
 
+class ChatTarget;
+
 class Server : public QObject {
 public:
     Server() { };
 
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) = 0;
 	virtual void sendMessage(std::unique_ptr<AbstractMessage> message) = 0;
+	virtual ChatTarget* getTarget(const std::string& targetName) = 0;
     virtual ~Server() { }
 
 protected:

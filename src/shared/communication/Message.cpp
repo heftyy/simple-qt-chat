@@ -10,8 +10,7 @@ Message::Message(std::unique_ptr<protoMsg> message)
 std::string Message::serialize() {
 	std::string serializeMessage;
 	if(message_->IsInitialized()) {
-		message_->SerializeToString(&serializeMessage);
-		return serializeMessage;
+		return message_->SerializeAsString();
 	}
 		
 	return nullptr;
