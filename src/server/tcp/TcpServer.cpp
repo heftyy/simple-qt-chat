@@ -127,7 +127,7 @@ void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
     if(success)
         response->set_allocated_user(&chatee->user());
 
-    auto responseMessage = std::make_unique<Message<UserJoinResponse>>(std::move(response));
+    auto responseMessage = std::make_unique<Message<UserJoinResponse>>(std::move(response), USER_JOIN_RESPONSE);
 
     chatroom_->propagateMessage(std::move(responseMessage));
 

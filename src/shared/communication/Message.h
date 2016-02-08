@@ -18,18 +18,10 @@ template
 >
 class Message : public AbstractMessage {
 public:
-    explicit Message(std::unique_ptr<MessageType> message)
-            : message_(std::move(message)) {
+    explicit Message(std::unique_ptr<MessageType> message, int type)
+            : message_(std::move(message)),
+              type_(type) {
 
-        if(std::is_same<MessageType, UserJoinRequest>()) {
-            type_ = USER_JOIN_REQUEST;
-        }
-        else if(std::is_same<MessageType, UserJoinResponse>()) {
-            type_ = USER_JOIN_RESPONSE;
-        }
-        else {
-            type_ = -1;
-        }
     }
 
     std::string serialize() override {

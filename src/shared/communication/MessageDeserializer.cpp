@@ -1,6 +1,8 @@
 #include "MessageDeserializer.h"
-#include "Message.h"
+#include "AbstractMessage.h"
 #include "NetworkMessage.pb.h"
+#include "User.pb.h"
+#include "ChatMessage.pb.h"
 
 namespace SimpleChat {
 
