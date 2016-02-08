@@ -14,100 +14,100 @@
 namespace SimpleChat {
 
 TcpServer::TcpServer()
-        : tcpServer_(nullptr),
-          chatroom_(std::make_shared<Chatroom>()) {
+    : tcpServer_(nullptr),
+    chatroom_(std::make_shared<Chatroom>()) {
 
 }
 
 void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
-	if (ipAddress == QHostAddress::LocalHost)
-		ipAddress = getAddress();
+    if (ipAddress == QHostAddress::LocalHost)
+        ipAddress = getAddress();
 
-	tcpServer_ = std::make_shared<QTcpServer>(this);
-	if (!tcpServer_->listen(ipAddress, port)) {
-		std::cerr << "opening listening port failed" << std::endl;
-		return;
-	}
+    tcpServer_ = std::make_shared<QTcpServer>(this);
+    if (!tcpServer_->listen(ipAddress, port)) {
+        std::cerr << "opening listening port failed" << std::endl;
+        return;
+    }
 
-	std::cout <<
-		"The server is running on\n IP: " <<
-		ipAddress.toString().toStdString() <<
-		"\nport: " << tcpServer_->serverPort() <<
-		std::endl;
+    std::cout <<
+        "The server is running on\n IP: " <<
+        ipAddress.toString().toStdString() <<
+        "\nport: " << tcpServer_->serverPort() <<
+        std::endl;
 }
 
 
 void TcpServer::connectionEstablished() const {
-	auto clientConnection = tcpServer_->nextPendingConnection();
-	std::shared_ptr<QTcpSocket> tcpSocket(clientConnection);
+    auto clientConnection = tcpServer_->nextPendingConnection();
+    std::shared_ptr<QTcpSocket> tcpSocket(clientConnection);
 
     auto connection = std::make_shared<TcpChatConnection>(
-            std::shared_ptr<QTcpSocket>(clientConnection)
-    );
+        std::shared_ptr<QTcpSocket>(clientConnection)
+        );
 
-	clientConnection->
-		connect(clientConnection, SIGNAL(readyRead()), 
-				clientConnection, SLOT(dataReceived(connection)));
+    clientConnection->
+        connect(clientConnection, SIGNAL(readyRead()),
+                clientConnection, SLOT(dataReceived(connection)));
 
-	clientConnection->
-		connect(clientConnection, SIGNAL(disconnected()),
-				clientConnection, SLOT(deleteLater()));	
+    clientConnection->
+        connect(clientConnection, SIGNAL(disconnected()),
+                clientConnection, SLOT(deleteLater()));
 }
 
 void TcpServer::dataReceived(const std::shared_ptr<TcpChatConnection>& connection) {
-	QDataStream inStream(connection->socket().get());
-	inStream.setVersion(QDataStream::Qt_5_5);
+    QDataStream inStream(connection->socket().get());
+    inStream.setVersion(QDataStream::Qt_5_5);
 
-	if (connection->blockSize == 0) {
-		if (connection->socket()->bytesAvailable() < static_cast<int>(sizeof(quint16)))
-			return;
+    if (connection->blockSize == 0) {
+        if (connection->socket()->bytesAvailable() < static_cast<int>(sizeof(quint16)))
+            return;
 
-		inStream >> connection->blockSize;
-	}
+        inStream >> connection->blockSize;
+    }
 
-	if (connection->socket()->bytesAvailable() < connection->blockSize)
-		return;
+    if (connection->socket()->bytesAvailable() < connection->blockSize)
+        return;
 
     // full message received, reset blockSize to 0
     connection->blockSize = 0;
 
-	QString serializedMessage;
-	inStream >> serializedMessage;
+    QString serializedMessage;
+    inStream >> serializedMessage;
 
-	MessageDeserializer deserializer(serializedMessage.toStdString());
+    MessageDeserializer deserializer(serializedMessage.toStdString());
     handleUntypedMessage(deserializer, connection);
 }
 
 void TcpServer::listen(quint16 port, QHostAddress ipAddress) {
-	openSession(port, ipAddress);
+    openSession(port, ipAddress);
 
-	connect(tcpServer_.get(), SIGNAL(newConnection()),
-			this, SLOT(connectionEstablished()));
+    connect(tcpServer_.get(), SIGNAL(newConnection()),
+            this, SLOT(connectionEstablished()));
 }
 
 QHostAddress TcpServer::getAddress() {
-	auto ipAddressesList = QNetworkInterface::allAddresses();
-	// use the first non-localhost IPv4 address
-	for (auto ipAddress : ipAddressesList) {
-		if (ipAddress != QHostAddress::LocalHost && ipAddress.toIPv4Address()) {
-			return ipAddress;
-		}
-	}
+    auto ipAddressesList = QNetworkInterface::allAddresses();
+    // use the first non-localhost IPv4 address
+    for (auto ipAddress : ipAddressesList) {
+        if (ipAddress != QHostAddress::LocalHost && ipAddress.toIPv4Address()) {
+            return ipAddress;
+        }
+    }
 
-	return QHostAddress::LocalHost;
+    return QHostAddress::LocalHost;
 }
 
 void TcpServer::handleUntypedMessage(
-        const MessageDeserializer& deserializer,
-        const std::shared_ptr<ChatConnection>& connection) {
+    const MessageDeserializer& deserializer,
+    const std::shared_ptr<ChatConnection>& connection) {
 
-    if(!deserializer.isInitialized())
+    if (!deserializer.isInitialized())
         return;
 
-    if(deserializer.type() == USER_JOIN_REQUEST) {
+    if (deserializer.type() == USER_JOIN_REQUEST) {
         handleMessage(deserializer.getMessage<UserJoinRequest>(), connection);
     }
-    else if(deserializer.type() == USER_JOIN_RESPONSE) {
+    else if (deserializer.type() == USER_JOIN_RESPONSE) {
         handleMessage(deserializer.getMessage<UserJoinResponse>());
     }
 }
@@ -123,7 +123,7 @@ void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
     response->set_success(success);
     response->set_message(message);
 
-    if(success)
+    if (success)
         response->set_allocated_user(&chatee->user());
 
     auto responseMessage = std::make_unique<Message<UserJoinResponse>>(std::move(response), USER_JOIN_RESPONSE);
@@ -137,4 +137,4 @@ void TcpServer::handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) {
 
 }
 
-}
+} //SimpleChat namespace

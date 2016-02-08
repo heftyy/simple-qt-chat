@@ -34,4 +34,4 @@ private:
     virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) = 0;
 };
 
-}
+} //SimpleChat namespace

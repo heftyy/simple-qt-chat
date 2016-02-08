@@ -7,40 +7,40 @@
 namespace SimpleChat {
 
 CommandParser::CommandParser(const std::string& command)
-	: command_(command) {
-	
+    : command_(command) {
+
 }
 
 std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarget> chatTarget) const {
-	auto chatCommand = std::make_unique<ChatCommand>();
+    auto chatCommand = std::make_unique<ChatCommand>();
 
-	auto commandArgs = StringUtil::split(command_, ' ');
-	if (commandArgs.size() < 2)
-		return nullptr;
+    auto commandArgs = StringUtil::split(command_, ' ');
+    if (commandArgs.size() < 2)
+        return nullptr;
 
-	auto commandType = getCommandType(commandArgs[0]);
-	chatCommand->set_type(commandType);
+    auto commandType = getCommandType(commandArgs[0]);
+    chatCommand->set_type(commandType);
 
-	for (auto i = 0; i < commandArgs.size(); i++)
-		chatCommand->set_arguments(i - 1, commandArgs[i]);
+    for (auto i = 0; i < commandArgs.size(); i++)
+        chatCommand->set_arguments(i - 1, commandArgs[i]);
 
-	chatCommand->set_allocated_from(chatTarget.release());
+    chatCommand->set_allocated_from(chatTarget.release());
 
-	return std::move(chatCommand);
+    return std::move(chatCommand);
 }
 
 CommandType CommandParser::getCommandType(const std::string& type) const {
-	if (type == "mute") {
-		return CommandType::MUTE;
-	}
-	else if (type == "kick") {
-		return CommandType::KICK;
-	}
-	else if (type == "motd") {
-		return CommandType::MOTD;
-	}
+    if (type == "mute") {
+        return CommandType::MUTE;
+    }
+    if (type == "kick") {
+        return CommandType::KICK;
+    }
+    if (type == "motd") {
+        return CommandType::MOTD;
+    }
 
-	throw std::runtime_error("Unrecognized command type");
+    throw std::runtime_error("Unrecognized command type");
 }
 
-}
+} // SimpleChat namespace

@@ -16,30 +16,30 @@ class AbstractMessage;
 class Chatee
 {
 public:
-	explicit Chatee(std::unique_ptr<User> user,
+    explicit Chatee(std::unique_ptr<User> user,
                     const std::shared_ptr<ChatConnection>& connection);
 
-	virtual ~Chatee();
+    virtual ~Chatee();
 
     User& user();
 
-	virtual void setAuthorized(bool authorized) {};
+    virtual void setAuthorized(bool authorized) {};
 
     virtual bool sendMessage(std::unique_ptr<AbstractMessage> message);
 
-	void sendMessage(const std::string& message, const std::string& target = "");
-	void sendCommand(const std::string& command);
-	void authorize(const std::string& password);
+    void sendMessage(const std::string& message, const std::string& target = "");
+    void sendCommand(const std::string& command);
+    void authorize(const std::string& password);
 
 private:
-	std::unique_ptr<User> user_;
+    std::unique_ptr<User> user_;
     std::shared_ptr<ChatConnection> connection_;
-	std::weak_ptr<Chatroom> chatroom_;
+    std::weak_ptr<Chatroom> chatroom_;
 
-	virtual std::unique_ptr<ChatTarget> getSelf();
-	virtual std::unique_ptr<ChatTarget> getTarget(const std::string& target);
+    virtual std::unique_ptr<ChatTarget> getSelf();
+    virtual std::unique_ptr<ChatTarget> getTarget(const std::string& target);
 
-	virtual void sendMessage(std::unique_ptr<google::protobuf::Message> message) {};
+    virtual void sendMessage(std::unique_ptr<google::protobuf::Message> message) {};
 };
 
-}
+} // SimpleChat namespace

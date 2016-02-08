@@ -3,49 +3,49 @@ syntax = "proto2";
 package SimpleChat;
 
 enum UserStatus {
-	ONLINE = 0;
-	AWAY = 1;
-	BUSY = 2;	
+    ONLINE = 0;
+    AWAY = 1;
+    BUSY = 2;
 }
 
 enum UserAction {
-	MUTED = 0;
-	JOIND = 1;
-	LEAVED = 2;
+    MUTED = 0;
+    JOIND = 1;
+    LEAVED = 2;
 }
 
 message User {
-	required int32 id = 1;
-	required string name = 2;
-	required UserStatus status = 3 [default = ONLINE];
+    required int32 id = 1;
+    required string name = 2;
+    required UserStatus status = 3 [default = ONLINE];
 }
 
 message UserJoinRequest {
-	required string name = 1;
+    required string name = 1;
 }
 
 message UserJoinResponse {
-	required bool success = 1;
+    required bool success = 1;
 
-	optional User user = 2;
-	optional string message = 3;
+    optional User user = 2;
+    optional string message = 3;
 }
 
 message UserListRequest {
-	required string name = 1;
+    required string name = 1;
 }
 
 message UserListResponse {
-	repeated User users = 1;
-	optional string message = 2;
+    repeated User users = 1;
+    optional string message = 2;
 }
 
 message UserStatusChange {
-	required User user = 1;
-	required UserStatus status = 2;
+    required User user = 1;
+    required UserStatus status = 2;
 }
 
 message UserListChange {
-	required User user = 1;
-	required UserAction action = 2;
+    required User user = 1;
+    required UserAction action = 2;
 }

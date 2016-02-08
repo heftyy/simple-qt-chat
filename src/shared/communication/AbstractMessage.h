@@ -16,8 +16,8 @@ public:
     virtual int type() = 0;
     virtual std::unique_ptr<ProtobufMsg> message() = 0;
     virtual bool isInitialized() = 0;
-	virtual ~AbstractMessage() {};
+    virtual ~AbstractMessage() {};
 };
 
-}
+} // SimpleChat namespace
 

@@ -21,7 +21,7 @@ private:
     std::string src_;
 };
 
-} //SimpleChat namespace
+} // SimpleChat namespace
 
 
 

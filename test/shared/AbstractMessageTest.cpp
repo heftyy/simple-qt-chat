@@ -3,13 +3,13 @@
 #include "resources/AbstractMessage.h"
 
 TEST_F(AbstractMessage, InvalidMessage) {
-	auto msg = invalidAbstractMessage();
+    auto msg = invalidAbstractMessage();
 
-	EXPECT_FALSE(msg->isInitialized());
+    EXPECT_FALSE(msg->isInitialized());
 }
 
 TEST_F(AbstractMessage, ValidMessage) {
-	auto msg = validAbstractMessage();
+    auto msg = validAbstractMessage();
 
-	EXPECT_TRUE(msg->isInitialized());
+    EXPECT_TRUE(msg->isInitialized());
 }

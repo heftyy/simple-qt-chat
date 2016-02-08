@@ -4,4 +4,4 @@ namespace SimpleChat {
 
 
 
-}
+} // SimpleChat namespace

@@ -26,25 +26,25 @@ public:
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) override;
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
-                                      const std::shared_ptr<ChatConnection>& tcpSocket);
+                                      const std::shared_ptr<ChatConnection>& tcpSocket) override;
 
 protected:
     virtual QHostAddress getAddress() override;
 
-private slots:
+    private slots:
     void connectionEstablished() const;
-	void dataReceived(const std::shared_ptr<TcpChatConnection>& tcpSocket);
+    void dataReceived(const std::shared_ptr<TcpChatConnection>& tcpSocket);
 
 private:
     std::shared_ptr<QTcpServer> tcpServer_;
-	std::shared_ptr<Chatroom> chatroom_;
+    std::shared_ptr<Chatroom> chatroom_;
 
     void openSession(quint16 port, QHostAddress ipAddress);
 
     virtual void handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
-                               const std::shared_ptr<ChatConnection>& tcpSocket);
+                               const std::shared_ptr<ChatConnection>& tcpSocket) override;
 
-    virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse);
+    virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) override;
 };
 
-}
+} //SimpleChat namespace
