@@ -22,7 +22,13 @@ std::tuple<bool, std::string> MessageSerializer::serialize() const {
     auto networkMessageHeader = networkMessage.mutable_header();
     networkMessageHeader->set_src(src_);
     networkMessageHeader->set_dest(dest_);
-    networkMessageHeader->set_type(abstractMessage_->type());
+    networkMessageHeader->set_type(
+		static_cast<NetworkMessageType>(abstractMessage_->type())
+	);
+
+	networkMessage.set_serialized_data(abstractMessage_->serialize());
+
+	return std::make_tuple(true, networkMessage.SerializeAsString());
 }
 
 }

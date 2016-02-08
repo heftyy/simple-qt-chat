@@ -13,12 +13,19 @@ include_directories(../src/server)
 
 set(TEST_SRC_FILES
         server/ServerTest.cpp
-        shared/MessageSerializationTest.cpp
+
+        shared/resources/SerializerTest.h
+        shared/resources/AbstractMessage.h
+        shared/resources/ChatroomTest.h
+
+        shared/SerializerTest.cpp
         shared/NetworkMessageTest.cpp
+        shared/AbstractMessageTest.cpp
+        shared/ChatroomTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})
-add_dependencies(${PROJECT_TEST_NAME} googletest)
+add_dependencies(${PROJECT_TEST_NAME} googletest shared)
 
 find_package(Threads)
 

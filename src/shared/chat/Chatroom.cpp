@@ -19,7 +19,7 @@ Chatroom::chateeJoined(const std::string& name,
                        const std::shared_ptr<ChatConnection>& connection) {
 
     if(chateeExists(name))
-        std::make_tuple(false, "That name is already taken", nullptr);
+        return std::make_tuple(false, "That name is already taken", nullptr);
 
     auto user = std::make_unique<User>();
     user->set_id(nextUserId++);
@@ -27,20 +27,25 @@ Chatroom::chateeJoined(const std::string& name,
     user->set_status(ONLINE);
 
     auto chatee = std::make_shared<Chatee>(std::move(user), connection);
-    insertChatee(chatee);
+	auto success = insertChatee(chatee);
 
-    return std::make_tuple(true, "", chatee);
+	if(success)
+		return std::make_tuple(true, "", chatee);
+
+	return std::make_tuple(false, "Failed to add chatee.", nullptr);
 }
 
 std::tuple<bool, std::string>
 Chatroom::chateeLeft(const std::string& name) {
     if(!chateeExists(name)) {
-        std::make_tuple(false, "Chatee doesn't exist.");
+        return std::make_tuple(false, "Chatee doesn't exist.");
     }
 
-	removeChatee(name);
+	auto success = removeChatee(name);
+	if(success)
+		return std::make_tuple(true, "");
 
-    return std::make_tuple(true, "");
+	return std::make_tuple(false, "Failed to remove chatee.");
 }
 
 bool Chatroom::sendMessage(const std::string& name, std::unique_ptr<AbstractMessage> message) {
@@ -66,10 +71,25 @@ void Chatroom::incomingMessage(std::unique_ptr<ChatAuthorize> chatAuthorize) {
 //    propagateMessage(std::move(msg));
 }
 
-void Chatroom::propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) {
+void Chatroom::propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const {
     for (auto& pair : chatees_) {
         pair.second->sendMessage(std::move(abstractMessage));
     }
+}
+
+bool Chatroom::chateeExists(const std::string& name) {
+	std::lock_guard<std::mutex> guard(this->chatees_mutex_);
+
+	auto search = chatees_.find(name);
+	return search != chatees_.end();
+}
+
+std::shared_ptr<Chatee> Chatroom::getChatee(const std::string& name) {
+	if(chateeExists(name)) {
+		return chatees_[name];
+	}
+
+	return nullptr;
 }
 
 std::unique_ptr<ChatTarget> Chatroom::getTarget(const std::string& userName) {
@@ -87,26 +107,26 @@ std::unique_ptr<ChatTarget> Chatroom::getTarget(const std::string& userName) {
 	return nullptr;
 }
 
-bool Chatroom::chateeExists(const std::string& name) {
-    std::lock_guard<std::mutex> guard(this->chatees_mutex_);
-
-    auto search = chatees_.find(name);
-    return search != chatees_.end();
-}
-
-void Chatroom::insertChatee(std::shared_ptr<Chatee> chatee) {
+bool Chatroom::insertChatee(std::shared_ptr<Chatee> chatee) {
     if(!chateeExists(chatee->user().name())) {
         std::lock_guard<std::mutex> guard(this->chatees_mutex_);
-        chatees_.insert(std::make_pair(chatee->user().name(), std::move(chatee)));
+        auto result = chatees_.insert(std::make_pair(chatee->user().name(), std::move(chatee)));
+
+		return result.first->second != nullptr;
     }
 
+	return false;
 }
 
-void Chatroom::removeChatee(const std::string& userName) {
-    if(!chateeExists(userName)) {
+bool Chatroom::removeChatee(const std::string& userName) {
+    if(chateeExists(userName)) {
         std::lock_guard<std::mutex> guard(this->chatees_mutex_);
         chatees_.erase(userName);
+
+		return true;
     }
+
+	return false;
 }
 
 }

@@ -34,7 +34,9 @@ int MessageDeserializer::type() const {
 }
 
 bool MessageDeserializer::isInitialized() const {
-    return networkMessage_ != nullptr && NetworkMessageType_IsValid(type());
+    return networkMessage_ != nullptr && 
+		networkMessage_->IsInitialized() && 
+		NetworkMessageType_IsValid(type());
 }
 
 }

@@ -36,8 +36,11 @@ public:
 	void incomingMessage(std::unique_ptr<ChatCommand> chatCommand);
 	void incomingMessage(std::unique_ptr<ChatAuthorize> chatAuthorize);
 
-    void propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage);
+    void propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const;
 
+	bool chateeExists(const std::string& name);
+	
+	std::shared_ptr<Chatee> getChatee(const std::string& name);
 	std::unique_ptr<ChatTarget> getTarget(const std::string& userName);
 
 private:
@@ -45,12 +48,10 @@ private:
 
 	std::mutex chatees_mutex_;
 	std::map<std::string, std::shared_ptr<Chatee>> chatees_;
-	std::string motd_;
+	std::string motd_;    
 
-    bool chateeExists(const std::string& name);
-
-    void insertChatee(std::shared_ptr<Chatee> chatee);
-	void removeChatee(const std::string& userName);
+	bool insertChatee(std::shared_ptr<Chatee> chatee);
+	bool removeChatee(const std::string& userName);
 };
 
 }

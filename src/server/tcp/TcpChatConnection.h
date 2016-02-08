@@ -19,7 +19,8 @@ public:
     virtual bool sendMessage(std::unique_ptr<AbstractMessage> message) override;
     virtual bool isAlive() override;
 
-    std::shared_ptr<QTcpSocket> socket();
+	std::string getIdent() override;
+	std::shared_ptr<QTcpSocket> socket();
 
 private:
     std::shared_ptr<QTcpSocket> socket_;

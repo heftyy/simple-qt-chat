@@ -7,7 +7,6 @@
 #include <chat/Chatee.h>
 #include <communication/Message.h>
 #include <communication/MessageDeserializer.h>
-#include <util/SmartPtrUtil.h>
 
 #include "TcpServer.h"
 #include "TcpChatConnection.h"

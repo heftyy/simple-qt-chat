@@ -11,6 +11,7 @@ class User;
 class Chatroom;
 class ChatConnection;
 class ChatTarget;
+class AbstractMessage;
 
 class Chatee
 {

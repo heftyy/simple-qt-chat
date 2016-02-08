@@ -1,7 +1,8 @@
-#include "gtest/gtest.h"
-#include "communication/AbstractMessage.h"
-#include "User.pb.h"
-#include "NetworkMessage.pb.h"
+#include <gtest/gtest.h>
+
+#include <communication/AbstractMessage.h>
+#include <User.pb.h>
+#include <NetworkMessage.pb.h>
 
 SimpleChat::NetworkMessage createNetworkMessage() {
 	SimpleChat::UserJoinRequest userJoinRequest;
