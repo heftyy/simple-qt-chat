@@ -3,10 +3,12 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <communication/AbstractMessage.h>
 
 namespace SimpleChat {
 
 class Chatee;
+class ChatConnection;
 class User;
 class AbstractMessage;
 class ChatTarget;
@@ -20,25 +22,35 @@ public:
 	explicit Chatroom();
 	~Chatroom();
 
-	void chateeJoined(std::unique_ptr<User> user);
-	void chateeLeft(std::unique_ptr<User> user);
+    std::tuple<bool, std::string, std::shared_ptr<Chatee>>
+            chateeJoined(const std::string& name,
+                         const std::shared_ptr<ChatConnection>& connection);
 
-	void messageReceived(std::unique_ptr<ChatMessage> chatMessage);
-	void commandReceived(std::unique_ptr<ChatCommand> chatCommand);
-	void authorizeReceived(std::unique_ptr<ChatAuthorize> chatAuthorize);
+    std::tuple<bool, std::string>
+            chateeLeft(const std::string& name);
 
+    bool sendMessage(const std::string& name,
+                     std::unique_ptr<AbstractMessage> message);
+
+	void incomingMessage(std::unique_ptr<ChatMessage> chatMessage);
+	void incomingMessage(std::unique_ptr<ChatCommand> chatCommand);
+	void incomingMessage(std::unique_ptr<ChatAuthorize> chatAuthorize);
+
+    void propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage);
 
 	std::unique_ptr<ChatTarget> getTarget(const std::string& userName);
 
 private:
+    int nextUserId;
+
 	std::mutex chatees_mutex_;
-	std::map<std::string, std::unique_ptr<Chatee>> chatees_;
+	std::map<std::string, std::shared_ptr<Chatee>> chatees_;
 	std::string motd_;
 
-	void insertChatee(std::unique_ptr<Chatee> chatee);
-	void removeChatee(const std::string& userName);
+    bool chateeExists(const std::string& name);
 
-	void propageMessage(std::unique_ptr<AbstractMessage> abstractMessage);
+    void insertChatee(std::shared_ptr<Chatee> chatee);
+	void removeChatee(const std::string& userName);
 };
 
 }

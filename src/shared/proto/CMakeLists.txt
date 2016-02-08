@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
 include(FindProtobuf)
-find_package(Protobuf CONFIG REQUIRED)
+find_package(Protobuf REQUIRED)
 
 set(PROTO_FILES
         ChatMessage.proto

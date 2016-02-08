@@ -17,7 +17,7 @@ enum UserAction {
 message User {
 	required int32 id = 1;
 	required string name = 2;
-	required UserStatus status = 3;
+	required UserStatus status = 3 [default = ONLINE];
 }
 
 message UserJoinRequest {

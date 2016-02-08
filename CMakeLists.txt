@@ -6,7 +6,7 @@ project(${PROJECT_NAME_STR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 if(UNIX)
-	add_definitions(-std=c++11)
+	add_definitions(-std=c++14)
 endif(UNIX)
 
 set(EXT_PROJECTS_DIR ${PROJECT_SOURCE_DIR}/ext)

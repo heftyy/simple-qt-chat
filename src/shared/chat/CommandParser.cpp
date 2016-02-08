@@ -1,4 +1,4 @@
-#pragma once
+#include <stdexcept>
 
 #include "CommandParser.h"
 #include "../util/StringUtil.h"
@@ -40,7 +40,7 @@ CommandType CommandParser::getCommandType(const std::string& type) const {
 		return CommandType::MOTD;
 	}
 
-	throw std::exception("Unrecognized command type");
+	throw std::runtime_error("Unrecognized command type");
 }
 
 }

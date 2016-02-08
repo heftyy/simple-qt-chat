@@ -10,6 +10,8 @@ set(SERVER_SOURCE_FILES
         Server.h
         tcp/TcpServer.h
         tcp/TcpServer.cpp
+        tcp/TcpChatConnection.h
+        tcp/TcpChatConnection.cpp
         )
 
 add_executable(chat_server ${SERVER_SOURCE_FILES})

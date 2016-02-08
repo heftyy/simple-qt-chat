@@ -10,18 +10,21 @@ namespace SimpleChat {
 class User;
 class Chatroom;
 class ChatConnection;
+class ChatTarget;
 
 class Chatee
 {
 public:
-	explicit Chatee(std::unique_ptr<User> user);
+	explicit Chatee(std::unique_ptr<User> user,
+                    const std::shared_ptr<ChatConnection>& connection);
+
 	virtual ~Chatee();
 
-	int getUserId() const;
-	std::string getUserName() const;
+    User& user();
 
 	virtual void setAuthorized(bool authorized) {};
-	virtual void sendMessage(std::unique_ptr<AbstractMessage> message) {};
+
+    virtual bool sendMessage(std::unique_ptr<AbstractMessage> message);
 
 	void sendMessage(const std::string& message, const std::string& target = "");
 	void sendCommand(const std::string& command);
@@ -29,6 +32,7 @@ public:
 
 private:
 	std::unique_ptr<User> user_;
+    std::shared_ptr<ChatConnection> connection_;
 	std::weak_ptr<Chatroom> chatroom_;
 
 	virtual std::unique_ptr<ChatTarget> getSelf();

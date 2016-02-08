@@ -1,30 +1,33 @@
 #include <chrono>
 #include <cctype>
 
-#include "../Message.h"
+#include "../communication/AbstractMessage.h"
 #include "Chatee.h"
 #include "Chatroom.h"
 #include "CommandParser.h"
+#include "ChatConnection.h"
 
 #include "ChatMessage.pb.h"
 #include "User.pb.h"
 
 namespace SimpleChat {
 
-Chatee::Chatee(std::unique_ptr<User> user) :
-	user_(std::move(user)) {
+Chatee::Chatee(std::unique_ptr<User> user,
+               const std::shared_ptr<ChatConnection>& connection)
+        : user_(std::move(user)),
+          connection_(connection) {
 
 }
 
 Chatee::~Chatee() {
 }
 
-int Chatee::getUserId() const {
-	return user_->id();
-}
+bool Chatee::sendMessage(std::unique_ptr<AbstractMessage> message) {
+    if(connection_) {
+        return connection_->sendMessage(std::move(message));
+    }
 
-std::string Chatee::getUserName() const {
-	return user_->name();
+    return false;
 }
 
 void Chatee::sendMessage(const std::string& message, const std::string& target) {
@@ -79,6 +82,10 @@ std::unique_ptr<ChatTarget> Chatee::getTarget(const std::string& target) {
 	}
 
 	return nullptr;
+}
+
+User& Chatee::user() {
+    return *user_;
 }
 
 }

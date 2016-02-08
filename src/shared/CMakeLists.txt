@@ -21,8 +21,9 @@ set(SHARED_SOURCE_FILES
 
     util/StringUtil.h
     util/StringUtil.cpp
-        )
+    util/SmartPtrUtil.h
+)
 
 add_library(shared ${SHARED_SOURCE_FILES})
-target_include_directories(shared PUBLIC ${SHARED_SOURCE_FILES})
+target_include_directories(shared PUBLIC)
 target_link_libraries(shared proto)
