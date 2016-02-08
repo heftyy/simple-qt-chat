@@ -3,31 +3,31 @@ syntax = "proto2";
 package SimpleChat;
 
 message ChatTarget {
-	required int32 user_id = 1;
-	required string user_name = 2;
+    required int32 user_id = 1;
+    required string user_name = 2;
 }
 
 message ChatMessage {
-	required ChatTarget from = 1;
-	required string text = 2;
-	required int64 timestamp = 3;
+    required ChatTarget from = 1;
+    required string text = 2;
+    required int64 timestamp = 3;
 
-	optional ChatTarget target = 4;
+    optional ChatTarget target = 4;
 }
 
 message ChatAuthorize {
-	required ChatTarget from = 1;
-	required string password = 2;
+    required ChatTarget from = 1;
+    required string password = 2;
 }
 
 enum CommandType {
-	MOTD = 0;
-	KICK = 1;
-	MUTE = 2;
+    MOTD = 0;
+    KICK = 1;
+    MUTE = 2;
 }
 
 message ChatCommand {
-	required ChatTarget from = 1;
-	required CommandType type = 2;
-	repeated string arguments = 3;
+    required ChatTarget from = 1;
+    required CommandType type = 2;
+    repeated string arguments = 3;
 }

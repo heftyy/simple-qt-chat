@@ -3,25 +3,25 @@ syntax = "proto2";
 package SimpleChat;
 
 enum NetworkMessageType {
-	USER_JOIN_REQUEST = 0;
-	USER_JOIN_RESPONSE = 1;
-	USER_LIST_REQUEST = 2;
-	USER_LIST_RESPONSE = 3;
-	USER_STATUS_CHANGE = 4;
-	USER_LIST_CHANGE = 5;
-	
-	CHAT_MESSAGE = 10;
-	CHAT_AUTHORIZE = 11;
-	CHAT_COMMAND = 12;
+    USER_JOIN_REQUEST = 0;
+    USER_JOIN_RESPONSE = 1;
+    USER_LIST_REQUEST = 2;
+    USER_LIST_RESPONSE = 3;
+    USER_STATUS_CHANGE = 4;
+    USER_LIST_CHANGE = 5;
+    
+    CHAT_MESSAGE = 10;
+    CHAT_AUTHORIZE = 11;
+    CHAT_COMMAND = 12;
 }
 
 message NetworkMessageHeader {
-	required string src = 1;
-	required string dest = 2;
-	required NetworkMessageType type = 3;
+    required string src = 1;
+    required string dest = 2;
+    required NetworkMessageType type = 3;
 }
 
 message NetworkMessage {
-	required NetworkMessageHeader header = 1;
-	required string serialized_data = 2;
+    required NetworkMessageHeader header = 1;
+    required string serialized_data = 2;
 }
