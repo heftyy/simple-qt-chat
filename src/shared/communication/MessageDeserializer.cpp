@@ -6,8 +6,8 @@
 
 namespace SimpleChat {
 
-MessageDeserializer::MessageDeserializer(const std::string& serializedMessage)
-    : serializedMessage_(serializedMessage),
+MessageDeserializer::MessageDeserializer(const std::string& serializedMessage) : 
+    serializedMessage_(serializedMessage),
     networkMessage_(getNetworkMessage()) {
 
 }

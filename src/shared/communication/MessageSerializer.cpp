@@ -6,8 +6,8 @@ namespace SimpleChat {
 
 MessageSerializer::MessageSerializer(std::unique_ptr<AbstractMessage> abstractMessage,
                                      const std::string& dest,
-                                     const std::string& src)
-    : abstractMessage_(std::move(abstractMessage)),
+                                     const std::string& src) : 
+    abstractMessage_(std::move(abstractMessage)),
     dest_(dest),
     src_(src) {
 

@@ -6,8 +6,8 @@
 
 namespace SimpleChat {
 
-Chatroom::Chatroom()
-    : nextUserId(0) {
+Chatroom::Chatroom() : 
+    nextUserId(0) {
 }
 
 

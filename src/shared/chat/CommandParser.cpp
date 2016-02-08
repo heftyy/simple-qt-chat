@@ -6,8 +6,8 @@
 
 namespace SimpleChat {
 
-CommandParser::CommandParser(const std::string& command)
-    : command_(command) {
+CommandParser::CommandParser(const std::string& command): 
+    command_(command) {
 
 }
 
