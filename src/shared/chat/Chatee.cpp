@@ -14,9 +14,9 @@
 namespace SimpleChat {
 
 Chatee::Chatee(std::unique_ptr<User> user,
-               const std::shared_ptr<ChatConnection>& connection)
-    : user_(std::move(user)),
-    connection_(connection) {
+               const std::shared_ptr<ChatConnection>& connection) :
+        user_(std::move(user)),
+        connection_(connection) {
 
 }
 
@@ -53,7 +53,7 @@ void Chatee::sendCommand(const std::string& command) {
     auto commandParser = std::make_unique<CommandParser>(command);
     auto chatCommand = commandParser->chatCommand(
         std::move(getSelf())
-        );
+    );
 
     this->prepareAndSend(
             std::move(chatCommand),

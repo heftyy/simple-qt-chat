@@ -7,9 +7,9 @@
 
 namespace SimpleChat {
 
+class User;
 class Chatee;
 class ChatConnection;
-class User;
 class AbstractMessage;
 class ChatTarget;
 class ChatMessage;
