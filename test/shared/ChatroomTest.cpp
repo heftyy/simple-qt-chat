@@ -4,6 +4,7 @@
 #include <User.pb.h>
 
 #include "resources/ChatroomTest.h"
+#include "../mocks/MockChatConnection.h"
 
 using namespace SimpleChat;
 
@@ -55,4 +56,18 @@ TEST_F(ChatroomTest, DeleteChatee) {
     EXPECT_TRUE(success);
     EXPECT_EQ(message, "");
     EXPECT_NE(chatee, nullptr);
+}
+
+TEST_F(ChatroomTest, TestMessageSend) {
+    using ::testing::_;
+
+    auto connection = std::make_shared<MockChatConnection>();
+    EXPECT_CALL(*connection, sendMessageProxy(_)).Times(1);
+
+    bool success;
+    std::string message;
+    std::shared_ptr<SimpleChat::Chatee> chatee;
+    std::tie(success, message, chatee) = room1->chateeJoined("first_chatee", connection);
+
+    chatee->sendMessage("first message");
 }

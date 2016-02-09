@@ -26,11 +26,11 @@ SimpleChat::NetworkMessage createNetworkMessage() {
     return networkMessage;
 }
 
-TEST(network_message_test, serialize_message) {
+TEST(network_message_test, SerializeWorks) {
     createNetworkMessage();
 }
 
-TEST(network_message_test, deserialize_message) {
+TEST(network_message_test, DeserializeWorks) {
     auto serializedMessage = createNetworkMessage().SerializeAsString();
 
     SimpleChat::NetworkMessage networkMessage;

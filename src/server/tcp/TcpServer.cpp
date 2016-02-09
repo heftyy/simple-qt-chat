@@ -13,9 +13,9 @@
 
 namespace SimpleChat {
 
-TcpServer::TcpServer()
-    : tcpServer_(nullptr),
-    chatroom_(std::make_shared<Chatroom>()) {
+TcpServer::TcpServer() :
+        tcpServer_(nullptr),
+        chatroom_(std::make_shared<Chatroom>()) {
 
 }
 
@@ -97,15 +97,17 @@ QHostAddress TcpServer::getAddress() {
     return QHostAddress::LocalHost;
 }
 
-void TcpServer::handleUntypedMessage(
-    const MessageDeserializer& deserializer,
-    const std::shared_ptr<ChatConnection>& connection) {
+void TcpServer::handleUntypedMessage(const MessageDeserializer& deserializer,
+                                     const std::shared_ptr<ChatConnection>& connection) {
 
     if (!deserializer.isInitialized())
         return;
 
     if (deserializer.type() == USER_JOIN_REQUEST) {
         handleMessage(deserializer.getMessage<UserJoinRequest>(), connection);
+    }
+    else if(deserializer.type() == USER_LIST_REQUEST) {
+        handleMessage(deserializer.getMessage<UserListRequest>(), connection);
     }
     else if (deserializer.type() == USER_JOIN_RESPONSE) {
         handleMessage(deserializer.getMessage<UserJoinResponse>());
@@ -131,6 +133,11 @@ void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
     chatroom_->propagateMessage(std::move(responseMessage));
 
     std::cout << "user " << joinRequest->name() << " joined" << std::endl;
+}
+
+void TcpServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
+                              const std::shared_ptr<ChatConnection>& connection) {
+
 }
 
 void TcpServer::handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) {

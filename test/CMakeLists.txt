@@ -5,23 +5,28 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 add_definitions(${MSVC_COMPILER_DEFS})
 
 set(PROJECT_TEST_NAME ${PROJECT_NAME_STR}_test)
-include_directories(${GTEST_INCLUDE_DIRS} ${QT_CHAT_INCLUDES})
+include_directories(${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
 
 include_directories(../src/shared)
-include_directories(../src/client)
 include_directories(../src/server)
 
 set(TEST_SRC_FILES
+        mocks/MockChatConnection.h
+
         server/ServerTest.cpp
 
         shared/resources/SerializerTest.h
-        shared/resources/AbstractMessage.h
+        shared/resources/DeserializerTest.h
+        shared/resources/AbstractMessageTest.h
         shared/resources/ChatroomTest.h
+        shared/resources/CommandParserTest.h
 
         shared/SerializerTest.cpp
+        shared/DeserializerTest.cpp
         shared/NetworkMessageTest.cpp
         shared/AbstractMessageTest.cpp
         shared/ChatroomTest.cpp
+        shared/CommandParserTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})
@@ -33,15 +38,23 @@ if (NOT WIN32)
     target_link_libraries(${PROJECT_TEST_NAME}
             ${GTEST_LIBS_DIR}/libgtest.a
             ${GTEST_LIBS_DIR}/libgtest_main.a
+            ${GMOCK_LIBS_DIR}/libgmock.a
+            ${GMOCK_LIBS_DIR}/libgmock_main.a
             )
 else ()
     target_link_libraries(${PROJECT_TEST_NAME}
             debug ${GTEST_LIBS_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
             optimized ${GTEST_LIBS_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
+
+            debug ${GMOCK_LIBS_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gmock${CMAKE_FIND_LIBRARY_SUFFIXES}
+            optimized ${GMOCK_LIBS_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gmock${CMAKE_FIND_LIBRARY_SUFFIXES}
             )
     target_link_libraries(${PROJECT_TEST_NAME}
             debug ${GTEST_LIBS_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest_main${CMAKE_FIND_LIBRARY_SUFFIXES}
             optimized ${GTEST_LIBS_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest_main${CMAKE_FIND_LIBRARY_SUFFIXES}
+
+            debug ${GMOCK_LIBS_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gmock_main${CMAKE_FIND_LIBRARY_SUFFIXES}
+            optimized ${GMOCK_LIBS_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gmock_main${CMAKE_FIND_LIBRARY_SUFFIXES}
             )
 endif ()
 

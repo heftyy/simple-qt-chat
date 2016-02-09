@@ -18,14 +18,14 @@ set(SHARED_SOURCE_FILES
         chat/Chatee.h
         chat/Chatee.cpp
         chat/ChatConnection.h
-        chat/CommandParser.h
-        chat/CommandParser.cpp
+
+        chat/commands/CommandParser.h
+        chat/commands/CommandParser.cpp
 
         util/StringUtil.h
         util/StringUtil.cpp
         util/SmartPtrUtil.h
-        )
+        chat/commands/MotdChatCommand.cpp chat/commands/MotdChatCommand.h chat/commands/SpecificChatCommand.h chat/commands/KickChatCommand.cpp chat/commands/KickChatCommand.h chat/commands/MuteChatCommand.cpp chat/commands/MuteChatCommand.h)
 
 add_library(shared ${SHARED_SOURCE_FILES})
-target_include_directories(shared PUBLIC)
 target_link_libraries(shared proto)

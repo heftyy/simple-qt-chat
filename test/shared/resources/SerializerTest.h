@@ -1,7 +1,9 @@
+#pragma once
+
 #include <gtest/gtest.h>
 #include <communication/MessageSerializer.h>
 
-#include "AbstractMessage.h"
+#include "AbstractMessageTest.h"
 
 class SerializerTest : public ::testing::Test {
     using ser = SimpleChat::MessageSerializer;
@@ -9,23 +11,32 @@ class SerializerTest : public ::testing::Test {
 protected:
     virtual void SetUp() override {
         // success
-        serializer1 = std::make_shared<ser>(
-            AbstractMessage::validAbstractMessage(),
-            "127.0.0.1:4444",
-            "127.0.0.1:4445");
+        serializerSuccess = getValidMessage();
 
         // fail
-        serializer2 = std::make_shared<ser>(
-            AbstractMessage::invalidAbstractMessage(),
-            "127.0.0.1:4444",
-            "127.0.0.1:4445");
+        serializerFail = getInvalidMessage();
     }
 
     virtual void TearDown() override {
-        serializer1.reset();
-        serializer2.reset();
+        serializerSuccess.reset();
+        serializerFail.reset();
     }
 
-    std::shared_ptr<ser> serializer1;
-    std::shared_ptr<ser> serializer2;
+    std::shared_ptr<ser> serializerSuccess;
+    std::shared_ptr<ser> serializerFail;
+
+public:
+    static std::shared_ptr<ser> getValidMessage() {
+        return std::make_shared<ser>(
+                AbstractMessageTest::validAbstractMessage(),
+                "127.0.0.1:4444",
+                "127.0.0.1:4445");
+    }
+
+    static std::shared_ptr<ser> getInvalidMessage() {
+        return std::make_shared<ser>(
+                AbstractMessageTest::invalidAbstractMessage(),
+                "127.0.0.1:4444",
+                "127.0.0.1:4445");
+    }
 };

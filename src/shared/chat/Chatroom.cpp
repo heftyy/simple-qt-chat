@@ -56,21 +56,6 @@ bool Chatroom::sendMessage(const std::string& name, std::unique_ptr<AbstractMess
     return false;
 }
 
-void Chatroom::incomingMessage(std::unique_ptr<ChatMessage> chatMessage) {
-    //	auto msg = MessageFactory::Create(std::move(chatMessage));
-    //    propagateMessage(std::move(msg));
-}
-
-void Chatroom::incomingMessage(std::unique_ptr<ChatCommand> chatCommand) {
-    //	auto msg = MessageFactory::Create(std::move(chatCommand));
-    //    propagateMessage(std::move(msg));
-}
-
-void Chatroom::incomingMessage(std::unique_ptr<ChatAuthorize> chatAuthorize) {
-    //	auto msg = MessageFactory::Create(std::move(chatAuthorize));
-    //    propagateMessage(std::move(msg));
-}
-
 void Chatroom::propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const {
     for (auto& pair : chatees_) {
         pair.second->sendMessage(std::move(abstractMessage));

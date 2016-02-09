@@ -3,7 +3,6 @@
 #include <memory>
 #include <type_traits>
 
-#include "User.pb.h"
 #include "AbstractMessage.h"
 #include "NetworkMessage.pb.h"
 
@@ -18,9 +17,9 @@ template
 >
 class Message : public AbstractMessage {
 public:
-    explicit Message(std::unique_ptr<MessageType> message, int type)
-        : message_(std::move(message)),
-        type_(type) {
+    explicit Message(std::unique_ptr<MessageType> message, int type) :
+            message_(std::move(message)),
+            type_(type) {
 
     }
 
@@ -36,10 +35,6 @@ public:
     virtual int type() override {
         return type_;
     };
-
-    virtual std::unique_ptr<ProtobufMsg> message() override {
-        return std::move(message_);
-    }
 
     virtual bool isInitialized() override {
         return message_ != nullptr &&

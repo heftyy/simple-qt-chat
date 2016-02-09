@@ -24,7 +24,7 @@ std::tuple<bool, std::string> MessageSerializer::serialize() const {
     networkMessageHeader->set_dest(dest_);
     networkMessageHeader->set_type(
         static_cast<NetworkMessageType>(abstractMessage_->type())
-        );
+    );
 
     networkMessage.set_serialized_data(abstractMessage_->serialize());
 

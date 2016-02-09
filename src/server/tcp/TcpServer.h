@@ -26,7 +26,7 @@ public:
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) override;
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
-                                      const std::shared_ptr<ChatConnection>& tcpSocket) override;
+                                      const std::shared_ptr<ChatConnection>& connection) override;
 
 protected:
     virtual QHostAddress getAddress() override;
@@ -42,7 +42,10 @@ private:
     void openSession(quint16 port, QHostAddress ipAddress);
 
     virtual void handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
-                               const std::shared_ptr<ChatConnection>& tcpSocket) override;
+                               const std::shared_ptr<ChatConnection>& connection) override;
+
+    virtual void handleMessage(std::unique_ptr<UserListRequest> listRequest,
+                               const std::shared_ptr<ChatConnection>& connection) override;
 
     virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) override;
 };

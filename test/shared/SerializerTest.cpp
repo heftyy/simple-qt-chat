@@ -3,22 +3,22 @@
 #include "resources/SerializerTest.h"
 
 TEST_F(SerializerTest, IsInitialized) {
-    EXPECT_NE(serializer1, nullptr);
-    EXPECT_NE(serializer2, nullptr);
+    EXPECT_NE(serializerSuccess, nullptr);
+    EXPECT_NE(serializerFail, nullptr);
 }
 
-TEST_F(SerializerTest, SerializationWorks) {
+TEST_F(SerializerTest, SerializerWorks) {
     bool success;
     std::string result;
 
-    std::tie(success, result) = serializer1->serialize();
+    std::tie(success, result) = serializerSuccess->serialize();
     EXPECT_TRUE(success);
 }
 
-TEST_F(SerializerTest, SerializationFails) {
+TEST_F(SerializerTest, SerializerFails) {
     bool success;
     std::string result;
 
-    std::tie(success, result) = serializer2->serialize();
+    std::tie(success, result) = serializerFail->serialize();
     EXPECT_FALSE(success);
 }

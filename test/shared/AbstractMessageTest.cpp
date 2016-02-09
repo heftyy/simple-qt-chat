@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 
-#include "resources/AbstractMessage.h"
+#include "resources/AbstractMessageTest.h"
 
-TEST_F(AbstractMessage, InvalidMessage) {
+TEST_F(AbstractMessageTest, InvalidMessage) {
     auto msg = invalidAbstractMessage();
 
     EXPECT_FALSE(msg->isInitialized());
 }
 
-TEST_F(AbstractMessage, ValidMessage) {
+TEST_F(AbstractMessageTest, ValidMessage) {
     auto msg = validAbstractMessage();
 
     EXPECT_TRUE(msg->isInitialized());

@@ -39,7 +39,8 @@ private:
     virtual std::unique_ptr<ChatTarget> getSelf();
     virtual std::unique_ptr<ChatTarget> getTarget(const std::string& target);
 
-    virtual void sendMessage(std::unique_ptr<google::protobuf::Message> message) {};
+    template<typename MessageType>
+    void prepareAndSend(std::unique_ptr<MessageType> message, int type);
 };
 
 } // SimpleChat namespace

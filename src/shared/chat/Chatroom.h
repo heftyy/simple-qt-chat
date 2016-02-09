@@ -16,6 +16,8 @@ class ChatMessage;
 class ChatCommand;
 class ChatAuthorize;
 
+using ChateesMap = std::map<std::string, std::shared_ptr<Chatee>>;
+
 class Chatroom
 {
 public:
@@ -32,10 +34,6 @@ public:
     bool sendMessage(const std::string& name,
                      std::unique_ptr<AbstractMessage> message);
 
-    void incomingMessage(std::unique_ptr<ChatMessage> chatMessage);
-    void incomingMessage(std::unique_ptr<ChatCommand> chatCommand);
-    void incomingMessage(std::unique_ptr<ChatAuthorize> chatAuthorize);
-
     void propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const;
 
     bool chateeExists(const std::string& name);
@@ -47,7 +45,7 @@ private:
     int nextUserId;
 
     std::mutex chatees_mutex_;
-    std::map<std::string, std::shared_ptr<Chatee>> chatees_;
+    ChateesMap chatees_;
     std::string motd_;
 
     bool insertChatee(std::shared_ptr<Chatee> chatee);

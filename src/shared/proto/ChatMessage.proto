@@ -3,8 +3,8 @@ syntax = "proto2";
 package SimpleChat;
 
 message ChatTarget {
-    required int32 user_id = 1;
-    required string user_name = 2;
+    required string user_name = 1;
+    optional int32 user_id = 2;
 }
 
 message ChatMessage {
@@ -24,6 +24,7 @@ enum CommandType {
     MOTD = 0;
     KICK = 1;
     MUTE = 2;
+    UNKNOWN = 3;
 }
 
 message ChatCommand {

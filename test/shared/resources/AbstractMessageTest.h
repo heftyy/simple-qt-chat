@@ -1,8 +1,10 @@
+#pragma once
+
 #include <gtest/gtest.h>
 #include <communication/Message.h>
 #include "User.pb.h"
 
-class AbstractMessage : public ::testing::Test {
+class AbstractMessageTest : public ::testing::Test {
     using am = SimpleChat::AbstractMessage;
     using m = SimpleChat::Message<SimpleChat::UserJoinRequest>;
 

@@ -7,14 +7,15 @@
 
 namespace SimpleChat {
 
-TcpChatConnection::TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_)
-    : socket_(socket_),
-    blockSize(0) {
+TcpChatConnection::TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_) :
+        blockSize(0),
+        socket_(socket_) {
 
 }
 
 bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
-    if (!isAlive()) return false;
+    if (!isAlive())
+        return false;
 
     MessageSerializer serializer(
         std::move(message),
@@ -22,12 +23,19 @@ bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
         ""
         );
 
+    bool success;
+    std::string result;
+    std::tie(success, result) = serializer.serialize();
+
+    if(!success)
+        return false;
+
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_5);
 
     out << static_cast<quint16>(0);
-    out << QString::fromStdString(message->serialize());
+    out << QString::fromStdString(result);
     out.device()->seek(0);
     out << static_cast<quint16>(block.size() - sizeof(quint16));
 
@@ -36,12 +44,12 @@ bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
     return true;
 }
 
-bool TcpChatConnection::isAlive() {
+bool TcpChatConnection::isAlive() const {
     return socket_->isOpen() && socket_->isValid() &&
         socket_->isWritable() && socket_->isReadable();
 }
 
-std::string TcpChatConnection::getIdent() {
+std::string TcpChatConnection::getIdent() const {
     auto str = socket_->peerAddress().toString() + ":" + QString::number(socket_->peerPort());
     return str.toStdString();
 }

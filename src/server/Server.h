@@ -12,6 +12,9 @@ class MessageDeserializer;
 class UserJoinRequest;
 class UserJoinResponse;
 
+class UserListRequest;
+class UserListResponse;
+
 class ChatConnection;
 
 class Server : public QObject {
@@ -29,6 +32,9 @@ private:
                                       const std::shared_ptr<ChatConnection>& connection) = 0;
 
     virtual void handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
+                               const std::shared_ptr<ChatConnection>& connection) = 0;
+
+    virtual void handleMessage(std::unique_ptr<UserListRequest> listRequest,
                                const std::shared_ptr<ChatConnection>& connection) = 0;
 
     virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) = 0;

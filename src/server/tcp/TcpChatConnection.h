@@ -17,9 +17,9 @@ public:
     explicit TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_);
 
     virtual bool sendMessage(std::unique_ptr<AbstractMessage> message) override;
-    virtual bool isAlive() override;
+    virtual bool isAlive() const override;
 
-    std::string getIdent() override;
+    std::string getIdent() const override;
     std::shared_ptr<QTcpSocket> socket();
 
 private:
