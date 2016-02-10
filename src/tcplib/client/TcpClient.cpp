@@ -1,16 +1,15 @@
 #include <iostream>
 
 #include <QtNetwork>
-#include <QtWidgets>
 
 #include <User.pb.h>
 #include <ChatMessage.pb.h>
 #include <NetworkMessage.pb.h>
 #include <communication/Message.h>
 #include <communication/MessageDeserializer.h>
+#include <chat/TcpChatConnection.h>
 
 #include "TcpClient.h"
-#include "TcpChatConnection.h"
 
 namespace SimpleChat {
 
@@ -27,8 +26,8 @@ void TcpClient::sendCommand(std::string command) {
 }
 
 void TcpClient::sendMessage(std::string text, std::string target) {
-    std::unique_ptr<ChatMessage> chatMessage = std::make_unique<ChatMessage>();
-    chatMessage->set_text("a");
+    auto chatMessage = std::make_unique<ChatMessage>();
+    chatMessage->set_text("abrrr");
     chatMessage->set_timestamp(66666);
 
     serverConnection_->sendMessage(std::make_unique<Message<ChatMessage>>(
@@ -58,8 +57,6 @@ void TcpClient::connect() {
     if(!clientName_.empty() && !serverAddress_.isNull()) {
         auto socket = std::make_shared<QTcpSocket>();
 
-//        connect(socket.get(), SIGNAL(displayError(QAbstractSocket::SocketError)),
-
         serverConnection_ = std::make_shared<TcpChatConnection>(socket);
 
         socket->connect(socket.get(), &QTcpSocket::readyRead,
@@ -79,7 +76,7 @@ void TcpClient::join() {
 }
 
 void TcpClient::dataReceived() {
-    std::cout << "DATA RECEIVED\n";
+    std::cout << "DATA RECEIVED" << std::endl;
 
     QDataStream inStream(serverConnection_->socket().get());
     inStream.setVersion(QDataStream::Qt_5_5);
@@ -89,6 +86,7 @@ void TcpClient::dataReceived() {
             return;
 
         inStream >> serverConnection_->blockSize;
+        std::cout << "client received block size: " << serverConnection_->blockSize << std::endl;
     }
 
     if (serverConnection_->socket()->bytesAvailable() < serverConnection_->blockSize)
@@ -99,8 +97,6 @@ void TcpClient::dataReceived() {
 
     QString serializedMessage;
     inStream >> serializedMessage;
-
-    std::cout << serializedMessage.toStdString() << std::endl;
 
     MessageDeserializer deserializer(serializedMessage.toStdString());
     handleUntypedMessage(deserializer, serverConnection_);
@@ -121,21 +117,21 @@ void TcpClient::handleUntypedMessage(const MessageDeserializer& deserializer,
     }
 }
 
-void TcpClient::displayError(QAbstractSocket::SocketError socketError) {
+void TcpClient::displayError(QAbstractSocket::SocketError socketError) const {
     switch (socketError) {
     case QAbstractSocket::RemoteHostClosedError:
         break;
     case QAbstractSocket::HostNotFoundError:
     std::cout << "Fortune Client\n" <<
                                  "The host was not found. Please check the "
-                                            "host name and port settings.\n";
+                                            "host name and port settings." << std::endl;
         break;
     case QAbstractSocket::ConnectionRefusedError:
         std::cout << "Fortune Client\n"
                                  << "The connection was refused by the peer. "
                                             "Make sure the fortune server is running, "
                                             "and check that the host name and port "
-                                            "settings are correct.\n";
+                                            "settings are correct." << std::endl;
         break;
     default:
         std::cout <<"Fortune Client\n"
@@ -149,8 +145,8 @@ QHostAddress TcpClient::getServerAddress() {
 }
 
 void TcpClient::handleMessage(std::unique_ptr<UserJoinResponse> joinRequest) {
-    std::cout << "joined succesfully " <<
-            joinRequest->user().name() << " " <<
+    std::cout << "joined succesfully name: " <<
+            joinRequest->user().name() << " id: " <<
             joinRequest->user().id() <<
             std::endl;
 }

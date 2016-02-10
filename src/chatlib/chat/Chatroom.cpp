@@ -34,7 +34,8 @@ Chatroom::chateeJoined(const std::string& name,
     auto success = insertChatee(chatee);
 
     if (success) {
-        connection->setChatee(chatee);
+        if(connection != nullptr)
+            connection->setChatee(chatee);
         return std::make_tuple(true, "", chatee);
     }
 

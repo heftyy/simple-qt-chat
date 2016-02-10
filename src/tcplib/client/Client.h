@@ -1,9 +1,7 @@
 #pragma once
 
 #include <memory>
-
-#include <QObject>
-#include <QtNetwork/qhostaddress.h>
+#include <QtNetwork>
 
 namespace SimpleChat {
 
@@ -27,7 +25,6 @@ public:
                                       const std::shared_ptr<ChatConnection>& connection) = 0;
 
     virtual QHostAddress getServerAddress() = 0;
-    virtual ~Client() {}
 };
 
 } // SimpleChat namespace

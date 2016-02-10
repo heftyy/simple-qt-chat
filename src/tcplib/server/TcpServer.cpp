@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <QtNetwork>
 
 #include <NetworkMessage.pb.h>
@@ -8,9 +10,9 @@
 #include <chat/Chatee.h>
 #include <communication/Message.h>
 #include <communication/MessageDeserializer.h>
+#include <chat/TcpChatConnection.h>
 
 #include "TcpServer.h"
-#include "TcpChatConnection.h"
 
 namespace SimpleChat {
 
@@ -65,7 +67,7 @@ void TcpServer::handleUntypedMessage(const MessageDeserializer& deserializer,
     }
 }
 
-QHostAddress TcpServer::getAddress() {
+QHostAddress TcpServer::getAddress() const {
     auto ipAddressesList = QNetworkInterface::allAddresses();
     // use the first non-localhost IPv4 address
     for (auto ipAddress : ipAddressesList) {
@@ -77,7 +79,7 @@ QHostAddress TcpServer::getAddress() {
     return QHostAddress::LocalHost;
 }
 
-void TcpServer::connectionEstablished() const {
+void TcpServer::connectionEstablished() {
     auto clientConnection = tcpServer_->nextPendingConnection();
 
     std::cout << "new connection from " << clientConnection->peerAddress().toString().toStdString() << std::endl;
@@ -94,13 +96,13 @@ void TcpServer::connectionEstablished() const {
                     clientConnection, [this, connection] { dataReceived(connection); });
 }
 
-void TcpServer::disconnected(const std::shared_ptr<TcpChatConnection>& connection) {
+void TcpServer::disconnected(const std::shared_ptr<TcpChatConnection>& connection) const {
     if(connection == nullptr) {
         std::cerr << "disconnected called with empty connection" << std::endl;
         return;
     }
 
-    connection->socket()->disconnectFromHost();
+    connection->socket()->abort();
 
     if(connection->chatee() == nullptr) {
         std::cerr << "disconnected called with empty chatee" << std::endl;
@@ -138,8 +140,9 @@ void TcpServer::dataReceived(const std::shared_ptr<TcpChatConnection>& connectio
     if (connection->blockSize == 0) {
         if (connection->socket()->bytesAvailable() < static_cast<int>(sizeof(quint16)))
             return;
-
+        
         inStream >> connection->blockSize;
+        std::cout << "server received block size: " << connection->blockSize << std::endl;
     }
 
     if (connection->socket()->bytesAvailable() < connection->blockSize)
@@ -166,7 +169,7 @@ void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
     }
 
     std::cout <<
-    "The server is running on\n IP: " <<
+    "The server is running on\nIP: " <<
     ipAddress.toString().toStdString() <<
     "\nport: " << tcpServer_->serverPort() <<
     std::endl;
@@ -190,14 +193,14 @@ void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
         auto userChange = std::make_unique<UserChange>();
         userChange->set_action(UserAction::JOINED);
         userChange->mutable_user()->CopyFrom(chatee->user());
-        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-                std::move(userChange), USER_CHANGE));
+//        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
+//                std::move(userChange), USER_CHANGE));
+
+        std::cout << "user " << joinRequest->name() << " joined" << std::endl;
     }
 
     chatee->sendMessage(std::make_unique<Message<UserJoinResponse>>(
             std::move(response), USER_JOIN_RESPONSE));
-
-    std::cout << "user " << joinRequest->name() << " joined" << std::endl;
 }
 
 void TcpServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
@@ -229,7 +232,7 @@ void TcpServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const st
     if(chatMessage->has_target()) { // send a private message
         auto targetChatee = chatroom_->getChatee(chatMessage->target().user_name());
         if(targetChatee == nullptr) { // let the sender know that target doesn't exist
-            std::string message = "user with name " + chatMessage->target().user_name() + " doesn't exit";
+            auto message = "user with name " + chatMessage->target().user_name() + " doesn't exit";
             std::cerr << message << std::endl;
 
             sender->sendResponse(false, message);

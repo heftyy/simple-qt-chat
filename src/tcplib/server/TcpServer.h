@@ -1,9 +1,6 @@
 #pragma once
 
-#include <iostream>
 #include <memory>
-
-#include <QObject>
 
 #include "Server.h"
 
@@ -21,18 +18,18 @@ class TcpChatConnection;
 class TcpServer : public Server {
     Q_OBJECT
 public:
-    TcpServer(const std::string& password);
+    explicit TcpServer(const std::string& password);
 
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) override;
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
                                       const std::shared_ptr<ChatConnection>& connection) override;
 
-    virtual QHostAddress getAddress() override;
+    virtual QHostAddress getAddress() const override;
 
 private slots:
-    void connectionEstablished() const;
-    void disconnected(const std::shared_ptr<TcpChatConnection>& connection);
+    void connectionEstablished();
+    void disconnected(const std::shared_ptr<TcpChatConnection>& connection) const;
     void dataReceived(const std::shared_ptr<TcpChatConnection>& tcpSocket);
 
 private:

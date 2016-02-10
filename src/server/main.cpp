@@ -1,7 +1,6 @@
 #include <QCoreApplication>
-#include <QtCore>
 
-#include "tcp/TcpServer.h"
+#include <server/TcpServer.h>
 
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);

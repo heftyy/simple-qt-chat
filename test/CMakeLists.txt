@@ -7,30 +7,28 @@ add_definitions(${MSVC_COMPILER_DEFS})
 set(PROJECT_TEST_NAME ${PROJECT_NAME_STR}_test)
 include_directories(${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
 
-include_directories(../src/shared)
-include_directories(../src/server)
-
 set(TEST_SRC_FILES
         mocks/MockChatConnection.h
 
         server/ServerTest.cpp
+        server/ClientServerTest.cpp
 
-        shared/resources/SerializerTest.h
-        shared/resources/DeserializerTest.h
-        shared/resources/AbstractMessageTest.h
-        shared/resources/ChatroomTest.h
-        shared/resources/CommandParserTest.h
+        chatlib/resources/SerializerTest.h
+        chatlib/resources/DeserializerTest.h
+        chatlib/resources/AbstractMessageTest.h
+        chatlib/resources/ChatroomTest.h
+        chatlib/resources/CommandParserTest.h
 
-        shared/SerializerTest.cpp
-        shared/DeserializerTest.cpp
-        shared/NetworkMessageTest.cpp
-        shared/AbstractMessageTest.cpp
-        shared/ChatroomTest.cpp
-        shared/CommandParserTest.cpp
+        chatlib/SerializerTest.cpp
+        chatlib/DeserializerTest.cpp
+        chatlib/NetworkMessageTest.cpp
+        chatlib/AbstractMessageTest.cpp
+        chatlib/ChatroomTest.cpp
+        chatlib/CommandParserTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})
-add_dependencies(${PROJECT_TEST_NAME} googletest shared)
+add_dependencies(${PROJECT_TEST_NAME} googletest chatlib tcplib)
 
 find_package(Threads)
 
@@ -58,6 +56,6 @@ else ()
             )
 endif ()
 
-target_link_libraries(${PROJECT_TEST_NAME} ${CMAKE_THREAD_LIBS_INIT} shared)
+target_link_libraries(${PROJECT_TEST_NAME} ${CMAKE_THREAD_LIBS_INIT} chatlib tcplib)
 
 add_test(test1 ${PROJECT_TEST_NAME})

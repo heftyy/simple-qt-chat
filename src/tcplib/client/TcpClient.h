@@ -48,7 +48,7 @@ public:
     std::string clientName_;
     std::shared_ptr<TcpChatConnection> serverConnection_;
 
-    void displayError(QAbstractSocket::SocketError socketError);
+    void displayError(QAbstractSocket::SocketError socketError) const;
 
 private slots:
     void dataReceived();

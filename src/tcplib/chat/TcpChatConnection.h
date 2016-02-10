@@ -1,7 +1,5 @@
 #pragma once
 
-#include <QObject>
-
 #include <chat/ChatConnection.h>
 
 QT_BEGIN_NAMESPACE

@@ -1,5 +1,5 @@
-#include <QtNetwork>
 #include <iostream>
+#include <QtNetwork>
 
 #include <communication/AbstractMessage.h>
 #include <communication/MessageSerializer.h>
@@ -16,17 +16,12 @@ TcpChatConnection::TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_)
 
 bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
     if (!isAlive())
-        return false;
-
-    while(socket_->bytesToWrite() > 0) {
-        socket_->waitForBytesWritten(1000);
-    }
+        return false;    
 
     MessageSerializer serializer(
         std::move(message),
         getIdent(),
-        ""
-        );
+        "");
 
     bool success;
     std::string result;
@@ -43,6 +38,8 @@ bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
     out << QString::fromStdString(result);
     out.device()->seek(0);
     out << static_cast<quint16>(block.size() - sizeof(quint16));
+
+    std::cout << "sending block size: " << block.size() << std::endl;
 
     socket_->write(block);
 
