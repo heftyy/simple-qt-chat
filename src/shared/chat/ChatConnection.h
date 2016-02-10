@@ -7,6 +7,7 @@ namespace SimpleChat {
 
 class AbstractMessage;
 class ChatTarget;
+class Chatee;
 
 class ChatConnection {
 public:
@@ -15,6 +16,9 @@ public:
     virtual bool sendMessage(std::unique_ptr<AbstractMessage> message) = 0;
     virtual bool isAlive() const = 0;
     virtual std::string getIdent() const = 0;
+
+    virtual void setChatee(const std::shared_ptr<Chatee>& chatee) = 0;
+    virtual std::shared_ptr<Chatee> chatee() const = 0;
 };
 
 } // SimpleChat namespace

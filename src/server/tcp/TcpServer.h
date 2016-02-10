@@ -21,23 +21,24 @@ class TcpChatConnection;
 class TcpServer : public Server {
     Q_OBJECT
 public:
-    TcpServer();
+    TcpServer(const std::string& password);
 
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) override;
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
                                       const std::shared_ptr<ChatConnection>& connection) override;
 
-protected:
     virtual QHostAddress getAddress() override;
 
-    private slots:
+private slots:
     void connectionEstablished() const;
+    void disconnected(const std::shared_ptr<TcpChatConnection>& connection);
     void dataReceived(const std::shared_ptr<TcpChatConnection>& tcpSocket);
 
 private:
     std::shared_ptr<QTcpServer> tcpServer_;
     std::shared_ptr<Chatroom> chatroom_;
+    std::string password_;
 
     void openSession(quint16 port, QHostAddress ipAddress);
 
@@ -45,9 +46,19 @@ private:
                                const std::shared_ptr<ChatConnection>& connection) override;
 
     virtual void handleMessage(std::unique_ptr<UserListRequest> listRequest,
-                               const std::shared_ptr<ChatConnection>& connection) override;
+                               const std::shared_ptr<Chatee>& sender) override;
 
-    virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) override;
+    virtual void handleMessage(std::unique_ptr<UserChange> change,
+                               const std::shared_ptr<Chatee>& sender) override;
+
+    virtual void handleMessage(std::unique_ptr<ChatMessage> chatMessage,
+                               const std::shared_ptr<Chatee>& sender) override;
+
+    virtual void handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize,
+                               const std::shared_ptr<Chatee>& sender) override;
+
+    virtual void handleMessage(std::unique_ptr<ChatCommand> chatCommand,
+                               const std::shared_ptr<Chatee>& sender) override;
 };
 
 } //SimpleChat namespace

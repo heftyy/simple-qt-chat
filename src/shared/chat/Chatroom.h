@@ -31,15 +31,17 @@ public:
     std::tuple<bool, std::string>
         chateeLeft(const std::string& name);
 
-    bool sendMessage(const std::string& name,
-                     std::unique_ptr<AbstractMessage> message);
-
     void propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const;
 
     bool chateeExists(const std::string& name);
 
     std::shared_ptr<Chatee> getChatee(const std::string& name);
     std::unique_ptr<ChatTarget> getTarget(const std::string& userName);
+
+    void setMotd(const std::string& motd);
+    std::string motd();
+
+    const ChateesMap& map();
 
 private:
     int nextUserId;

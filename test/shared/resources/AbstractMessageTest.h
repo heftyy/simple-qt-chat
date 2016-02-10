@@ -2,11 +2,11 @@
 
 #include <gtest/gtest.h>
 #include <communication/Message.h>
-#include "User.pb.h"
+#include <ChatMessage.pb.h>
 
 class AbstractMessageTest : public ::testing::Test {
     using am = SimpleChat::AbstractMessage;
-    using m = SimpleChat::Message<SimpleChat::UserJoinRequest>;
+    using m = SimpleChat::Message<SimpleChat::ChatMessage>;
 
 protected:
     virtual void SetUp() override {}
@@ -15,15 +15,17 @@ protected:
 
 public:
     static std::unique_ptr<am> invalidAbstractMessage() {
-        auto userJoinRequest = std::make_unique<SimpleChat::UserJoinRequest>();
+        auto message = std::make_unique<SimpleChat::ChatMessage>();
+        message->set_text("text_message1");
 
-        return std::make_unique<m>(std::move(userJoinRequest), SimpleChat::USER_JOIN_REQUEST);
+        return std::make_unique<m>(std::move(message), SimpleChat::USER_JOIN_REQUEST);
     }
 
     static std::unique_ptr<am> validAbstractMessage() {
-        auto userJoinRequest = std::make_unique<SimpleChat::UserJoinRequest>();
-        userJoinRequest->set_name("first_user");
+        auto message = std::make_unique<SimpleChat::ChatMessage>();
+        message->set_text("text_message1");
+        message->set_timestamp(2131231);
 
-        return std::make_unique<m>(std::move(userJoinRequest), SimpleChat::USER_JOIN_REQUEST);
+        return std::make_unique<m>(std::move(message), SimpleChat::USER_JOIN_REQUEST);
     }
 };

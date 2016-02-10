@@ -6,26 +6,33 @@ add_subdirectory(proto)
 
 set(SHARED_SOURCE_FILES
         communication/AbstractMessage.h
-        communication/Message.h
         communication/Message.cpp
-        communication/MessageDeserializer.h
+        communication/Message.h
         communication/MessageDeserializer.cpp
-        communication/MessageSerializer.h
+        communication/MessageDeserializer.h
         communication/MessageSerializer.cpp
+        communication/MessageSerializer.h
 
-        chat/Chatroom.h
         chat/Chatroom.cpp
-        chat/Chatee.h
+        chat/Chatroom.h
         chat/Chatee.cpp
+        chat/Chatee.h
         chat/ChatConnection.h
 
-        chat/commands/CommandParser.h
         chat/commands/CommandParser.cpp
+        chat/commands/CommandParser.h
+        chat/commands/MotdChatCommand.cpp
+        chat/commands/MotdChatCommand.h
+        chat/commands/SpecificChatCommand.h
+        chat/commands/KickChatCommand.cpp
+        chat/commands/KickChatCommand.h
+        chat/commands/MuteChatCommand.cpp
+        chat/commands/MuteChatCommand.h
 
-        util/StringUtil.h
         util/StringUtil.cpp
+        util/StringUtil.h
         util/SmartPtrUtil.h
-        chat/commands/MotdChatCommand.cpp chat/commands/MotdChatCommand.h chat/commands/SpecificChatCommand.h chat/commands/KickChatCommand.cpp chat/commands/KickChatCommand.h chat/commands/MuteChatCommand.cpp chat/commands/MuteChatCommand.h)
+        )
 
 add_library(shared ${SHARED_SOURCE_FILES})
 target_link_libraries(shared proto)

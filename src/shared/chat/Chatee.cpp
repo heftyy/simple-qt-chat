@@ -31,17 +31,19 @@ bool Chatee::sendMessage(std::unique_ptr<AbstractMessage> message) {
     return false;
 }
 
-void Chatee::sendMessage(const std::string& message, const std::string& target) {
+void Chatee::sendChatMessage(const std::string& message, const std::string& from, const std::string& target) {
     auto chatMessage = std::make_unique<ChatMessage>();
     auto duration = std::chrono::system_clock::now().time_since_epoch();
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
     chatMessage->set_text(message);
-    chatMessage->set_allocated_from(this->getSelf().release());
     chatMessage->set_timestamp(millis);
+    if(target.empty())
+        chatMessage->set_allocated_target(getSelf().release());
+    else
+        chatMessage->set_allocated_target(getTarget(target).release());
 
-    if (!target.empty())
-        chatMessage->set_allocated_target(this->getTarget(target).release());
+    chatMessage->set_allocated_from(getTarget(from).release());
 
     this->prepareAndSend(
             std::move(chatMessage),
@@ -49,6 +51,7 @@ void Chatee::sendMessage(const std::string& message, const std::string& target) 
     );
 }
 
+/*
 void Chatee::sendCommand(const std::string& command) {
     auto commandParser = std::make_unique<CommandParser>(command);
     auto chatCommand = commandParser->chatCommand(
@@ -70,6 +73,53 @@ void Chatee::authorize(const std::string& password) {
             std::move(authorizeMessage),
             CHAT_AUTHORIZE
     );
+}
+*/
+
+void Chatee::sendResponse(bool success, const std::string& message) {
+    auto genericResponse = std::make_unique<GenericChatResponse>();
+
+    genericResponse->set_success(success);
+    genericResponse->set_message(message);
+
+    this->prepareAndSend(
+            std::move(genericResponse),
+            GENERIC_CHAT_RESPONSE
+    );
+}
+
+void Chatee::mute() {
+    user_->set_status(MUTED);
+
+    auto response = std::make_unique<UserChange>();
+    response->set_status(MUTED);
+    response->mutable_user()->CopyFrom(user());
+
+    chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
+            std::move(response), USER_CHANGE));
+}
+
+void Chatee::kick() {
+    chatroom_.lock()->chateeLeft(user_->name());
+
+    auto response = std::make_unique<UserChange>();
+    response->set_action(KICKED);
+    response->mutable_user()->CopyFrom(user());
+
+    chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
+            std::move(response), USER_CHANGE));
+}
+
+std::shared_ptr<ChatConnection> Chatee::connection() const {
+    return connection_;
+}
+
+bool Chatee::authorized() const {
+    return authorized_;
+}
+
+void Chatee::setAuthorized(bool authorized) {
+    authorized_ = authorized;
 }
 
 std::unique_ptr<ChatTarget> Chatee::getSelf() {
@@ -98,6 +148,7 @@ void Chatee::prepareAndSend(std::unique_ptr<MessageType> message, int type) {
             std::move(message),
             type
     );
+
     sendMessage(std::move(abstractMessage));
 }
 
@@ -107,11 +158,12 @@ template void Chatee::prepareAndSend<UserJoinResponse>(std::unique_ptr<UserJoinR
 template void Chatee::prepareAndSend<UserListRequest>(std::unique_ptr<UserListRequest> message, int type);
 template void Chatee::prepareAndSend<UserListResponse>(std::unique_ptr<UserListResponse> message, int type);
 
-template void Chatee::prepareAndSend<UserStatusChange>(std::unique_ptr<UserStatusChange> message, int type);
-template void Chatee::prepareAndSend<UserListChange>(std::unique_ptr<UserListChange> message, int type);
+template void Chatee::prepareAndSend<UserChange>(std::unique_ptr<UserChange> message, int type);
 
 template void Chatee::prepareAndSend<ChatMessage>(std::unique_ptr<ChatMessage> message, int type);
 template void Chatee::prepareAndSend<ChatAuthorize>(std::unique_ptr<ChatAuthorize> message, int type);
 template void Chatee::prepareAndSend<ChatCommand>(std::unique_ptr<ChatCommand> message, int type);
+
+template void Chatee::prepareAndSend<GenericChatResponse>(std::unique_ptr<GenericChatResponse> message, int type);
 
 } // SimpleChat namespace

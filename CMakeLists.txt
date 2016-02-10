@@ -22,6 +22,7 @@ endif(UNIX)
 set(EXT_PROJECTS_DIR ${PROJECT_SOURCE_DIR}/ext)
 
 find_package(Qt5Network)
+find_package(Qt5Widgets)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -43,7 +44,7 @@ if(WIN32)
         # debug version
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Cored.dll         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Networkd.dll      ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
-  
+
         # release version
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Core.dll          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Network.dll       ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release

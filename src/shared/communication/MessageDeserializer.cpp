@@ -28,12 +28,13 @@ template auto MessageDeserializer::getMessage<UserJoinResponse>() const -> std::
 template auto MessageDeserializer::getMessage<UserListRequest>() const -> std::unique_ptr<UserListRequest>;
 template auto MessageDeserializer::getMessage<UserListResponse>() const -> std::unique_ptr<UserListResponse>;
 
-template auto MessageDeserializer::getMessage<UserStatusChange>() const -> std::unique_ptr<UserStatusChange>;
-template auto MessageDeserializer::getMessage<UserListChange>() const -> std::unique_ptr<UserListChange>;
+template auto MessageDeserializer::getMessage<UserChange>() const -> std::unique_ptr<UserChange>;
 
 template auto MessageDeserializer::getMessage<ChatMessage>() const -> std::unique_ptr<ChatMessage>;
 template auto MessageDeserializer::getMessage<ChatAuthorize>() const -> std::unique_ptr<ChatAuthorize>;
 template auto MessageDeserializer::getMessage<ChatCommand>() const -> std::unique_ptr<ChatCommand>;
+
+template auto MessageDeserializer::getMessage<GenericChatResponse>() const -> std::unique_ptr<GenericChatResponse>;
 
 std::unique_ptr<NetworkMessage> MessageDeserializer::getNetworkMessage() const {
     auto networkMessage = std::make_unique<NetworkMessage>();

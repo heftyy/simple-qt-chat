@@ -5,8 +5,7 @@
 
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
-    SimpleChat::TcpServer server;
+    SimpleChat::TcpServer server("abra kadabra");
     server.listen(4441);
-    qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
     return app.exec();
 }

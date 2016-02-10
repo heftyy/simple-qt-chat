@@ -2,16 +2,23 @@ syntax = "proto2";
 
 package SimpleChat;
 
+enum CommandType {
+    MOTD = 0;
+    KICK = 1;
+    MUTE = 2;
+    UNKNOWN = 3;
+}
+
 message ChatTarget {
     required string user_name = 1;
     optional int32 user_id = 2;
 }
 
 message ChatMessage {
-    required ChatTarget from = 1;
-    required string text = 2;
-    required int64 timestamp = 3;
+    required string text = 1;
+    required int64 timestamp = 2;
 
+    optional ChatTarget from = 3;
     optional ChatTarget target = 4;
 }
 
@@ -20,15 +27,17 @@ message ChatAuthorize {
     required string password = 2;
 }
 
-enum CommandType {
-    MOTD = 0;
-    KICK = 1;
-    MUTE = 2;
-    UNKNOWN = 3;
-}
-
 message ChatCommand {
     required ChatTarget from = 1;
     required CommandType type = 2;
     repeated string arguments = 3;
+}
+
+message ChatroomChange {
+    optional string motd = 1;
+}
+
+message GenericChatResponse {
+    required bool success = 1;
+    optional string message = 2;
 }

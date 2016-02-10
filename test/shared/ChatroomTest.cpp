@@ -69,5 +69,5 @@ TEST_F(ChatroomTest, TestMessageSend) {
     std::shared_ptr<SimpleChat::Chatee> chatee;
     std::tie(success, message, chatee) = room1->chateeJoined("first_chatee", connection);
 
-    chatee->sendMessage("first message");
+    chatee->sendChatMessage("first message", "first_chatee");
 }

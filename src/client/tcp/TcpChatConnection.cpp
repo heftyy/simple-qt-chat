@@ -1,4 +1,5 @@
 #include <QtNetwork>
+#include <iostream>
 
 #include <communication/AbstractMessage.h>
 #include <communication/MessageSerializer.h>

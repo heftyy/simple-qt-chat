@@ -7,12 +7,15 @@ enum NetworkMessageType {
     USER_JOIN_RESPONSE = 1;
     USER_LIST_REQUEST = 2;
     USER_LIST_RESPONSE = 3;
-    USER_STATUS_CHANGE = 4;
-    USER_LIST_CHANGE = 5;
+    USER_CHANGE = 4;
     
     CHAT_MESSAGE = 10;
     CHAT_AUTHORIZE = 11;
     CHAT_COMMAND = 12;
+
+    GENERIC_CHAT_RESPONSE = 20;
+
+    CHATROOM_CHANGED = 25;
 }
 
 message NetworkMessageHeader {
@@ -23,5 +26,5 @@ message NetworkMessageHeader {
 
 message NetworkMessage {
     required NetworkMessageHeader header = 1;
-    required string serialized_data = 2;
+    required bytes serialized_data = 2;
 }

@@ -2,22 +2,28 @@ syntax = "proto2";
 
 package SimpleChat;
 
-enum UserStatus {
+enum UserPresence {
     ONLINE = 0;
     AWAY = 1;
     BUSY = 2;
 }
 
+enum UserStatus {
+    NONE = 0;
+    MUTED = 1;
+}
+
 enum UserAction {
-    MUTED = 0;
-    JOIND = 1;
-    LEAVED = 2;
+    JOINED = 0;
+    LEFT = 1;
+    KICKED = 2;
 }
 
 message User {
     required int32 id = 1;
     required string name = 2;
-    required UserStatus status = 3 [default = ONLINE];
+    required UserPresence presence = 3 [default = ONLINE];
+    required UserStatus status = 4 [default = NONE];
 }
 
 message UserJoinRequest {
@@ -28,7 +34,8 @@ message UserJoinResponse {
     required bool success = 1;
 
     optional User user = 2;
-    optional string message = 3;
+    optional string motd = 3;
+    optional string message = 4;
 }
 
 message UserListRequest {
@@ -40,12 +47,9 @@ message UserListResponse {
     optional string message = 2;
 }
 
-message UserStatusChange {
+message UserChange {
     required User user = 1;
-    required UserStatus status = 2;
-}
-
-message UserListChange {
-    required User user = 1;
-    required UserAction action = 2;
+    optional UserPresence presence = 2;
+    optional UserStatus status = 3;
+    optional UserAction action = 4;
 }

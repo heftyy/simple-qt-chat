@@ -24,4 +24,7 @@ public:
     MOCK_METHOD1(sendMessageProxy, bool(AbstractMessage*));
     MOCK_CONST_METHOD0(isAlive, bool());
     MOCK_CONST_METHOD0(getIdent, std::string());
+
+    MOCK_METHOD1(setChatee, void(const std::shared_ptr<Chatee>&));
+    MOCK_CONST_METHOD0(chatee, std::shared_ptr<Chatee>());
 };

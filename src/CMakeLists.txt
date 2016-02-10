@@ -7,5 +7,5 @@ set(SERVER_DIRECTORY server)
 include_directories(shared)
 
 add_subdirectory(shared)
-#add_subdirectory(client)
+add_subdirectory(client)
 add_subdirectory(server)

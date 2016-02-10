@@ -1,13 +1,16 @@
 #include "Chatroom.h"
 #include "Chatee.h"
 #include "ChatConnection.h"
+#include "../communication/Message.h"
+
 #include "User.pb.h"
 #include "ChatMessage.pb.h"
+#include "NetworkMessage.pb.h"
 
 namespace SimpleChat {
 
 Chatroom::Chatroom() : 
-    nextUserId(0) {
+    nextUserId(1) {
 }
 
 
@@ -24,13 +27,17 @@ Chatroom::chateeJoined(const std::string& name,
     auto user = std::make_unique<User>();
     user->set_id(nextUserId++);
     user->set_name(name);
-    user->set_status(ONLINE);
+    user->set_presence(ONLINE);
+    user->set_status(NONE);
 
     auto chatee = std::make_shared<Chatee>(std::move(user), connection);
     auto success = insertChatee(chatee);
 
-    if (success)
+    if (success) {
+        connection->setChatee(chatee);
         return std::make_tuple(true, "", chatee);
+    }
+
 
     return std::make_tuple(false, "Failed to add chatee.", nullptr);
 }
@@ -46,14 +53,6 @@ Chatroom::chateeLeft(const std::string& name) {
         return std::make_tuple(true, "");
 
     return std::make_tuple(false, "Failed to remove chatee.");
-}
-
-bool Chatroom::sendMessage(const std::string& name, std::unique_ptr<AbstractMessage> message) {
-    if (chateeExists(name)) {
-        return chatees_[name]->sendMessage(std::move(message));
-    }
-
-    return false;
 }
 
 void Chatroom::propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const {
@@ -90,6 +89,24 @@ std::unique_ptr<ChatTarget> Chatroom::getTarget(const std::string& userName) {
     }
 
     return nullptr;
+}
+
+void Chatroom::setMotd(const std::string& motd) {
+    motd_ = motd;
+
+    auto chatroomChanged = std::make_unique<ChatroomChange>();
+    chatroomChanged->set_motd(motd);
+
+    propagateMessage(std::make_unique<Message<ChatroomChange>>(
+            std::move(chatroomChanged), CHATROOM_CHANGED));
+}
+
+std::string Chatroom::motd() {
+    return motd_;
+}
+
+const ChateesMap& Chatroom::map() {
+    return chatees_;
 }
 
 bool Chatroom::insertChatee(std::shared_ptr<Chatee> chatee) {
