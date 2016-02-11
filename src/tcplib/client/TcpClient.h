@@ -22,26 +22,26 @@ class TcpChatConnection;
 class Chatee;
 
 class TcpClient : public Client {
+    Q_OBJECT
 public:
-    virtual void showChatWindow() override;
+    virtual void showChatWindow();
 
-    virtual void requestUserList() override;
-    virtual void sendCommand(std::string command) override;
-    virtual void sendMessage(std::string text, std::string target) override;
+    virtual void requestUserList();
+    virtual void sendCommand(std::string command);
+    virtual void sendMessage(std::string text, std::string target);
 
-    virtual void serverDialog() override;
-    virtual void nameDialog() override;
-    virtual void connect() override;
-    virtual void join() override;
+    virtual void serverDialog();
+    virtual void nameDialog();
+    virtual void connectToHost();
+    virtual void disconnectFromHost();
+    virtual void join();
 
-    virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
-                                      const std::shared_ptr<ChatConnection>& connection) override;
+    virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse);
+    virtual void handleMessage(std::unique_ptr<UserListResponse> joinResponse);
+    virtual void handleMessage(std::unique_ptr<UserChange> userChange);
+    virtual void handleMessage(std::unique_ptr<ChatMessage> chatMessage);
 
-    virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinRequest);
-
-    virtual void handleMessage(std::unique_ptr<UserListResponse> listRequest);
-
-    virtual QHostAddress getServerAddress() override;
+    virtual QHostAddress getServerAddress();
 
     QHostAddress serverAddress_;
     quint16 serverPort_;
@@ -51,7 +51,10 @@ public:
     void displayError(QAbstractSocket::SocketError socketError) const;
 
 private slots:
-    void dataReceived();
+    virtual void handleUntypedMessage(QString serializedData,
+                                      std::string ident);
+
+    void connectionLost(std::string ident);
 };
 
 } // SimpleChat namespace

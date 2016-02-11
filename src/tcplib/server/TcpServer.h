@@ -15,6 +15,8 @@ namespace SimpleChat {
 class Chatroom;
 class TcpChatConnection;
 
+using ConnectionsMap = std::map<std::string, std::shared_ptr<TcpChatConnection>>;
+
 class TcpServer : public Server {
     Q_OBJECT
 public:
@@ -22,17 +24,18 @@ public:
 
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) override;
 
-    virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
-                                      const std::shared_ptr<ChatConnection>& connection) override;
-
     virtual QHostAddress getAddress() const override;
 
 private slots:
     void connectionEstablished();
-    void disconnected(const std::shared_ptr<TcpChatConnection>& connection) const;
-    void dataReceived(const std::shared_ptr<TcpChatConnection>& tcpSocket);
+    void connectionLost(std::string ident);
+
+    virtual void handleUntypedMessage(QString serializedData,
+                                      std::string ident) override;
 
 private:
+    ConnectionsMap connections_;
+
     std::shared_ptr<QTcpServer> tcpServer_;
     std::shared_ptr<Chatroom> chatroom_;
     std::string password_;

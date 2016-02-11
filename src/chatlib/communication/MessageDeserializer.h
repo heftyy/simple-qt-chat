@@ -3,9 +3,10 @@
 #include <memory>
 #include <string>
 
+#include "NetworkMessage.pb.h"
+
 namespace SimpleChat {
 
-class NetworkMessage;
 class AbstractMessage;
 
 class MessageDeserializer {
@@ -20,9 +21,7 @@ public:
 
 private:
     std::string serializedMessage_;
-    std::unique_ptr<NetworkMessage> networkMessage_;
-
-    std::unique_ptr<NetworkMessage> getNetworkMessage() const;
+    NetworkMessage networkMessage_;
 };
 
 } // SimpleChat namespace

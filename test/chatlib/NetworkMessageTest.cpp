@@ -12,15 +12,13 @@ SimpleChat::NetworkMessage createNetworkMessage() {
 
     SimpleChat::NetworkMessage networkMessage;
 
-    auto networkMessageHeader = networkMessage.mutable_header();
-    networkMessageHeader->set_src("127.0.0.1:1444");
-    networkMessageHeader->set_dest("127.0.0.1:1445");
-    networkMessageHeader->set_type(SimpleChat::USER_JOIN_REQUEST);
-
-    EXPECT_TRUE(networkMessageHeader->IsInitialized());
-
     networkMessage.set_serialized_data(userJoinRequest.SerializeAsString());
 
+    auto networkMessageHeader = networkMessage.mutable_header();
+    networkMessageHeader->set_type(SimpleChat::USER_JOIN_REQUEST);
+    networkMessageHeader->set_size(networkMessage.serialized_data().size());
+
+    EXPECT_TRUE(networkMessageHeader->IsInitialized());
     EXPECT_TRUE(networkMessage.IsInitialized());
 
     return networkMessage;

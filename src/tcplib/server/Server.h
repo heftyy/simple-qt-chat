@@ -26,8 +26,8 @@ class Server : public QObject {
 public:
     virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) = 0;
 
-    virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
-                                      const std::shared_ptr<ChatConnection>& connection) = 0;
+    virtual void handleUntypedMessage(QString serializedData,
+                                      std::string ident) = 0;
 
     virtual QHostAddress getAddress() const = 0;
     virtual ~Server() { }

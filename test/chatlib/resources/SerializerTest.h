@@ -28,15 +28,11 @@ protected:
 public:
     static std::shared_ptr<ser> getValidMessage() {
         return std::make_shared<ser>(
-                AbstractMessageTest::validAbstractMessage(),
-                "127.0.0.1:4444",
-                "127.0.0.1:4445");
+                AbstractMessageTest::validAbstractMessage());
     }
 
     static std::shared_ptr<ser> getInvalidMessage() {
         return std::make_shared<ser>(
-                AbstractMessageTest::invalidAbstractMessage(),
-                "127.0.0.1:4444",
-                "127.0.0.1:4445");
+                AbstractMessageTest::invalidAbstractMessage());
     }
 };

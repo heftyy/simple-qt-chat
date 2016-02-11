@@ -10,7 +10,8 @@
 #include <chat/Chatee.h>
 #include <communication/Message.h>
 #include <communication/MessageDeserializer.h>
-#include <chat/TcpChatConnection.h>
+
+#include "../chat/TcpChatConnection.h"
 
 #include "TcpServer.h"
 
@@ -26,45 +27,8 @@ TcpServer::TcpServer(const std::string& password) :
 void TcpServer::listen(quint16 port, QHostAddress ipAddress) {
     openSession(port, ipAddress);
 
-    connect(tcpServer_.get(), &QTcpServer::newConnection,
-            tcpServer_.get(), [this] { connectionEstablished(); });
-}
-
-void TcpServer::handleUntypedMessage(const MessageDeserializer& deserializer,
-                                     const std::shared_ptr<ChatConnection>& connection) {
-    if(connection == nullptr || !connection->isAlive()) {
-        std::cerr << "chat connection is invalid" << std::endl;
-        return;
-    }
-
-    if (!deserializer.isInitialized())
-        return;
-
-    if (deserializer.type() == USER_JOIN_REQUEST) {
-        handleMessage(deserializer.getMessage<UserJoinRequest>(), connection);
-        return;
-    }
-
-    if(connection->chatee() == nullptr) {
-        std::cerr << "chatee not found for connection from " << connection->getIdent() << std::endl;
-        return;
-    }
-
-    if(deserializer.type() == USER_LIST_REQUEST) {
-        handleMessage(deserializer.getMessage<UserListRequest>(), connection->chatee());
-    }
-    else if (deserializer.type() == USER_CHANGE) {
-        handleMessage(deserializer.getMessage<UserChange>(), connection->chatee());
-    }
-    else if(deserializer.type() == CHAT_MESSAGE) {
-        handleMessage(deserializer.getMessage<ChatMessage>(), connection->chatee());
-    }
-    else if(deserializer.type() == CHAT_AUTHORIZE) {
-        handleMessage(deserializer.getMessage<ChatAuthorize>(), connection->chatee());
-    }
-    else if(deserializer.type() == CHAT_COMMAND) {
-        handleMessage(deserializer.getMessage<ChatCommand>(), connection->chatee());
-    }
+    connect(tcpServer_.get(), SIGNAL(newConnection()),
+            this, SLOT(connectionEstablished()));
 }
 
 QHostAddress TcpServer::getAddress() const {
@@ -82,32 +46,42 @@ QHostAddress TcpServer::getAddress() const {
 void TcpServer::connectionEstablished() {
     auto clientConnection = tcpServer_->nextPendingConnection();
 
-    std::cout << "new connection from " << clientConnection->peerAddress().toString().toStdString() << std::endl;
+    qDebug() << "SERVER: " << "new connection from" << clientConnection->peerAddress().toString();
 
     auto connection = std::make_shared<TcpChatConnection>(
-        std::shared_ptr<QTcpSocket>(clientConnection));
+            std::shared_ptr<QTcpSocket>(clientConnection));
 
-    clientConnection->
-            connect(clientConnection, &QTcpSocket::disconnected,
-                    clientConnection, [this, connection] { disconnected(connection); });
+    connections_.emplace(std::make_pair(connection->getIdent(), connection));
 
-    clientConnection->
-            connect(clientConnection, &QTcpSocket::readyRead,
-                    clientConnection, [this, connection] { dataReceived(connection); });
+    connection->connect(
+            connection.get(),
+            SIGNAL(dataReceived(QString, std::string)),
+            this,
+            SLOT(handleUntypedMessage(QString, std::string))
+    );
+
+    connection->connect(
+            connection.get(),
+            SIGNAL(disconnectSignal(std::string)),
+            this,
+            SLOT(connectionLost(std::string))
+    );
+
+    connection->init();
 }
 
-void TcpServer::disconnected(const std::shared_ptr<TcpChatConnection>& connection) const {
-    if(connection == nullptr) {
-        std::cerr << "disconnected called with empty connection" << std::endl;
-        return;
-    }
+void TcpServer::connectionLost(std::string ident) {
+    auto connection = connections_[ident];
 
-    connection->socket()->abort();
-
-    if(connection->chatee() == nullptr) {
-        std::cerr << "disconnected called with empty chatee" << std::endl;
+    if (connection == nullptr) {
+        qCritical() << "disconnected called with empty connection";
         return;
-    }
+    }    
+
+    if (connection->chatee() == nullptr) {
+        qCritical() << "disconnected called with empty chatee";
+        return;
+    }    
 
     // get a shared_ptr to chatee so we can send a message after it's removed from chatroom
     // connection stores a weak_ptr
@@ -118,44 +92,60 @@ void TcpServer::disconnected(const std::shared_ptr<TcpChatConnection>& connectio
 
     std::tie(success, message) = chatroom_->chateeLeft(connection->chatee()->user().name());
 
-    if(success) {
-        std::cout << "user " << chatee->user().name() << " from " <<
-                connection->socket()->peerAddress().toString().toStdString() << " left" << std::endl;
+    if (success) {
+        qDebug() << "SERVER:" << chatee->user().DebugString().c_str() << "from" <<
+            connection->socket()->peerAddress().toString() << "left";
 
         auto change = std::make_unique<UserChange>();
         change->set_action(UserAction::LEFT);
         change->mutable_user()->CopyFrom(chatee->user());
 
         chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-                std::move(change), USER_CHANGE));
+            std::move(change), USER_CHANGE));
     }
     else
-        std::cerr << "removing the chatee failed" << std::endl;
+        qCritical() << "removing the chatee failed";
 }
 
-void TcpServer::dataReceived(const std::shared_ptr<TcpChatConnection>& connection) {
-    QDataStream inStream(connection->socket().get());
-    inStream.setVersion(QDataStream::Qt_5_5);
+void TcpServer::handleUntypedMessage(QString serializedData,
+                                     std::string ident) {
 
-    if (connection->blockSize == 0) {
-        if (connection->socket()->bytesAvailable() < static_cast<int>(sizeof(quint16)))
-            return;
-        
-        inStream >> connection->blockSize;
-        std::cout << "server received block size: " << connection->blockSize << std::endl;
+    auto deserializer = MessageDeserializer(serializedData.toStdString());
+    auto connection = connections_[ident];
+
+    if (connection == nullptr || !connection->isAlive()) {
+        qCritical() << "chat connection is invalid";
+        return;
     }
 
-    if (connection->socket()->bytesAvailable() < connection->blockSize)
+    if (!deserializer.isInitialized())
         return;
 
-    // full message received, reset blockSize to 0
-    connection->blockSize = 0;
+    if (deserializer.type() == USER_JOIN_REQUEST) {
+        handleMessage(deserializer.getMessage<UserJoinRequest>(), connection);
+        return;
+    }
 
-    QString serializedMessage;
-    inStream >> serializedMessage;
+    if (connection->chatee() == nullptr) {
+        qCritical() << "chatee not found for connection from " << connection->getIdent().c_str();
+        return;
+    }
 
-    MessageDeserializer deserializer(serializedMessage.toStdString());
-    handleUntypedMessage(deserializer, connection);
+    if (deserializer.type() == USER_LIST_REQUEST) {
+        handleMessage(deserializer.getMessage<UserListRequest>(), connection->chatee());
+    }
+    else if (deserializer.type() == USER_CHANGE) {
+        handleMessage(deserializer.getMessage<UserChange>(), connection->chatee());
+    }
+    else if (deserializer.type() == CHAT_MESSAGE) {
+        handleMessage(deserializer.getMessage<ChatMessage>(), connection->chatee());
+    }
+    else if (deserializer.type() == CHAT_AUTHORIZE) {
+        handleMessage(deserializer.getMessage<ChatAuthorize>(), connection->chatee());
+    }
+    else if (deserializer.type() == CHAT_COMMAND) {
+        handleMessage(deserializer.getMessage<ChatCommand>(), connection->chatee());
+    }
 }
 
 void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
@@ -164,15 +154,14 @@ void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
 
     tcpServer_ = std::make_shared<QTcpServer>(this);
     if (!tcpServer_->listen(ipAddress, port)) {
-        std::cerr << "opening listening port failed" << std::endl;
+        qCritical() << "opening listening port failed";
         return;
     }
 
-    std::cout <<
-    "The server is running on\nIP: " <<
-    ipAddress.toString().toStdString() <<
-    "\nport: " << tcpServer_->serverPort() <<
-    std::endl;
+    qDebug() << "SERVER: " <<
+        "The server is running on\nIP: " <<
+        ipAddress.toString() <<
+        "\nport: " << tcpServer_->serverPort();
 }
 
 void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
@@ -193,10 +182,10 @@ void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
         auto userChange = std::make_unique<UserChange>();
         userChange->set_action(UserAction::JOINED);
         userChange->mutable_user()->CopyFrom(chatee->user());
-//        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-//                std::move(userChange), USER_CHANGE));
+        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
+                std::move(userChange), USER_CHANGE));
 
-        std::cout << "user " << joinRequest->name() << " joined" << std::endl;
+        qDebug() << "SERVER:" << joinRequest->DebugString().c_str();
     }
 
     chatee->sendMessage(std::make_unique<Message<UserJoinResponse>>(
@@ -208,7 +197,7 @@ void TcpServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
     auto response = std::make_unique<UserListResponse>();
 
     auto const& map = chatroom_->map();
-    for(auto const& pair : map) {
+    for (auto const& pair : map) {
         response->mutable_users()->Add()->CopyFrom(
                 pair.second->user());
     }
@@ -219,9 +208,9 @@ void TcpServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
 
 void TcpServer::handleMessage(std::unique_ptr<UserChange> change,
                               const std::shared_ptr<Chatee>& sender) {
-    if(change->has_presence())
+    if (change->has_presence())
         sender->user().set_presence(change->presence());
-    if(change->has_status())
+    if (change->has_status())
         sender->user().set_status(change->status());
 
     chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
@@ -229,11 +218,16 @@ void TcpServer::handleMessage(std::unique_ptr<UserChange> change,
 }
 
 void TcpServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const std::shared_ptr<Chatee>& sender) {
-    if(chatMessage->has_target()) { // send a private message
+    auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
+
+    chatMessage->set_timestamp(123421521);
+
+    if (chatMessage->has_target()) { // send a private message
         auto targetChatee = chatroom_->getChatee(chatMessage->target().user_name());
-        if(targetChatee == nullptr) { // let the sender know that target doesn't exist
+        if (targetChatee == nullptr) { // let the sender know that target doesn't exist
             auto message = "user with name " + chatMessage->target().user_name() + " doesn't exit";
-            std::cerr << message << std::endl;
+            qCritical() << message.c_str();
 
             sender->sendResponse(false, message);
         }
@@ -249,7 +243,7 @@ void TcpServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const st
         }
     }
     else { // send a public message
-        std::cout << sender->user().name() << ": " << chatMessage->text() << std::endl;
+        qDebug() << "SERVER: " << chatMessage->DebugString().c_str();
 
         chatroom_->propagateMessage(std::make_unique<Message<ChatMessage>>(
                 std::move(chatMessage), CHAT_MESSAGE));
@@ -257,7 +251,7 @@ void TcpServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const st
 }
 
 void TcpServer::handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize, const std::shared_ptr<Chatee>& sender) {
-    if(chatAuthorize->password() == password_) {
+    if (chatAuthorize->password() == password_) {
         sender->setAuthorized(true);
         sender->sendResponse(true, "auth successful");
     }
@@ -266,20 +260,20 @@ void TcpServer::handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize, cons
 }
 
 void TcpServer::handleMessage(std::unique_ptr<ChatCommand> chatCommand, const std::shared_ptr<Chatee>& sender) {
-    if(sender->authorized()) {
-        if(chatCommand->type() == CommandType::MUTE) {
+    if (sender->authorized()) {
+        if (chatCommand->type() == CommandType::MUTE) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
-            if(targetChatee == nullptr)
+            if (targetChatee == nullptr)
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
             targetChatee->mute();
         }
-        else if(chatCommand->type() == CommandType::KICK) {
+        else if (chatCommand->type() == CommandType::KICK) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
-            if(targetChatee == nullptr)
+            if (targetChatee == nullptr)
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
             targetChatee->kick();
         }
-        else if(chatCommand->type() == CommandType::MOTD) {
+        else if (chatCommand->type() == CommandType::MOTD) {
             chatroom_->setMotd(chatCommand->arguments(0));
         }
     }

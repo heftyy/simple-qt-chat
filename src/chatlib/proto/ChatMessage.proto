@@ -16,7 +16,7 @@ message ChatTarget {
 
 message ChatMessage {
     required string text = 1;
-    required int64 timestamp = 2;
+    optional sfixed64 timestamp = 2;
 
     optional ChatTarget from = 3;
     optional ChatTarget target = 4;

@@ -3,32 +3,40 @@
 
 #include <communication/AbstractMessage.h>
 #include <communication/MessageSerializer.h>
+#include <communication/MessageDeserializer.h>
 
 #include "TcpChatConnection.h"
 
 namespace SimpleChat {
 
 TcpChatConnection::TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_) :
-        blockSize(0),
+        blockSize_(0),
         socket_(socket_) {
 
 }
 
+void TcpChatConnection::init() {
+    socket_->connect(socket_.get(), SIGNAL(disconnected()),
+                     this, SLOT(disconnected()));
+
+    socket_->connect(socket_.get(), SIGNAL(readyRead()),
+                     this, SLOT(readyRead()));
+}
+
 bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
     if (!isAlive())
-        return false;    
+        return false;
 
-    MessageSerializer serializer(
-        std::move(message),
-        getIdent(),
-        "");
+    MessageSerializer serializer(std::move(message));
 
     bool success;
     std::string result;
     std::tie(success, result) = serializer.serialize();
 
-    if(!success)
+    if (!success) {
+        qCritical() << "serialization failed ";
         return false;
+    }
 
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -39,16 +47,16 @@ bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
     out.device()->seek(0);
     out << static_cast<quint16>(block.size() - sizeof(quint16));
 
-    std::cout << "sending block size: " << block.size() << std::endl;
+    qDebug() << "sending block size: " << block.size();
 
     socket_->write(block);
-
-    return true;
+    return socket_->waitForBytesWritten();
 }
 
 bool TcpChatConnection::isAlive() const {
-    return socket_->isOpen() && socket_->isValid() &&
-        socket_->isWritable() && socket_->isReadable();
+    return socket_->state() == QAbstractSocket::ConnectedState &&
+            socket_->isOpen() && socket_->isValid() &&
+            socket_->isWritable() && socket_->isReadable();
 }
 
 std::string TcpChatConnection::getIdent() const {
@@ -65,7 +73,41 @@ void TcpChatConnection::setChatee(const std::shared_ptr<Chatee>& chatee) {
 }
 
 std::shared_ptr<Chatee> TcpChatConnection::chatee() const {
-    return chatee_.lock();
+    if(!chatee_.expired())
+        return chatee_.lock();
+    return nullptr;
+}
+
+void TcpChatConnection::readyRead() {
+    qDebug() << getIdent().c_str() << " readyRead";
+
+    QDataStream inStream(socket().get());
+    inStream.setVersion(QDataStream::Qt_5_5);
+
+    while(socket()->bytesAvailable() > 0) {
+        if (blockSize_ == 0) {
+            if (socket()->bytesAvailable() < sizeof(quint16))
+                return;
+
+            inStream >> blockSize_;
+            qDebug() << "received block size: " << blockSize_;
+        }
+
+        if (socket()->bytesAvailable() < blockSize_)
+            return;
+
+        // full message received, reset blockSize to 0
+        blockSize_ = 0;
+
+        QString serializedMessage;
+        inStream >> serializedMessage;
+
+        emit dataReceived(serializedMessage, getIdent());
+    }
+}
+
+void TcpChatConnection::disconnected() {
+    emit disconnectSignal(getIdent());
 }
 
 } //SimpleChat namespace

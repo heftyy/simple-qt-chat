@@ -27,42 +27,57 @@ void TcpClient::sendCommand(std::string command) {
 
 void TcpClient::sendMessage(std::string text, std::string target) {
     auto chatMessage = std::make_unique<ChatMessage>();
-    chatMessage->set_text("abrrr");
-    chatMessage->set_timestamp(66666);
+    chatMessage->set_text(text);
 
-    serverConnection_->sendMessage(std::make_unique<Message<ChatMessage>>(
+    auto result = serverConnection_->sendMessage(std::make_unique<Message<ChatMessage>>(
             std::move(chatMessage), CHAT_MESSAGE));
+
+    if (!result)
+        qCritical() << "sending a message failed";
 }
 
 void TcpClient::serverDialog() {
-    std::cout << "server address:\n";
+    qDebug() << "server address:\n";
     std::string address;
     std::cin >> address;
 
-    std::cout << "server port:\n";
+    qDebug() << "server port:\n";
     std::cin >> serverPort_;
 
     serverAddress_ = QHostAddress(QString::fromStdString(address));
 }
 
 void TcpClient::nameDialog() {
-    std::cout << "name:\n";
+    qDebug() << "name:\n";
     std::string name;
     std::cin >> name;
 
     clientName_ = name;
 }
 
-void TcpClient::connect() {
+void TcpClient::connectToHost() {
     if(!clientName_.empty() && !serverAddress_.isNull()) {
         auto socket = std::make_shared<QTcpSocket>();
 
         serverConnection_ = std::make_shared<TcpChatConnection>(socket);
+        serverConnection_->init();
 
-        socket->connect(socket.get(), &QTcpSocket::readyRead,
-                        socket.get(), [this] { dataReceived(); });
+        serverConnection_->connect(
+                serverConnection_.get(),
+                SIGNAL(dataReceived(QString, std::string)),
+                this,
+                SLOT(handleUntypedMessage(QString, std::string))
+        );
+
+        serverConnection_->connect(
+                serverConnection_.get(),
+                SIGNAL(disconnectSignal(std::string)),
+                this,
+                SLOT(connectionLost(std::string))
+        );
 
         socket->connectToHost(serverAddress_, serverPort_);
+        socket->waitForConnected();
     }
 }
 
@@ -75,37 +90,64 @@ void TcpClient::join() {
             std::move(joinRequest), USER_JOIN_REQUEST));
 }
 
-void TcpClient::dataReceived() {
-    std::cout << "DATA RECEIVED" << std::endl;
-
-    QDataStream inStream(serverConnection_->socket().get());
-    inStream.setVersion(QDataStream::Qt_5_5);
-
-    if (serverConnection_->blockSize == 0) {
-        if (serverConnection_->socket()->bytesAvailable() < static_cast<int>(sizeof(quint16)))
-            return;
-
-        inStream >> serverConnection_->blockSize;
-        std::cout << "client received block size: " << serverConnection_->blockSize << std::endl;
+void TcpClient::displayError(QAbstractSocket::SocketError socketError) const {
+    switch (socketError) {
+    case QAbstractSocket::RemoteHostClosedError:
+        break;
+    case QAbstractSocket::HostNotFoundError:
+        qDebug() << "Fortune Client\n" <<
+            "The host was not found. Please check the "
+            "host name and port settings.";
+        break;
+    case QAbstractSocket::ConnectionRefusedError:
+        qDebug() << "Fortune Client\n"
+            << "The connection was refused by the peer. "
+            "Make sure the fortune server is running, "
+            "and check that the host name and port "
+            "settings are correct.";
+        break;
+    default:
+        qDebug() << "Fortune Client\n"
+            << "The following error occurred: "
+            << serverConnection_->socket()->errorString();
     }
-
-    if (serverConnection_->socket()->bytesAvailable() < serverConnection_->blockSize)
-        return;
-
-    // full message received, reset blockSize to 0
-    serverConnection_->blockSize = 0;
-
-    QString serializedMessage;
-    inStream >> serializedMessage;
-
-    MessageDeserializer deserializer(serializedMessage.toStdString());
-    handleUntypedMessage(deserializer, serverConnection_);
 }
 
-void TcpClient::handleUntypedMessage(const MessageDeserializer& deserializer,
-                                     const std::shared_ptr<ChatConnection>& connection) {
-    if(connection == nullptr || !connection->isAlive()) {
-        std::cerr << "chat connection is invalid" << std::endl;
+QHostAddress TcpClient::getServerAddress() {
+    return serverAddress_;
+}
+
+void TcpClient::handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) {
+    qDebug() << "joined succesfully: " <<
+        joinResponse->DebugString().c_str();;
+
+    sendMessage("brbrbrbr1", "notarget");
+    sendMessage("brbrbrbr2", "notarget");
+    sendMessage("brbrbrbr3", "notarget");
+}
+
+void TcpClient::handleMessage(std::unique_ptr<UserListResponse> listRequest) {
+
+}
+
+void TcpClient::handleMessage(std::unique_ptr<UserChange> userChange) {
+    qDebug() << "user change " <<
+        userChange->DebugString().c_str();
+}
+
+void TcpClient::handleMessage(std::unique_ptr<ChatMessage> chatMessage) {
+    qDebug() << "chat messsage " <<
+        chatMessage->DebugString().c_str();
+}
+
+void TcpClient::handleUntypedMessage(QString serializedData,
+                                     std::string ident) {
+
+    auto deserializer = MessageDeserializer(serializedData.toStdString());
+
+    if(serverConnection_ == nullptr || !serverConnection_->isAlive() ||
+       serverConnection_->getIdent() != ident) {
+        qCritical() << "chat connection is invalid";
         return;
     }
 
@@ -115,44 +157,24 @@ void TcpClient::handleUntypedMessage(const MessageDeserializer& deserializer,
     if (deserializer.type() == USER_JOIN_RESPONSE) {
         handleMessage(deserializer.getMessage<UserJoinResponse>());
     }
-}
-
-void TcpClient::displayError(QAbstractSocket::SocketError socketError) const {
-    switch (socketError) {
-    case QAbstractSocket::RemoteHostClosedError:
-        break;
-    case QAbstractSocket::HostNotFoundError:
-    std::cout << "Fortune Client\n" <<
-                                 "The host was not found. Please check the "
-                                            "host name and port settings." << std::endl;
-        break;
-    case QAbstractSocket::ConnectionRefusedError:
-        std::cout << "Fortune Client\n"
-                                 << "The connection was refused by the peer. "
-                                            "Make sure the fortune server is running, "
-                                            "and check that the host name and port "
-                                            "settings are correct." << std::endl;
-        break;
-    default:
-        std::cout <<"Fortune Client\n"
-                << "The following error occurred: "
-        << serverConnection_->socket()->errorString().toStdString() << std::endl;
+    else if(deserializer.type() == USER_CHANGE) {
+        handleMessage(deserializer.getMessage<UserChange>());
+    }
+    else if(deserializer.type() == CHAT_MESSAGE) {
+        handleMessage(deserializer.getMessage<ChatMessage>());
     }
 }
 
-QHostAddress TcpClient::getServerAddress() {
-    return serverAddress_;
+void TcpClient::connectionLost(std::string ident) {
+    qDebug() << "disconnected\n";
 }
 
-void TcpClient::handleMessage(std::unique_ptr<UserJoinResponse> joinRequest) {
-    std::cout << "joined succesfully name: " <<
-            joinRequest->user().name() << " id: " <<
-            joinRequest->user().id() <<
-            std::endl;
-}
+void TcpClient::disconnectFromHost() {
+    serverConnection_->socket()->disconnectFromHost();
+    serverConnection_->socket()->waitForDisconnected();
 
-void TcpClient::handleMessage(std::unique_ptr<UserListResponse> listRequest) {
 
+    serverConnection_.reset();
 }
 
 } // SimpleChat namespace

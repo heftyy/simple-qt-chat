@@ -19,9 +19,8 @@ enum NetworkMessageType {
 }
 
 message NetworkMessageHeader {
-    required string src = 1;
-    required string dest = 2;
-    required NetworkMessageType type = 3;
+    required NetworkMessageType type = 1;
+    required int32 size = 2;
 }
 
 message NetworkMessage {

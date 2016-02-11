@@ -59,10 +59,12 @@ TEST_F(ChatroomTest, DeleteChatee) {
 }
 
 TEST_F(ChatroomTest, TestMessageSend) {
-    using ::testing::_;
+//    using ::testing::_;
+    using ::testing::Ne;
 
     auto connection = std::make_shared<MockChatConnection>();
-    EXPECT_CALL(*connection, sendMessageProxy(_)).Times(1);
+    EXPECT_CALL(*connection, sendMessageProxy(Ne(nullptr))).Times(1);
+    EXPECT_CALL(*connection, setChatee(Ne(nullptr))).Times(1);
 
     bool success;
     std::string message;

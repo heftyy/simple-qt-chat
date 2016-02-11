@@ -7,18 +7,17 @@
 namespace SimpleChat {
 
 MessageDeserializer::MessageDeserializer(const std::string& serializedMessage) : 
-    serializedMessage_(serializedMessage),
-    networkMessage_(getNetworkMessage()) {
-
+    serializedMessage_(serializedMessage) {
+    networkMessage_.ParseFromString(serializedMessage);
 }
 
 template<typename MessageType>
 auto MessageDeserializer::getMessage() const -> std::unique_ptr<MessageType> {
-    if(!networkMessage_->IsInitialized())
+    if(!networkMessage_.IsInitialized())
         return nullptr;
 
     auto message = std::make_unique<MessageType>();
-    message->ParseFromString(networkMessage_->serialized_data());
+    message->ParseFromString(networkMessage_.serialized_data());
     return std::move(message);
 }
 
@@ -36,22 +35,14 @@ template auto MessageDeserializer::getMessage<ChatCommand>() const -> std::uniqu
 
 template auto MessageDeserializer::getMessage<GenericChatResponse>() const -> std::unique_ptr<GenericChatResponse>;
 
-std::unique_ptr<NetworkMessage> MessageDeserializer::getNetworkMessage() const {
-    auto networkMessage = std::make_unique<NetworkMessage>();
-    networkMessage->ParseFromString(serializedMessage_);
-
-    return std::move(networkMessage);
-}
-
 int MessageDeserializer::type() const {
-    if(networkMessage_->IsInitialized())
-        return networkMessage_->header().type();
+    if(networkMessage_.IsInitialized())
+        return networkMessage_.header().type();
     return -1;
 }
 
 bool MessageDeserializer::isInitialized() const {
-    return networkMessage_ != nullptr &&
-        networkMessage_->IsInitialized() &&
+    return networkMessage_.IsInitialized() &&
         NetworkMessageType_IsValid(type());
 }
 
