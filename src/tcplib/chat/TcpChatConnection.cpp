@@ -50,7 +50,7 @@ bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
     qDebug() << "sending block size: " << block.size();
 
     socket_->write(block);
-    return socket_->waitForBytesWritten();
+    return true;
 }
 
 bool TcpChatConnection::isAlive() const {
@@ -102,12 +102,12 @@ void TcpChatConnection::readyRead() {
         QString serializedMessage;
         inStream >> serializedMessage;
 
-        emit dataReceived(serializedMessage, getIdent());
+        emit dataReceivedSignal(serializedMessage);
     }
 }
 
 void TcpChatConnection::disconnected() {
-    emit disconnectSignal(getIdent());
+    emit disconnectSignal();
 }
 
 } //SimpleChat namespace

@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+import "NetworkMessage.proto";
+
 package SimpleChat;
 
 enum CommandType {
@@ -40,4 +42,13 @@ message ChatroomChange {
 message GenericChatResponse {
     required bool success = 1;
     optional string message = 2;
+}
+
+extend NetworkMessage {
+  optional ChatMessage chatMessage = 20;
+  optional ChatAuthorize chatAuthorize = 21;
+  optional ChatCommand chatCommand = 22;
+
+  optional ChatroomChange chatroomChange = 23;
+  optional GenericChatResponse genericChatResponse = 24;
 }

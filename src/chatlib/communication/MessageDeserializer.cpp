@@ -33,6 +33,8 @@ template auto MessageDeserializer::getMessage<ChatMessage>() const -> std::uniqu
 template auto MessageDeserializer::getMessage<ChatAuthorize>() const -> std::unique_ptr<ChatAuthorize>;
 template auto MessageDeserializer::getMessage<ChatCommand>() const -> std::unique_ptr<ChatCommand>;
 
+template auto MessageDeserializer::getMessage<ChatroomChange>() const -> std::unique_ptr<ChatroomChange>;
+
 template auto MessageDeserializer::getMessage<GenericChatResponse>() const -> std::unique_ptr<GenericChatResponse>;
 
 int MessageDeserializer::type() const {

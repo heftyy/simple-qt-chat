@@ -24,13 +24,21 @@ Chatroom::chateeJoined(const std::string& name,
     if (chateeExists(name))
         return std::make_tuple(false, "That name is already taken", nullptr);
 
-    auto user = std::make_unique<User>();
-    user->set_id(nextUserId++);
-    user->set_name(name);
-    user->set_presence(ONLINE);
-    user->set_status(NONE);
+    User user;
+    user.set_id(nextUserId++);
+    user.set_name(name);
+    user.set_presence(ONLINE);
+    user.set_status(NONE);
 
-    auto chatee = std::make_shared<Chatee>(std::move(user), connection);
+    return chateeJoined(user, connection);
+}
+
+std::tuple<bool, std::string, std::shared_ptr<Chatee>> Chatroom::chateeJoined(const User& user,
+                                                                              const std::shared_ptr<ChatConnection>& connection) {
+    if (chateeExists(user.name()))
+        return std::make_tuple(false, "That name is already taken", nullptr);
+
+    auto chatee = std::make_shared<Chatee>(user, connection);
     auto success = insertChatee(chatee);
 
     if (success) {
@@ -54,6 +62,11 @@ Chatroom::chateeLeft(const std::string& name) {
         return std::make_tuple(true, "");
 
     return std::make_tuple(false, "Failed to remove chatee.");
+}
+
+std::tuple<bool, std::string>
+Chatroom::chateeLeft(const User& user) {
+    return chateeLeft(user.name());
 }
 
 void Chatroom::propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const {
@@ -99,7 +112,7 @@ void Chatroom::setMotd(const std::string& motd) {
     chatroomChanged->set_motd(motd);
 
     propagateMessage(std::make_unique<Message<ChatroomChange>>(
-            std::move(chatroomChanged), CHATROOM_CHANGED));
+            std::move(chatroomChanged), CHATROOM_CHANGE));
 }
 
 std::string Chatroom::motd() {

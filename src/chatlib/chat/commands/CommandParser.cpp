@@ -16,6 +16,9 @@ CommandParser::CommandParser(const std::string& command):
 }
 
 std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarget> from) {
+    if(from == nullptr)
+        return nullptr;
+
     if(command_.empty())
         return nullptr;
 

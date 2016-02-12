@@ -1,16 +1,12 @@
 #include <QApplication>
-#include <client/TcpClient.h>
-#include <thread>
 
-int main(int argc, char *argv[])
-{
+#include "dialog/LoginDialog.h"
+#include "dialog/ChatDialog.h"
+
+int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
-    SimpleChat::TcpClient client;
-    client.serverAddress_ = QHostAddress::LocalHost;
-    client.serverPort_ = 4441;
-    client.clientName_ = "Foooo1";
-    client.connectToHost();
+    SimpleChat::ChatDialog dialog;
+    dialog.start();
 
-    client.join();    
     return app.exec();
 }

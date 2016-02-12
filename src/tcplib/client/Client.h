@@ -5,11 +5,9 @@
 
 namespace SimpleChat {
 
-class MessageDeserializer;
-class ChatConnection;
-
 class Client : public QObject {
-
+public:
+    virtual ~Client() { }
 };
 
 } // SimpleChat namespace

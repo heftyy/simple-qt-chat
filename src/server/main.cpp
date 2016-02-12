@@ -1,10 +1,10 @@
 #include <QCoreApplication>
 
-#include <server/TcpServer.h>
+#include <server/ChatServer.h>
 
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
-    SimpleChat::TcpServer server("abra kadabra");
+    SimpleChat::ChatServer server("abra kadabra");
     server.listen(4441, QHostAddress::AnyIPv4);
     app.exec();
 

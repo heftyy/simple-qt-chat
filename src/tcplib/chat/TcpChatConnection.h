@@ -31,8 +31,8 @@ public:
     std::shared_ptr<QTcpSocket> socket();
 
 signals:
-    void dataReceived(QString, std::string);
-    void disconnectSignal(std::string);
+    void dataReceivedSignal(const QString& serializedMessage);
+    void disconnectSignal();
 
 private slots:
     void disconnected();

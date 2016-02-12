@@ -1,10 +1,13 @@
 #pragma once
 
-#ifndef CHATDIALOG_H
-#define CHATDIALOG_H
+#include <memory>
 
 #include "ui_chatdialog.h"
-#include "client.h"
+
+namespace SimpleChat {
+
+class LoginDialog;
+class ChatClient;
 
 class ChatDialog : public QDialog, private Ui::ChatDialog
 {
@@ -12,6 +15,7 @@ class ChatDialog : public QDialog, private Ui::ChatDialog
 
 public:
     ChatDialog(QWidget *parent = 0);
+    void start();
 
 public slots:
     void appendMessage(const QString &from, const QString &message);
@@ -21,11 +25,16 @@ private slots:
     void newParticipant(const QString &nick);
     void participantLeft(const QString &nick);
     void showInformation();
+    void loginToChat(const QString& address, quint16 port, const QString& name);
 
 private:
-    Client client;
+    std::shared_ptr<LoginDialog> loginDialog;
+    std::shared_ptr<ChatClient > chatClient;
+
     QString myNickName;
     QTextTableFormat tableFormat;
+
+    void showChat(const QString& address, quint16 port, const QString& name);
 };
 
-#endif
+} // SimpleChat namespace

@@ -15,7 +15,7 @@ enum NetworkMessageType {
 
     GENERIC_CHAT_RESPONSE = 20;
 
-    CHATROOM_CHANGED = 25;
+    CHATROOM_CHANGE = 25;
 }
 
 message NetworkMessageHeader {
@@ -26,4 +26,6 @@ message NetworkMessageHeader {
 message NetworkMessage {
     required NetworkMessageHeader header = 1;
     required bytes serialized_data = 2;
+
+    extensions 10 to 200;
 }

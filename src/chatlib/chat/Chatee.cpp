@@ -13,9 +13,9 @@
 
 namespace SimpleChat {
 
-Chatee::Chatee(std::unique_ptr<User> user,
+Chatee::Chatee(const User& user,
                const std::shared_ptr<ChatConnection>& connection) :
-        user_(std::move(user)),
+        user_(user),
         connection_(connection) {
 
 }
@@ -24,8 +24,8 @@ Chatee::~Chatee() {
 }
 
 bool Chatee::sendMessage(std::unique_ptr<AbstractMessage> message) {
-    if (connection_) {
-        return connection_->sendMessage(std::move(message));
+    if (!connection_.expired()) {
+        return connection_.lock()->sendMessage(std::move(message));
     }
 
     return false;
@@ -88,8 +88,11 @@ void Chatee::sendResponse(bool success, const std::string& message) {
     );
 }
 
-void Chatee::mute() {
-    user_->set_status(MUTED);
+void Chatee::mute(bool propagate) {
+    user_.set_status(MUTED);
+
+    if(!propagate)
+        return;
 
     auto response = std::make_unique<UserChange>();
     response->set_status(MUTED);
@@ -99,8 +102,11 @@ void Chatee::mute() {
             std::move(response), USER_CHANGE));
 }
 
-void Chatee::kick() {
-    chatroom_.lock()->chateeLeft(user_->name());
+void Chatee::kick(bool propagate) {
+    chatroom_.lock()->chateeLeft(user_.name());
+
+    if(!propagate)
+        return;
 
     auto response = std::make_unique<UserChange>();
     response->set_action(KICKED);
@@ -111,7 +117,9 @@ void Chatee::kick() {
 }
 
 std::shared_ptr<ChatConnection> Chatee::connection() const {
-    return connection_;
+    if(!connection_.expired())
+        return connection_.lock();
+    return nullptr;
 }
 
 bool Chatee::authorized() const {
@@ -124,7 +132,7 @@ void Chatee::setAuthorized(bool authorized) {
 
 std::unique_ptr<ChatTarget> Chatee::getSelf() {
     if (!chatroom_.expired()) {
-        return std::move(chatroom_.lock()->getTarget(user_->name()));
+        return std::move(chatroom_.lock()->getTarget(user_.name()));
     }
 
     return nullptr;
@@ -139,7 +147,7 @@ std::unique_ptr<ChatTarget> Chatee::getTarget(const std::string& target) {
 }
 
 User& Chatee::user() {
-    return *user_;
+    return user_;
 }
 
 template<typename MessageType>
@@ -163,6 +171,8 @@ template void Chatee::prepareAndSend<UserChange>(std::unique_ptr<UserChange> mes
 template void Chatee::prepareAndSend<ChatMessage>(std::unique_ptr<ChatMessage> message, int type);
 template void Chatee::prepareAndSend<ChatAuthorize>(std::unique_ptr<ChatAuthorize> message, int type);
 template void Chatee::prepareAndSend<ChatCommand>(std::unique_ptr<ChatCommand> message, int type);
+
+template void Chatee::prepareAndSend<ChatroomChange>(std::unique_ptr<ChatroomChange> message, int type);
 
 template void Chatee::prepareAndSend<GenericChatResponse>(std::unique_ptr<GenericChatResponse> message, int type);
 

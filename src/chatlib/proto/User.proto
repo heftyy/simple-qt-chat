@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+import "NetworkMessage.proto";
+
 package SimpleChat;
 
 enum UserPresence {
@@ -52,4 +54,14 @@ message UserChange {
     optional UserPresence presence = 2;
     optional UserStatus status = 3;
     optional UserAction action = 4;
+}
+
+extend NetworkMessage {
+  optional UserJoinRequest userJoinRequest = 10;
+  optional UserJoinResponse userJoinResponse = 11;
+
+  optional UserListRequest userListRequest = 12;
+  optional UserListResponse userListResponse = 13;
+
+  optional UserChange userChange = 14;
 }

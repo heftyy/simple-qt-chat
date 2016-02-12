@@ -6,8 +6,8 @@
 #include <chrono>
 #include <future>
 
-#include <server/TcpServer.h>
-#include <client/TcpClient.h>
+#include <server/ChatServer.h>
+#include <client/ChatClient.h>
 
 #include "../MessageOutput.h"
 
@@ -19,17 +19,8 @@ TEST(client_server_test, JoinTest1) {
 
     QCoreApplication app(argc, argv);
 
-    SimpleChat::TcpServer server("my_password123");
+    SimpleChat::ChatServer server("my_password123");
     server.listen(4442, QHostAddress::Any);
-
-    SimpleChat::TcpClient client;
-    client.serverAddress_ = QHostAddress::LocalHost;
-    client.serverPort_ = 4442;
-    client.clientName_ = "Foooo1";
-    std::async(std::launch::async, [&client] {
-        client.connectToHost();
-        client.join();
-    });
 
     EXPECT_EQ(app.exec(), 0);
 }

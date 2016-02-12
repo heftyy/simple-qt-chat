@@ -5,6 +5,8 @@
 
 #include <google/protobuf/message.h>
 
+#include <User.pb.h>
+
 namespace SimpleChat {
 
 class User;
@@ -16,7 +18,7 @@ class AbstractMessage;
 class Chatee
 {
 public:
-    explicit Chatee(std::unique_ptr<User> user,
+    explicit Chatee(const User& user,
                     const std::shared_ptr<ChatConnection>& connection);
 
     virtual ~Chatee();
@@ -28,8 +30,8 @@ public:
     void sendChatMessage(const std::string& message, const std::string& from, const std::string& target = "");
     void sendResponse(bool success, const std::string& message);
 
-    void mute();
-    void kick();
+    void mute(bool propagate);
+    void kick(bool propagate);
 
     std::shared_ptr<ChatConnection> connection() const;
 
@@ -37,8 +39,8 @@ public:
     void setAuthorized(bool authorized);
 
 private:
-    std::unique_ptr<User> user_;
-    std::shared_ptr<ChatConnection> connection_;
+    User user_;
+    std::weak_ptr<ChatConnection> connection_;
     std::weak_ptr<Chatroom> chatroom_;
     bool authorized_;
 

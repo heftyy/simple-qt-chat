@@ -13,25 +13,25 @@
 
 #include "../chat/TcpChatConnection.h"
 
-#include "TcpServer.h"
+#include "ChatServer.h"
 
 namespace SimpleChat {
 
-TcpServer::TcpServer(const std::string& password) :
+ChatServer::ChatServer(const std::string& password) :
         tcpServer_(nullptr),
-        chatroom_(std::make_shared<Chatroom>()),
+        chatroom_(new Chatroom),
         password_(password) {
 
 }
 
-void TcpServer::listen(quint16 port, QHostAddress ipAddress) {
+void ChatServer::listen(quint16 port, QHostAddress ipAddress) {
     openSession(port, ipAddress);
 
     connect(tcpServer_.get(), SIGNAL(newConnection()),
             this, SLOT(connectionEstablished()));
 }
 
-QHostAddress TcpServer::getAddress() const {
+QHostAddress ChatServer::getAddress() const {
     auto ipAddressesList = QNetworkInterface::allAddresses();
     // use the first non-localhost IPv4 address
     for (auto ipAddress : ipAddressesList) {
@@ -43,34 +43,35 @@ QHostAddress TcpServer::getAddress() const {
     return QHostAddress::LocalHost;
 }
 
-void TcpServer::connectionEstablished() {
+void ChatServer::connectionEstablished() {
     auto clientConnection = tcpServer_->nextPendingConnection();
 
     qDebug() << "SERVER: " << "new connection from" << clientConnection->peerAddress().toString();
 
-    auto connection = std::make_shared<TcpChatConnection>(
-            std::shared_ptr<QTcpSocket>(clientConnection));
-
-    connections_.emplace(std::make_pair(connection->getIdent(), connection));
-
-    connection->connect(
-            connection.get(),
-            SIGNAL(dataReceived(QString, std::string)),
-            this,
-            SLOT(handleUntypedMessage(QString, std::string))
-    );
-
-    connection->connect(
-            connection.get(),
-            SIGNAL(disconnectSignal(std::string)),
-            this,
-            SLOT(connectionLost(std::string))
-    );
+    auto socket = std::shared_ptr<QTcpSocket>(clientConnection);
+    auto connection = std::make_shared<TcpChatConnection>(socket);
 
     connection->init();
+
+    connection->connect(
+            connection.get(),
+            SIGNAL(dataReceivedSignal(QString)),
+            this,
+            SLOT(handleUntypedMessage(QString))
+    );
+
+    connection->connect(
+            connection.get(),
+            SIGNAL(disconnectSignal()),
+            this,
+            SLOT(connectionLost())
+    );
+
+    connections_.emplace(std::make_pair(connection->getIdent(), connection));
 }
 
-void TcpServer::connectionLost(std::string ident) {
+void ChatServer::connectionLost() {
+    auto ident = static_cast<TcpChatConnection*>(sender())->getIdent();
     auto connection = connections_[ident];
 
     if (connection == nullptr) {
@@ -96,21 +97,21 @@ void TcpServer::connectionLost(std::string ident) {
         qDebug() << "SERVER:" << chatee->user().DebugString().c_str() << "from" <<
             connection->socket()->peerAddress().toString() << "left";
 
-        auto change = std::make_unique<UserChange>();
-        change->set_action(UserAction::LEFT);
-        change->mutable_user()->CopyFrom(chatee->user());
+        auto userChange = std::make_unique<UserChange>();
+        userChange->set_action(UserAction::LEFT);
+        userChange->mutable_user()->CopyFrom(chatee->user());
 
         chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-            std::move(change), USER_CHANGE));
+            std::move(userChange), USER_CHANGE));
     }
     else
         qCritical() << "removing the chatee failed";
 }
 
-void TcpServer::handleUntypedMessage(QString serializedData,
-                                     std::string ident) {
+void ChatServer::handleUntypedMessage(const QString& serializedMessage) {
+    auto ident = static_cast<TcpChatConnection*>(sender())->getIdent();
 
-    auto deserializer = MessageDeserializer(serializedData.toStdString());
+    auto deserializer = MessageDeserializer(serializedMessage.toStdString());
     auto connection = connections_[ident];
 
     if (connection == nullptr || !connection->isAlive()) {
@@ -148,11 +149,11 @@ void TcpServer::handleUntypedMessage(QString serializedData,
     }
 }
 
-void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
+void ChatServer::openSession(quint16 port, QHostAddress ipAddress) {
     if (ipAddress == QHostAddress::LocalHost)
         ipAddress = getAddress();
 
-    tcpServer_ = std::make_shared<QTcpServer>(this);
+    tcpServer_ = std::make_unique<QTcpServer>(this);
     if (!tcpServer_->listen(ipAddress, port)) {
         qCritical() << "opening listening port failed";
         return;
@@ -164,8 +165,8 @@ void TcpServer::openSession(quint16 port, QHostAddress ipAddress) {
         "\nport: " << tcpServer_->serverPort();
 }
 
-void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
-                              const std::shared_ptr<ChatConnection>& connection) {
+void ChatServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
+                               const std::shared_ptr<ChatConnection>& connection) {
     bool success;
     std::string message;
     std::shared_ptr<Chatee> chatee;
@@ -192,8 +193,8 @@ void TcpServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
             std::move(response), USER_JOIN_RESPONSE));
 }
 
-void TcpServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
-                              const std::shared_ptr<Chatee>& sender) {
+void ChatServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
+                               const std::shared_ptr<Chatee>& sender) {
     auto response = std::make_unique<UserListResponse>();
 
     auto const& map = chatroom_->map();
@@ -206,22 +207,22 @@ void TcpServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
             std::move(response), USER_LIST_RESPONSE));
 }
 
-void TcpServer::handleMessage(std::unique_ptr<UserChange> change,
-                              const std::shared_ptr<Chatee>& sender) {
-    if (change->has_presence())
-        sender->user().set_presence(change->presence());
-    if (change->has_status())
-        sender->user().set_status(change->status());
+void ChatServer::handleMessage(std::unique_ptr<UserChange> userChange,
+                               const std::shared_ptr<Chatee>& sender) {
+    if (userChange->has_presence())
+        sender->user().set_presence(userChange->presence());
+    if (userChange->has_status())
+        sender->user().set_status(userChange->status());
 
     chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-            std::move(change), USER_CHANGE));
+            std::move(userChange), USER_CHANGE));
 }
 
-void TcpServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const std::shared_ptr<Chatee>& sender) {
-    auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+void ChatServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const std::shared_ptr<Chatee>& sender) {
+    long long timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
 
-    chatMessage->set_timestamp(123421521);
+    chatMessage->set_timestamp(timestamp);
 
     if (chatMessage->has_target()) { // send a private message
         auto targetChatee = chatroom_->getChatee(chatMessage->target().user_name());
@@ -250,7 +251,7 @@ void TcpServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const st
     }
 }
 
-void TcpServer::handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize, const std::shared_ptr<Chatee>& sender) {
+void ChatServer::handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize, const std::shared_ptr<Chatee>& sender) {
     if (chatAuthorize->password() == password_) {
         sender->setAuthorized(true);
         sender->sendResponse(true, "auth successful");
@@ -259,19 +260,19 @@ void TcpServer::handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize, cons
         sender->sendResponse(false, "auth failure");
 }
 
-void TcpServer::handleMessage(std::unique_ptr<ChatCommand> chatCommand, const std::shared_ptr<Chatee>& sender) {
+void ChatServer::handleMessage(std::unique_ptr<ChatCommand> chatCommand, const std::shared_ptr<Chatee>& sender) {
     if (sender->authorized()) {
         if (chatCommand->type() == CommandType::MUTE) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
             if (targetChatee == nullptr)
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
-            targetChatee->mute();
+            targetChatee->mute(true);
         }
         else if (chatCommand->type() == CommandType::KICK) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
             if (targetChatee == nullptr)
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
-            targetChatee->kick();
+            targetChatee->kick(true);
         }
         else if (chatCommand->type() == CommandType::MOTD) {
             chatroom_->setMotd(chatCommand->arguments(0));

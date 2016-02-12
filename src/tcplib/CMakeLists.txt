@@ -10,12 +10,12 @@ set(TCPLIB_SOURCE_FILES
         chat/TcpChatConnection.h
 
         server/Server.h
-        server/TcpServer.cpp
-        server/TcpServer.h
+        server/ChatServer.cpp
+        server/ChatServer.h
 
         client/Client.h
-        client/TcpClient.cpp
-        client/TcpClient.h
+        client/ChatClient.cpp
+        client/ChatClient.h
         )
 
 add_library(tcplib ${TCPLIB_SOURCE_FILES})
