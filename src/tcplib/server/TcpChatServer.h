@@ -11,8 +11,6 @@ namespace SimpleChat {
 class Chatroom;
 class TcpChatConnection;
 
-using ConnectionsMap = std::map<std::string, TcpChatConnection*>;
-
 class TcpChatServer : public QObject, public ChatServer {
     Q_OBJECT
 public:
@@ -28,7 +26,6 @@ private slots:
     void connectionLost();
 
 private:
-    ConnectionsMap connections_;
     QTcpServer* tcpServer_;
 
     void openSession(quint16 port, const QHostAddress& ipAddress);

@@ -83,7 +83,7 @@ void ChatServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
         std::cout << "SERVER: " << joinRequest->DebugString().c_str() << std::endl;
     }
 
-    chatee->sendMessage(std::make_unique<Message<UserJoinResponse>>(
+    connection->sendMessage(std::make_unique<Message<UserJoinResponse>>(
             std::move(response), USER_JOIN_RESPONSE));
 }
 

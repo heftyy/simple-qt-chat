@@ -37,10 +37,9 @@ void TcpChatServer::listen(quint16 port, const QHostAddress& ipAddress) {
 }
 
 void TcpChatServer::handleUntypedMessage(const QString& serializedMessage) {
-    auto ident = static_cast<TcpChatConnection*>(sender())->getIdent();
+    auto connection = static_cast<TcpChatConnection*>(sender());
 
     auto deserializer = MessageDeserializer(serializedMessage.toStdString());
-    auto connection = connections_[ident];
 
     ChatServer::handleUntypedMessage(deserializer, connection);
 }
@@ -64,13 +63,10 @@ void TcpChatServer::connectionEstablished() {
                         this,
                         SLOT(connectionLost())
     );
-
-    connections_.emplace(std::make_pair(connection->getIdent(), connection));
 }
 
 void TcpChatServer::connectionLost() {       
     auto connection = static_cast<TcpChatConnection*>(sender());
-    connections_.erase(connection->getIdent());
 
     if (connection == nullptr) {
         qCritical() << "disconnected called with empty connection";
