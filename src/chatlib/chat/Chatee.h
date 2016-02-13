@@ -19,7 +19,7 @@ class Chatee
 {
 public:
     explicit Chatee(const User& user,
-                    const std::shared_ptr<ChatConnection>& connection);
+                    ChatConnection* connection);
 
     virtual ~Chatee();
 
@@ -33,14 +33,14 @@ public:
     void mute(bool propagate);
     void kick(bool propagate);
 
-    std::shared_ptr<ChatConnection> connection() const;
+    ChatConnection* connection() const;
 
     bool authorized() const;
     void setAuthorized(bool authorized);
 
 private:
     User user_;
-    std::weak_ptr<ChatConnection> connection_;
+    ChatConnection* connection_;
     std::weak_ptr<Chatroom> chatroom_;
     bool authorized_;
 

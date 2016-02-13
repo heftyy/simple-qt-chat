@@ -9,19 +9,25 @@
 
 namespace SimpleChat {
 
-TcpChatConnection::TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_) :
+TcpChatConnection::TcpChatConnection(QTcpSocket* socket, QObject* parent) :
+        QObject(parent),
         blockSize_(0),
-        socket_(socket_) {
+        socket_(socket) {
 
 }
 
+TcpChatConnection::~TcpChatConnection() {
+    socket_->deleteLater();
+    qDebug() << "connection deleted";
+}
+
 void TcpChatConnection::init() const {
-    socket_->connect(socket_.get(), 
+    socket_->connect(socket_, 
                      SIGNAL(disconnected()),
                      this, 
                      SLOT(disconnected()));
 
-    socket_->connect(socket_.get(), 
+    socket_->connect(socket_, 
                      SIGNAL(readyRead()),
                      this, 
                      SLOT(readyRead()));
@@ -72,7 +78,7 @@ void TcpChatConnection::disconnectFromHost() {
     socket_->disconnectFromHost();
 }
 
-std::shared_ptr<QTcpSocket> TcpChatConnection::socket() {
+QTcpSocket* TcpChatConnection::socket() const {
     return socket_;
 }
 
@@ -89,7 +95,7 @@ std::shared_ptr<Chatee> TcpChatConnection::chatee() const {
 void TcpChatConnection::readyRead() {
     qDebug() << getIdent().c_str() << " readyRead";
 
-    QDataStream inStream(socket().get());
+    QDataStream inStream(socket());
     inStream.setVersion(QDataStream::Qt_5_5);
 
     while(socket()->bytesAvailable() > 0) {
@@ -115,7 +121,7 @@ void TcpChatConnection::readyRead() {
 }
 
 void TcpChatConnection::disconnected() {
-    emit disconnectSignal();
+    emit disconnectSignal();    
 }
 
 } //SimpleChat namespace

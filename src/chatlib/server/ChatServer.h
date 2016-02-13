@@ -13,10 +13,10 @@ public:
     explicit ChatServer(const std::string& password);
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
-                                      const std::shared_ptr<ChatConnection>& connection) override;
+                                      ChatConnection* connection) override;
 
     virtual void handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
-                               const std::shared_ptr<ChatConnection>& connection) override;
+                               ChatConnection* connection) override;
 
     virtual void handleMessage(std::unique_ptr<UserListRequest> listRequest,
                                const std::shared_ptr<Chatee>& sender) override;

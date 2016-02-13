@@ -17,16 +17,22 @@
 
 namespace SimpleChat {
 
-TcpChatServer::TcpChatServer(const std::string& password) :
+TcpChatServer::TcpChatServer(const std::string& password, QObject* parent) :
+        QObject(parent),
         ChatServer(password),
         tcpServer_(nullptr) {
 
 }
 
+TcpChatServer::~TcpChatServer() {
+    if(tcpServer_ != nullptr)
+        tcpServer_->deleteLater();
+}
+
 void TcpChatServer::listen(quint16 port, const QHostAddress& ipAddress) {
     openSession(port, ipAddress);
 
-    connect(tcpServer_.get(), SIGNAL(newConnection()),
+    connect(tcpServer_, SIGNAL(newConnection()),
             this, SLOT(connectionEstablished()));
 }
 
@@ -40,22 +46,20 @@ void TcpChatServer::handleUntypedMessage(const QString& serializedMessage) {
 }
 
 void TcpChatServer::connectionEstablished() {
-    auto clientConnection = tcpServer_->nextPendingConnection();
+    auto socket = tcpServer_->nextPendingConnection();
+    auto connection = new TcpChatConnection(socket, this);
 
-    qDebug() << "SERVER: " << "new connection from" << clientConnection->peerAddress().toString();
-
-    auto socket = std::shared_ptr<QTcpSocket>(clientConnection);
-    auto connection = std::make_shared<TcpChatConnection>(socket);
+    qDebug() << "SERVER: " << "new connection from" << socket->peerAddress().toString();    
 
     connection->init();
 
-    connection->connect(connection.get(),
+    connection->connect(connection,
                         SIGNAL(dataReceivedSignal(QString)),
                         this,
                         SLOT(handleUntypedMessage(QString))
     );
 
-    connection->connect(connection.get(),
+    connection->connect(connection,
                         SIGNAL(disconnectSignal()),
                         this,
                         SLOT(connectionLost())
@@ -64,20 +68,18 @@ void TcpChatServer::connectionEstablished() {
     connections_.emplace(std::make_pair(connection->getIdent(), connection));
 }
 
-void TcpChatServer::connectionLost() {   
-    auto ident = static_cast<TcpChatConnection*>(sender())->getIdent();
-    auto connection = connections_[ident];
+void TcpChatServer::connectionLost() {       
+    auto connection = static_cast<TcpChatConnection*>(sender());
+    connections_.erase(connection->getIdent());
 
     if (connection == nullptr) {
         qCritical() << "disconnected called with empty connection";
         return;
     }
-
-    // disconnect all signals and delete connection from map
-    connection->disconnect();
     
     if (connection->chatee() == nullptr) {
         qCritical() << "disconnected called with empty chatee";
+        connection->deleteLater();
         return;
     }
 
@@ -108,10 +110,13 @@ void TcpChatServer::connectionLost() {
     }
     else
         qCritical() << "removing the chatee failed";
+
+    connection->deleteLater();
+    QCoreApplication::exit();
 }
 
 void TcpChatServer::openSession(quint16 port, const QHostAddress& ipAddress) {
-    tcpServer_ = std::make_unique<QTcpServer>(this);
+    tcpServer_ = new QTcpServer(this);
     if (!tcpServer_->listen(ipAddress, port)) {
         qCritical() << "opening listening port failed";
         return;

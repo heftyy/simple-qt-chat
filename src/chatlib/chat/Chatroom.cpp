@@ -19,7 +19,7 @@ Chatroom::~Chatroom() {
 
 std::tuple<bool, std::string, std::shared_ptr<Chatee>>
 Chatroom::chateeJoined(const std::string& name,
-                       const std::shared_ptr<ChatConnection>& connection) {
+                       ChatConnection* connection) {
 
     if (chateeExists(name))
         return std::make_tuple(false, "That name is already taken", nullptr);
@@ -34,7 +34,7 @@ Chatroom::chateeJoined(const std::string& name,
 }
 
 std::tuple<bool, std::string, std::shared_ptr<Chatee>> Chatroom::chateeJoined(const User& user,
-                                                                              const std::shared_ptr<ChatConnection>& connection) {
+                                                                              ChatConnection* connection) {
     if (chateeExists(user.name()))
         return std::make_tuple(false, "That name is already taken", nullptr);
 

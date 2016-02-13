@@ -14,7 +14,7 @@
 namespace SimpleChat {
 
 Chatee::Chatee(const User& user,
-               const std::shared_ptr<ChatConnection>& connection) :
+               ChatConnection* connection) :
         user_(user),
         connection_(connection) {
 
@@ -24,8 +24,8 @@ Chatee::~Chatee() {
 }
 
 bool Chatee::sendMessage(std::unique_ptr<AbstractMessage> message) {
-    if (!connection_.expired()) {
-        return connection_.lock()->sendMessage(std::move(message));
+    if (connection_ != nullptr) {
+        return connection_->sendMessage(std::move(message));
     }
 
     return false;
@@ -115,10 +115,8 @@ void Chatee::kick(bool propagate) {
             std::move(response), USER_CHANGE));
 }
 
-std::shared_ptr<ChatConnection> Chatee::connection() const {
-    if(!connection_.expired())
-        return connection_.lock();
-    return nullptr;
+ChatConnection* Chatee::connection() const {
+    return connection_;
 }
 
 bool Chatee::authorized() const {

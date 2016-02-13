@@ -5,11 +5,9 @@
 
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
-    auto server = std::make_unique<SimpleChat::TcpChatServer>("abra kadabra");
-    server->listen(4441, QHostAddress::AnyIPv4);
-    app.exec();
-
-    server.reset();
+    SimpleChat::TcpChatServer server("abra kadabra", &app);
+    server.listen(4441, QHostAddress::AnyIPv4);
+    app.exec();   
 
     return 0;
 }

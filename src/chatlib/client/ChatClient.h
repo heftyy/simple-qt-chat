@@ -45,7 +45,7 @@ protected:
 
     virtual bool sendAnyMessage(std::unique_ptr<AbstractMessage> message) override = 0;
     virtual bool isConnected() override = 0;
-    virtual std::shared_ptr<ChatConnection> connection() override = 0;
+    virtual ChatConnection* connection() override = 0;
 
     virtual void chatMotdChanged(const std::string& motd) override = 0;
     virtual void chatInfoReceived(const std::string& info) override = 0;

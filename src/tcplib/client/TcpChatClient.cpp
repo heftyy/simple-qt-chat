@@ -42,7 +42,7 @@ bool TcpChatClient::isConnected() {
     return serverConnection_ != nullptr && serverConnection_->isAlive();
 }
 
-std::shared_ptr<ChatConnection> TcpChatClient::connection() {
+ChatConnection* TcpChatClient::connection() {
     return serverConnection_;
 }
 
@@ -111,21 +111,21 @@ bool TcpChatClient::connectToServer() {
         return false;
     }
 
-    auto socket = std::make_shared<QTcpSocket>();
-    auto connection = std::make_shared<TcpChatConnection>(socket);
+    auto socket = new QTcpSocket(this);
+    auto connection = new TcpChatConnection(socket, this);
     connection->init();
 
-    connection->connect(connection.get(),
+    connection->connect(connection,
                         SIGNAL(dataReceivedSignal(QString)),
                         this,
                         SLOT(handleUntypedMessage(QString)));
 
-    connection->connect(connection.get(),
+    connection->connect(connection,
                         SIGNAL(disconnectSignal()),
                         this,
                         SLOT(connectionLost()));
 
-    connection->connect(connection->socket().get(),
+    connection->connect(connection->socket(),
                         SIGNAL(error(QAbstractSocket::SocketError)),
                         this,
                         SLOT(displayError(QAbstractSocket::SocketError)));

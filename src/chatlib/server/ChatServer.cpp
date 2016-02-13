@@ -22,7 +22,7 @@ ChatServer::ChatServer(const std::string& password) :
 }
 
 void ChatServer::handleUntypedMessage(const MessageDeserializer& deserializer, 
-                                      const std::shared_ptr<ChatConnection>& connection) {
+                                      ChatConnection* connection) {
     if (connection == nullptr || !connection->isAlive()) {
         std::cerr << "chat connection is invalid" << std::endl;
         return;
@@ -60,7 +60,7 @@ void ChatServer::handleUntypedMessage(const MessageDeserializer& deserializer,
 }
 
 void ChatServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
-                               const std::shared_ptr<ChatConnection>& connection) {
+                               ChatConnection* connection) {
     bool success;
     std::string message;
     std::shared_ptr<Chatee> chatee;

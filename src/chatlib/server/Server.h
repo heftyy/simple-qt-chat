@@ -20,10 +20,10 @@ public:
     virtual ~Server() {}
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
-                                      const std::shared_ptr<ChatConnection>& connection) = 0;
+                                      ChatConnection* connection) = 0;
 
     virtual void handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
-                               const std::shared_ptr<ChatConnection>& connection) = 0;
+                               ChatConnection* connection) = 0;
 
     virtual void handleMessage(std::unique_ptr<UserListRequest> listRequest,
                                const std::shared_ptr<Chatee>& sender) = 0;

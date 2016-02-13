@@ -25,11 +25,11 @@ public:
 
     std::tuple<bool, std::string, std::shared_ptr<Chatee>>
     chateeJoined(const std::string& name,
-                 const std::shared_ptr<ChatConnection>& connection);
+                 ChatConnection* connection);
 
     std::tuple<bool, std::string, std::shared_ptr<Chatee>>
     chateeJoined(const User& user,
-                 const std::shared_ptr<ChatConnection>& connection);
+                 ChatConnection* connection);
 
     std::tuple<bool, std::string>
     chateeLeft(const std::string& name);

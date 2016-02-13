@@ -20,7 +20,7 @@ public:
 protected:
     bool sendAnyMessage(std::unique_ptr<AbstractMessage> message) override;
     bool isConnected() override;
-    std::shared_ptr<ChatConnection> connection() override;
+    ChatConnection* connection() override;
 
     void chatMotdChanged(const std::string& motd) override;
     void chatInfoReceived(const std::string& info) override;
@@ -40,7 +40,7 @@ private slots:
     void displayError(QAbstractSocket::SocketError socketError) const;
 
 private:
-    std::shared_ptr<TcpChatConnection> serverConnection_;
+    TcpChatConnection* serverConnection_;
     QHostAddress serverAddress_;
     quint16 serverPort_;
 

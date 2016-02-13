@@ -11,12 +11,13 @@ namespace SimpleChat {
 class Chatroom;
 class TcpChatConnection;
 
-using ConnectionsMap = std::map<std::string, std::shared_ptr<TcpChatConnection>>;
+using ConnectionsMap = std::map<std::string, TcpChatConnection*>;
 
 class TcpChatServer : public QObject, public ChatServer {
     Q_OBJECT
 public:
-    explicit TcpChatServer(const std::string& password);
+    explicit TcpChatServer(const std::string& password, QObject* parent = nullptr);
+    ~TcpChatServer();
 
     virtual void listen(quint16 port, const QHostAddress& ipAddress);
 
@@ -28,7 +29,7 @@ private slots:
 
 private:
     ConnectionsMap connections_;
-    std::unique_ptr<QTcpServer> tcpServer_;
+    QTcpServer* tcpServer_;
 
     void openSession(quint16 port, const QHostAddress& ipAddress);
 };

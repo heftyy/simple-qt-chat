@@ -16,7 +16,8 @@ class TcpChatConnection : public QObject,
                           public ChatConnection {
     Q_OBJECT
 public:
-    explicit TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_);
+    explicit TcpChatConnection(QTcpSocket* socket, QObject* parent = nullptr);
+    ~TcpChatConnection();
 
     void init() const;
 
@@ -29,7 +30,7 @@ public:
     virtual void setChatee(const std::shared_ptr<Chatee>& chatee) override;
     virtual std::shared_ptr<Chatee> chatee() const override;
 
-    std::shared_ptr<QTcpSocket> socket();
+    QTcpSocket* socket() const;
 
 signals:
     void dataReceivedSignal(const QString& serializedMessage);
@@ -42,7 +43,7 @@ private slots:
 private:
     quint16 blockSize_;
 
-    std::shared_ptr<QTcpSocket> socket_;
+    QTcpSocket* socket_;
     std::weak_ptr<Chatee> chatee_;
 };
 

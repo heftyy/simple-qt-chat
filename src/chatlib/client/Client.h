@@ -34,7 +34,7 @@ public:
 protected:
     virtual bool sendAnyMessage(std::unique_ptr<AbstractMessage> message) = 0;
     virtual bool isConnected() = 0;
-    virtual std::shared_ptr<ChatConnection> connection() = 0;
+    virtual ChatConnection* connection() = 0;
 
     virtual void chatMotdChanged(const std::string& motd) = 0;
     virtual void chatInfoReceived(const std::string& info) = 0;
