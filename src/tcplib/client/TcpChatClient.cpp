@@ -51,6 +51,18 @@ ChatConnection* TcpChatClient::connection() {
     return serverConnection_;
 }
 
+void TcpChatClient::chateeJoined(const std::string& name) {
+    emit chateeJoinedSignal(format(name));
+
+    qDebug() << name.c_str() << "joined";
+}
+
+void TcpChatClient::chateeLeft(const std::string& name) {
+    emit chateeLeftSignal(format(name));
+
+    qDebug() << name.c_str() << "left";
+}
+
 void TcpChatClient::chatMotdChanged(const std::string& motd) {
     emit chatMotdSignal(format(motd));
 
@@ -85,6 +97,7 @@ void TcpChatClient::handleUntypedMessage(const QString& serializedData) {
 }
 
 void TcpChatClient::connectionLost() {
+    emit chatInfoSignal(format("disconnected, connection lost"));
     qDebug() << "disconnected\n";
 }
 
@@ -161,19 +174,19 @@ void TcpChatClient::requestUserList() {
         std::move(userListRequest), USER_LIST_REQUEST));
 }
 
-QString TcpChatClient::format(const std::string& info) {
+QString TcpChatClient::format(const std::string& info) const {
     return QString::fromUtf8(info.c_str());
 }
 
-QString TcpChatClient::format(const User& user, const char* info) {
+QString TcpChatClient::format(const User& user, const char* info) const {
     return format(user, QString(info));
 }
 
-QString TcpChatClient::format(const User& user, const std::string& info) {
+QString TcpChatClient::format(const User& user, const std::string& info) const {
     return format(user, QString::fromUtf8(info.c_str()));
 }
 
-QString TcpChatClient::format(const User& user, const QString& info) {
+QString TcpChatClient::format(const User& user, const QString& info) const {
     return QString("%1 - %2").
         arg(QString::fromUtf8(user.name().c_str()), info);
 }

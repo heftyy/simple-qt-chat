@@ -13,3 +13,11 @@ TEST_F(AbstractMessageTest, ValidMessage) {
 
     EXPECT_TRUE(msg->isInitialized());
 }
+
+TEST_F(AbstractMessageTest, CloneMessage) {
+    auto msg1 = validAbstractMessage();
+    auto msg2 = msg1->clone();
+
+    EXPECT_EQ(msg1->type(), msg2->type());
+    EXPECT_EQ(msg1->serialize(), msg2->serialize());
+}

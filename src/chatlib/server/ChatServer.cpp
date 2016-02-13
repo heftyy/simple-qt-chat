@@ -17,8 +17,28 @@ namespace SimpleChat {
 
 ChatServer::ChatServer(const std::string& password) : 
         chatroom_(new Chatroom), 
-    password_(password) {
+        password_(password) {
     
+}
+
+void ChatServer::chateeLeft(const std::shared_ptr<Chatee>& chatee) {
+    bool success;
+    std::string message;
+
+    std::tie(success, message) = chatroom_->chateeLeft(chatee->user().name());
+
+    if (success) {
+        std::cout << "SERVER:" << chatee->user().DebugString().c_str() << "left" << std::endl;
+
+        auto userChange = std::make_unique<UserChange>();
+        userChange->set_action(UserAction::LEFT);
+        userChange->mutable_user()->CopyFrom(chatee->user());
+
+        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
+            std::move(userChange), USER_CHANGE));
+    }
+    else
+        std::cerr << "removing the chatee failed" << std::endl;
 }
 
 void ChatServer::handleUntypedMessage(const MessageDeserializer& deserializer, 
@@ -50,9 +70,6 @@ void ChatServer::handleUntypedMessage(const MessageDeserializer& deserializer,
     }
     else if (deserializer.type() == CHAT_MESSAGE) {
         handleMessage(deserializer.getMessage<ChatMessage>(), connection->chatee());
-    }
-    else if (deserializer.type() == CHAT_AUTHORIZE) {
-        handleMessage(deserializer.getMessage<ChatAuthorize>(), connection->chatee());
     }
     else if (deserializer.type() == CHAT_COMMAND) {
         handleMessage(deserializer.getMessage<ChatCommand>(), connection->chatee());
@@ -141,16 +158,19 @@ void ChatServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const s
     }
 }
 
-void ChatServer::handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize, const std::shared_ptr<Chatee>& sender) {
-    if (chatAuthorize->password() == password_) {
-        sender->setAuthorized(true);
-        sender->sendResponse(true, "auth successful");
-    }
-    else
-        sender->sendResponse(false, "auth failure");
-}
-
 void ChatServer::handleMessage(std::unique_ptr<ChatCommand> chatCommand, const std::shared_ptr<Chatee>& sender) {
+    // check if the command is auth first
+    if (chatCommand->type() == CommandType::AUTH) {
+        if (chatCommand->arguments_size() == 1 && chatCommand->arguments(0) == password_) {
+            sender->setAuthorized(true);
+            sender->sendResponse(true, "auth successful");
+        }
+        else
+            sender->sendResponse(false, "auth failure");
+
+        return;
+    }
+
     if (sender->authorized()) {
         if (chatCommand->type() == CommandType::MUTE) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));

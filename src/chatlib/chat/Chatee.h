@@ -19,7 +19,8 @@ class Chatee
 {
 public:
     explicit Chatee(const User& user,
-                    ChatConnection* connection);
+                    ChatConnection* connection, 
+                    std::shared_ptr<Chatroom> chatroom);
 
     virtual ~Chatee();
 

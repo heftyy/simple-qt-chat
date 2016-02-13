@@ -6,13 +6,13 @@
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
-//    SimpleChat::ChatDialog dialog;
-//    dialog.start();
+    SimpleChat::ChatDialog dialog(app.activeWindow());
+    dialog.start();
 
-    SimpleChat::TcpChatClient client(&app);
-    client.login("127.0.0.1", 4441, "FruFru");
-    client.sendMessage("foo");
-    client.sendMessage("bar");
+//    SimpleChat::TcpChatClient client(&app);
+//    client.login("127.0.0.1", 4441, "FruFru");
+//    client.sendMessage("foo");
+//    client.sendMessage("bar");
 
     return app.exec();
 }

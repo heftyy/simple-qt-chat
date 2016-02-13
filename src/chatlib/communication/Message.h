@@ -42,6 +42,11 @@ public:
             NetworkMessageType_IsValid(type_);
     }
 
+    virtual std::unique_ptr<AbstractMessage> clone() override {
+        auto msg = std::make_unique<MessageType>(*message_);
+        return std::make_unique<Message<MessageType>>(std::move(msg), type_);
+    }
+
 private:
     std::unique_ptr<MessageType> message_;
     int type_;

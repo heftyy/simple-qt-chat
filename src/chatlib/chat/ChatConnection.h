@@ -6,7 +6,6 @@
 namespace SimpleChat {
 
 class AbstractMessage;
-class ChatTarget;
 class Chatee;
 
 class ChatConnection {

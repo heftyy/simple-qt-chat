@@ -87,25 +87,7 @@ void TcpChatServer::connectionLost() {
     */
     
     auto chatee = connection->chatee();
-
-    bool success;
-    std::string message;
-
-    std::tie(success, message) = chatroom_->chateeLeft(connection->chatee()->user().name());
-
-    if (success) {
-        qDebug() << "SERVER:" << chatee->user().DebugString().c_str() << "from" <<
-            connection->socket()->peerAddress().toString() << "left";
-
-        auto userChange = std::make_unique<UserChange>();
-        userChange->set_action(UserAction::LEFT);
-        userChange->mutable_user()->CopyFrom(chatee->user());
-
-        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-            std::move(userChange), USER_CHANGE));
-    }
-    else
-        qCritical() << "removing the chatee failed";
+    chateeLeft(chatee);
 
     connection->deleteLater();
 }

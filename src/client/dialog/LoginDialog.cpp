@@ -4,7 +4,8 @@
 
 namespace SimpleChat {
 
-LoginDialog::LoginDialog(QWidget* parent) {
+LoginDialog::LoginDialog(QWidget* parent) :
+        QDialog(parent) {
 
 }
 
@@ -12,9 +13,9 @@ void LoginDialog::setupDialog() {
     createWidgets();
     bindEvents();
 
-    QGridLayout *mainLayout = new QGridLayout;
+    auto mainLayout = new QGridLayout;
     mainLayout->addWidget(hostLabel, 0, 0);
-    mainLayout->addWidget(hostCombo, 0, 1);
+    mainLayout->addWidget(hostLineEdit, 0, 1);
     mainLayout->addWidget(portLabel, 1, 0);
     mainLayout->addWidget(portLineEdit, 1, 1);
     mainLayout->addWidget(nameLabel, 2, 0);
@@ -23,15 +24,15 @@ void LoginDialog::setupDialog() {
     setLayout(mainLayout);
 
     setWindowTitle(tr("Chat login"));
-    hostCombo->setFocus();
+    nameLineEdit->setFocus();
 }
 
-void LoginDialog::setEnableLogin(bool enabled) {
+void LoginDialog::setEnableLogin(bool enabled) const {
     loginButton->setEnabled(enabled);
 }
 
-void LoginDialog::enableLoginButton() {
-    auto enabled = !hostCombo->currentText().isEmpty() &&
+void LoginDialog::enableLoginButton() const {
+    auto enabled = !hostLineEdit->text().isEmpty() &&
             !portLineEdit->text().isEmpty() &&
             !nameLineEdit->text().isEmpty();
 
@@ -41,23 +42,21 @@ void LoginDialog::enableLoginButton() {
 void LoginDialog::login() {
     loginButton->setEnabled(false);
 
-    emit loginSignal(hostCombo->currentText(),
+    emit loginSignal(hostLineEdit->text(),
                      static_cast<quint16>(portLineEdit->text().toInt()),
                      nameLineEdit->text());
 }
 
-void LoginDialog::bindEvents() {
-    connect(hostCombo, SIGNAL(editTextChanged(QString)),
+void LoginDialog::bindEvents() const {
+    connect(hostLineEdit, SIGNAL(textChanged(QString)),
             this, SLOT(enableLoginButton()));
     connect(portLineEdit, SIGNAL(textChanged(QString)),
             this, SLOT(enableLoginButton()));
     connect(nameLineEdit, SIGNAL(textChanged(QString)),
             this, SLOT(enableLoginButton()));
 
-    connect(loginButton,
-            SIGNAL(clicked()),
-            this,
-            SLOT(login()));
+    connect(loginButton, SIGNAL(clicked()),
+            this, SLOT(login()));
 
     connect(quitButton, SIGNAL(clicked()),
             this, SLOT(close()));
@@ -68,39 +67,27 @@ void LoginDialog::createWidgets() {
     portLabel = new QLabel(tr("S&erver port:"));
     nameLabel = new QLabel(tr("N&ickname:"));
 
-    hostCombo = new QComboBox;
-    hostCombo->setEditable(true);
-    // find out name of this machine
-    auto name = QHostInfo::localHostName();
-    if (!name.isEmpty()) {
-        hostCombo->addItem(name);
-        auto domain = QHostInfo::localDomainName();
-        if (!domain.isEmpty())
-            hostCombo->addItem(name + QChar('.') + domain);
-    }
-    if (name != QString("localhost"))
-        hostCombo->addItem(QString("localhost"));
-    // find out IP addresses of this machine
-    auto ipAddressesList = QNetworkInterface::allAddresses();
-    // add non-localhost addresses
-    for (auto i = 0; i < ipAddressesList.size(); ++i) {
-        if (!ipAddressesList.at(i).isLoopback())
-            hostCombo->addItem(ipAddressesList.at(i).toString());
-    }
-    // add localhost addresses
-    for (auto i = 0; i < ipAddressesList.size(); ++i) {
-        if (ipAddressesList.at(i).isLoopback())
-            hostCombo->addItem(ipAddressesList.at(i).toString());
-    }
+    QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+    // You may want to use QRegularExpression for new code with Qt 5 (not mandatory).
+    QRegularExpression ipRegex("^" + ipRange 
+                               + "\\." + ipRange
+                               + "\\." + ipRange
+                               + "\\." + ipRange + "$");
+
+    hostLineEdit = new QLineEdit;
+    hostLineEdit->setText("127.0.0.1");
+    hostLineEdit->setValidator(new QRegularExpressionValidator(
+        ipRegex, this));
 
     portLineEdit = new QLineEdit;
+    portLineEdit->setText("4441");
     portLineEdit->setValidator(new QIntValidator(1, 65535, this));
 
-    QRegularExpression rx("\\w+");
     nameLineEdit = new QLineEdit;
-    nameLineEdit->setValidator(new QRegularExpressionValidator(rx));
+    nameLineEdit->setValidator(new QRegularExpressionValidator(
+        QRegularExpression("\\w+"), this));
 
-    hostLabel->setBuddy(hostCombo);
+    hostLabel->setBuddy(hostLineEdit);
     portLabel->setBuddy(portLineEdit);
     nameLabel->setBuddy(nameLineEdit);
 

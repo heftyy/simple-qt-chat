@@ -16,7 +16,6 @@ protected:
 public:
     static std::unique_ptr<am> invalidAbstractMessage() {
         auto message = std::make_unique<SimpleChat::ChatMessage>();
-        message->set_text("text_message1");
 
         return std::make_unique<m>(std::move(message), SimpleChat::USER_JOIN_REQUEST);
     }
@@ -24,7 +23,6 @@ public:
     static std::unique_ptr<am> validAbstractMessage() {
         auto message = std::make_unique<SimpleChat::ChatMessage>();
         message->set_text("text_message1");
-        message->set_timestamp(2131231);
 
         return std::make_unique<m>(std::move(message), SimpleChat::USER_JOIN_REQUEST);
     }

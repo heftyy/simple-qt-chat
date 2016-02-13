@@ -11,11 +11,14 @@ using ProtobufMsg = google::protobuf::Message;
 
 class AbstractMessage {
 public:
+    virtual ~AbstractMessage() {};
+
     virtual std::string serialize() = 0;
 
     virtual int type() = 0;
-    virtual bool isInitialized() = 0;
-    virtual ~AbstractMessage() {};
+    virtual bool isInitialized() = 0;    
+
+    virtual std::unique_ptr<AbstractMessage> clone() = 0;
 };
 
 } // SimpleChat namespace

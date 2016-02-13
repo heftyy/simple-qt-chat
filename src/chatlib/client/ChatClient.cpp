@@ -19,7 +19,7 @@ ChatClient::ChatClient() :
     
 }
 
-void ChatClient::sendCommand(const std::string& command) {
+bool ChatClient::sendCommand(const std::string& command) {
     CommandParser commandParser(command);
 
     auto message = commandParser.chatCommand(chatroom_->getTarget(clientName_));
@@ -28,9 +28,14 @@ void ChatClient::sendCommand(const std::string& command) {
                 std::make_unique<Message<ChatCommand>>(
                         std::move(message), CHAT_COMMAND));
 
-        if (!result)
+        if (!result) {
             std::cerr << "sending a command failed" << std::endl;
+            return false;
+        }
+        return true;
     }
+
+    return false;
 }
 
 void ChatClient::sendMessage(const std::string& text, const std::string& target) {
@@ -86,7 +91,6 @@ void ChatClient::handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) {
         chatroom_->chateeJoined(joinResponse->user(), connection());
 
         chatMotdChanged(joinResponse->motd());
-        chatInfoReceived(joinResponse->user().name() + " joined");
     }
     else {
         chatInfoReceived(joinResponse->message());
@@ -105,6 +109,17 @@ void ChatClient::handleMessage(std::unique_ptr<UserChange> userChange) {
     std::cout << "user change " <<
         userChange->DebugString().c_str() << std::endl;
 
+    // check for join first because chatee doesn't exist yet
+    if (userChange->has_action()) {
+        if (userChange->action() == JOINED) {
+            chatroom_->chateeJoined(userChange->user(), connection());
+            chatInfoReceived(userChange->user().name() + " joined");
+            refreshChateeList();
+
+            return;
+        }
+    }
+
     auto chatee = chatroom_->getChatee(userChange->user().name());
     if(chatee == nullptr)
         return;
@@ -122,17 +137,15 @@ void ChatClient::handleMessage(std::unique_ptr<UserChange> userChange) {
         }
     }
     if(userChange->has_action()) {
-        if(userChange->action() == JOINED) {
-            chatroom_->chateeJoined(userChange->user(), connection());
-            chatInfoReceived(userChange->user().name() + " joined");
-        }
-        else if(userChange->action() == LEFT) {
+        if(userChange->action() == LEFT) {
             chatroom_->chateeLeft(userChange->user().name());
             chatInfoReceived(userChange->user().name() + " left");
+            refreshChateeList();
         }
         else if(userChange->action() == KICKED) {
             chatee->kick(false);
             chatInfoReceived(userChange->user().name() + " has been kicked");
+            refreshChateeList();
         }
     }
 }
@@ -145,7 +158,7 @@ void ChatClient::handleMessage(std::unique_ptr<ChatMessage> chatMessage) {
 
 void ChatClient::handleMessage(std::unique_ptr<ChatroomChange> chatroomChange) {
     if (chatroomChange->has_motd())
-        chatInfoReceived(chatroomChange->motd());
+        chatMotdChanged(chatroomChange->motd());
 }
 
 void ChatClient::handleMessage(std::unique_ptr<GenericChatResponse> response) {
@@ -169,6 +182,10 @@ void ChatClient::requestUserList() {
 
     sendAnyMessage(std::make_unique<Message<UserListRequest>>(
             std::move(userListRequest), USER_LIST_REQUEST));
+}
+
+std::shared_ptr<Chatroom> ChatClient::chatroom() {
+    return chatroom_;
 }
 
 } // SimpleChat namespace

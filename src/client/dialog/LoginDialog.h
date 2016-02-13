@@ -6,26 +6,24 @@ namespace SimpleChat {
 
 class LoginDialog : public QDialog {
     Q_OBJECT
-
 public:
-    explicit LoginDialog(QWidget *parent = 0);
+    explicit LoginDialog(QWidget *parent = nullptr);
 
     void setupDialog();
-
-    void setEnableLogin(bool enabled);
+    void setEnableLogin(bool enabled) const;
 
 signals:
     void loginSignal(const QString& address, quint16 port, const QString& name);
 
 private slots:
     void login();
-    void enableLoginButton();
+    void enableLoginButton() const;
 
 private:
     QLabel *hostLabel;
     QLabel *portLabel;
     QLabel *nameLabel;
-    QComboBox *hostCombo;
+    QLineEdit *hostLineEdit;
     QLineEdit *portLineEdit;
     QLineEdit *nameLineEdit;
 
@@ -34,7 +32,7 @@ private:
     QDialogButtonBox *buttonBox;
 
     void createWidgets();
-    void bindEvents();
+    void bindEvents() const;
 };
 
 } // SimpleChat namespace

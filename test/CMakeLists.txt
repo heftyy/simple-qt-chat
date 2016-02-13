@@ -25,6 +25,7 @@ set(TEST_SRC_FILES
         chatlib/AbstractMessageTest.cpp
         chatlib/ChatroomTest.cpp
         chatlib/CommandParserTest.cpp
+        chatlib/ChatCommandTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})

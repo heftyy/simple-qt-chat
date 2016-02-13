@@ -9,32 +9,32 @@ namespace SimpleChat {
 class LoginDialog;
 class TcpChatClient;
 
-class ChatDialog : public QDialog, private Ui::ChatDialog
-{
+class ChatDialog : public QDialog,
+                   private Ui::ChatDialog {
     Q_OBJECT
-
 public:
-    explicit ChatDialog(QWidget *parent = 0);
-    void start();
-
-public slots:
-    void appendMessage(const QString &from, const QString &message);
+    explicit ChatDialog(QWidget *parent = nullptr);
+    ~ChatDialog();
+    void start() const;
 
 private slots:
-    void returnPressed();
-    void newParticipant(const QString &nick);
-    void participantLeft(const QString &nick);
+    void appendMessage(const QString &from, const QString &message) const;
+    void appendInfo(const QString& info) const;
+    void appendMotd(const QString& motd) const;
+    void refreshList();
+
+    void returnPressed() const;
     void showInformation();
     void loginToChat(const QString& address, quint16 port, const QString& name);
 
 private:
-    std::shared_ptr<LoginDialog> loginDialog;
-    std::shared_ptr<TcpChatClient > chatClient;
+    LoginDialog* loginDialog;
+    TcpChatClient* chatClient;
 
     QString myNickName;
     QTextTableFormat tableFormat;
 
-    void showChat(const QString& address, quint16 port, const QString& name);
+    void showChat();
 };
 
 } // SimpleChat namespace

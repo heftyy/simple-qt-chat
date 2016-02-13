@@ -14,9 +14,12 @@
 namespace SimpleChat {
 
 Chatee::Chatee(const User& user,
-               ChatConnection* connection) :
+               ChatConnection* connection, 
+               std::shared_ptr<Chatroom> chatroom) :
         user_(user),
-        connection_(connection) {
+        connection_(connection), 
+        chatroom_(chatroom),
+        authorized_(false) {
 
 }
 
@@ -49,31 +52,6 @@ void Chatee::sendChatMessage(const std::string& message, const std::string& from
             CHAT_MESSAGE
     );
 }
-
-/*
-void Chatee::sendCommand(const std::string& command) {
-    auto commandParser = std::make_unique<CommandParser>(command);
-    auto chatCommand = commandParser->chatCommand(
-        std::move(getSelf())
-    );
-
-    this->prepareAndSend(
-            std::move(chatCommand),
-            CHAT_COMMAND
-    );
-}
-
-void Chatee::authorize(const std::string& password) {
-    auto authorizeMessage = std::make_unique<ChatAuthorize>();
-    authorizeMessage->set_allocated_from(getSelf().release());
-    authorizeMessage->set_password(password);
-
-    this->prepareAndSend(
-            std::move(authorizeMessage),
-            CHAT_AUTHORIZE
-    );
-}
-*/
 
 void Chatee::sendResponse(bool success, const std::string& message) {
     auto genericResponse = std::make_unique<GenericChatResponse>();
@@ -166,7 +144,6 @@ template void Chatee::prepareAndSend<UserListResponse>(std::unique_ptr<UserListR
 template void Chatee::prepareAndSend<UserChange>(std::unique_ptr<UserChange> message, int type);
 
 template void Chatee::prepareAndSend<ChatMessage>(std::unique_ptr<ChatMessage> message, int type);
-template void Chatee::prepareAndSend<ChatAuthorize>(std::unique_ptr<ChatAuthorize> message, int type);
 template void Chatee::prepareAndSend<ChatCommand>(std::unique_ptr<ChatCommand> message, int type);
 
 template void Chatee::prepareAndSend<ChatroomChange>(std::unique_ptr<ChatroomChange> message, int type);

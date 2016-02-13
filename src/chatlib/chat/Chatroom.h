@@ -17,7 +17,7 @@ class ChatAuthorize;
 
 using ChateesMap = std::map<std::string, std::shared_ptr<Chatee>>;
 
-class Chatroom
+class Chatroom : public std::enable_shared_from_this<Chatroom>
 {
 public:
     explicit Chatroom();
@@ -47,7 +47,7 @@ public:
     void setMotd(const std::string& motd);
     std::string motd();
 
-    const ChateesMap& map();
+    const ChateesMap& map() const;
 
 private:
     int nextUserId;

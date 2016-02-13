@@ -19,7 +19,7 @@ class Client {
 public:
     virtual ~Client() { }
 
-    virtual void sendCommand(const std::string& command) = 0;
+    virtual bool sendCommand(const std::string& command) = 0;
     virtual void sendMessage(const std::string& text, const std::string& target) = 0;
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer) = 0;
@@ -36,6 +36,8 @@ protected:
     virtual bool isConnected() = 0;
     virtual ChatConnection* connection() = 0;
 
+    virtual void chateeJoined(const std::string& name) = 0;
+    virtual void chateeLeft(const std::string& name) = 0;
     virtual void chatMotdChanged(const std::string& motd) = 0;
     virtual void chatInfoReceived(const std::string& info) = 0;
     virtual void chatMessageReceived(const std::string& text,

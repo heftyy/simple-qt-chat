@@ -7,6 +7,7 @@
 #include "MotdChatCommand.h"
 #include "MuteChatCommand.h"
 #include "KickChatCommand.h"
+#include "AuthChatCommand.h"
 
 namespace SimpleChat {
 
@@ -30,7 +31,7 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
         return nullptr;
 
     auto commandType = getCommandType(commandArgs[0]);
-    if(commandType == CommandType::UNKNOWN)
+    if(commandType == UNKNOWN)
         return nullptr;
 
     // remove the command type from vector
@@ -38,12 +39,14 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
 
     std::unique_ptr<SpecificChatCommand> chatCommand;
 
-    if(CommandType::MOTD == commandType)
+    if(MOTD == commandType)
         chatCommand = std::make_unique<MotdChatCommand>();
-    else if(CommandType::KICK == commandType)
+    else if(KICK == commandType)
         chatCommand = std::make_unique<KickChatCommand>();
-    else if(CommandType::MUTE == commandType)
+    else if (MUTE == commandType)
         chatCommand = std::make_unique<MuteChatCommand>();
+    else if (AUTH == commandType)
+        chatCommand = std::make_unique<AuthChatCommand>();
 
     chatCommand->set_type(static_cast<CommandType>(commandType));
     chatCommand->insertData(commandArgs);
@@ -55,16 +58,19 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
 
 int CommandParser::getCommandType(const std::string& type) const {
     if (type == "mute") {
-        return CommandType::MUTE;
+        return MUTE;
     }
     if (type == "kick") {
-        return CommandType::KICK;
+        return KICK;
     }
     if (type == "motd") {
-        return CommandType::MOTD;
+        return MOTD;
+    }
+    if(type == "auth") {
+        return AUTH;
     }
 
-    return CommandType::UNKNOWN;
+    return UNKNOWN;
 }
 
 } // SimpleChat namespace

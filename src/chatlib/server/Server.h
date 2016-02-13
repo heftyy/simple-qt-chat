@@ -19,6 +19,8 @@ class Server {
 public:
     virtual ~Server() {}
 
+    virtual void chateeLeft(const std::shared_ptr<Chatee>& chatee) = 0;
+
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
                                       ChatConnection* connection) = 0;
 
@@ -32,9 +34,6 @@ public:
                                const std::shared_ptr<Chatee>& sender) = 0;
 
     virtual void handleMessage(std::unique_ptr<ChatMessage> chatMessage,
-                               const std::shared_ptr<Chatee>& sender) = 0;
-
-    virtual void handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize,
                                const std::shared_ptr<Chatee>& sender) = 0;
 
     virtual void handleMessage(std::unique_ptr<ChatCommand> chatCommand,

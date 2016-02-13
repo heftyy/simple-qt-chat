@@ -1,6 +1,8 @@
 #include <QtWidgets>
 
 #include <client/TcpChatClient.h>
+#include <chat/Chatroom.h>
+#include <chat/Chatee.h>
 
 #include "ChatDialog.h"
 #include "LoginDialog.h"
@@ -8,113 +10,140 @@
 namespace SimpleChat {
 
 ChatDialog::ChatDialog(QWidget* parent) :
-        QDialog(parent),
-        loginDialog(new LoginDialog),
-        chatClient(new TcpChatClient) {
+    QDialog(parent),
+    loginDialog(new LoginDialog),
+    chatClient(new TcpChatClient) {
 
 }
 
-void ChatDialog::start() {
+ChatDialog::~ChatDialog() {
+    loginDialog->deleteLater();
+    chatClient->deleteLater();
+    qDebug() << "deleted chat dialog";
+}
+
+void ChatDialog::start() const {
     loginDialog->setupDialog();
     loginDialog->show();
 
-    connect(loginDialog.get(), SIGNAL(loginSignal(QString, quint16, QString)),
+    connect(loginDialog, SIGNAL(loginSignal(QString, quint16, QString)),
             this, SLOT(loginToChat(QString, quint16, QString)));
 }
 
-void ChatDialog::appendMessage(const QString& from, const QString& message) {
+void ChatDialog::appendMessage(const QString& message, const QString& from) const {
     if (from.isEmpty() || message.isEmpty())
         return;
 
-    QTextCursor cursor(textEdit->textCursor());
+    auto cursor(textEdit->textCursor());
     cursor.movePosition(QTextCursor::End);
-    QTextTable* table = cursor.insertTable(1, 2, tableFormat);
+    auto table = cursor.insertTable(1, 2, tableFormat);
     table->cellAt(0, 0).firstCursorPosition().insertText('<' + from + "> ");
     table->cellAt(0, 1).firstCursorPosition().insertText(message);
-    QScrollBar* bar = textEdit->verticalScrollBar();
+    auto bar = textEdit->verticalScrollBar();
     bar->setValue(bar->maximum());
 }
 
-void ChatDialog::returnPressed() {
-    QString text = lineEdit->text();
-    if (text.isEmpty())
+void ChatDialog::appendInfo(const QString& info) const {
+    if (info.isEmpty())
         return;
 
+    auto color = textEdit->textColor();
+    textEdit->setTextColor(Qt::gray);
+    textEdit->append("* " + info);
+    textEdit->setTextColor(color);
+}
+
+void ChatDialog::appendMotd(const QString& motd) const {
+    if (motd.isEmpty())
+        return;
+
+    auto color = textEdit->textColor();
+    textEdit->setTextColor(Qt::gray);
+    textEdit->append(tr("* motd: %1").arg(motd));
+    textEdit->setTextColor(color);
+}
+
+void ChatDialog::refreshList() {
+    // remove chatees from the widget list
+    for (auto i = 0; i < listWidget->count(); ++i) {
+        auto item = listWidget->item(i);
+        auto name = item->text().toStdString();
+        if(!chatClient->chatroom()->chateeExists(name)) {
+            delete item;
+        }
+    }
+
+    // add chatees to the widget list
+    for (auto const& entry : chatClient->chatroom()->map()) {        
+        auto name = QString::fromStdString(entry.second->user().name());
+        auto items = listWidget->findItems(name,
+                                           Qt::MatchExactly);
+        if (items.isEmpty())
+            listWidget->addItem(name);
+    }    
+}
+
+void ChatDialog::returnPressed() const {
+    auto text = lineEdit->text();
+    if (text.isEmpty())
+        return;
+    
     if (text.startsWith(QChar('/'))) {
-        QColor color = textEdit->textColor();
+        qDebug() << "command" << text;
+        auto color = textEdit->textColor();
         textEdit->setTextColor(Qt::red);
-        textEdit->append(tr("! Unknown command: %1")
-                                 .arg(text.left(text.indexOf(' '))));
+
+        auto success = chatClient->sendCommand(text.toStdString());
+        if (success)
+            textEdit->append(tr("* sending command: %1").arg(text));
+        else
+            textEdit->append(tr("* commmand unrecognized, try /help"));
+
         textEdit->setTextColor(color);
-    } else {
-        qDebug() << "send message";
-        appendMessage(myNickName, text);
+    }
+    else {
+        qDebug() << "message" << text;
+        chatClient->sendMessage(text.toStdString());
     }
 
     lineEdit->clear();
-}
-
-void ChatDialog::newParticipant(const QString& nick) {
-    if (nick.isEmpty())
-        return;
-
-    QColor color = textEdit->textColor();
-    textEdit->setTextColor(Qt::gray);
-    textEdit->append(tr("* %1 has joined").arg(nick));
-    textEdit->setTextColor(color);
-    listWidget->addItem(nick);
-}
-
-void ChatDialog::participantLeft(const QString& nick) {
-    if (nick.isEmpty())
-        return;
-
-    QList<QListWidgetItem*> items = listWidget->findItems(nick,
-                                                          Qt::MatchExactly);
-    if (items.isEmpty())
-        return;
-
-    delete items.at(0);
-    QColor color = textEdit->textColor();
-    textEdit->setTextColor(Qt::gray);
-    textEdit->append(tr("* %1 has left").arg(nick));
-    textEdit->setTextColor(color);
 }
 
 void ChatDialog::showInformation() {
     if (listWidget->count() == 1) {
         QMessageBox::information(this, tr("Chat"),
                                  tr("Launch several instances of this "
-                                            "program on your local network and "
-                                            "start chatting!"));
+                                 "program on your local network and "
+                                 "start chatting!"));
     }
 }
 
 void ChatDialog::loginToChat(const QString& address, quint16 port, const QString& name) {
     chatClient->login(address, port, name);
+    loginDialog->hide();
+    this->showChat();
 }
 
-void ChatDialog::showChat(const QString& address, quint16 port, const QString& name) {
+void ChatDialog::showChat() {
     setupUi(this);
+    this->show();
 
     lineEdit->setFocusPolicy(Qt::StrongFocus);
     textEdit->setFocusPolicy(Qt::NoFocus);
     textEdit->setReadOnly(true);
     listWidget->setFocusPolicy(Qt::NoFocus);
+    
+    connect(chatClient, SIGNAL(chatMessageSignal(QString, QString, QString)),
+            this, SLOT(appendMessage(QString, QString)));
+    connect(chatClient, SIGNAL(chatInfoSignal(QString)),
+            this, SLOT(appendInfo(QString)));
+    connect(chatClient, SIGNAL(chatMotdSignal(QString)),
+            this, SLOT(appendMotd(QString)));
+    connect(chatClient, SIGNAL(chatRefreshListSignal()),
+            this, SLOT(refreshList()));
+    connect(lineEdit, SIGNAL(returnPressed()),
+            this, SLOT(returnPressed()));
 
-    connect(lineEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
-
-    /*
-    connect(&client, SIGNAL(newMessage(QString,QString)),
-            this, SLOT(appendMessage(QString,QString)));
-    connect(&client, SIGNAL(newParticipant(QString)),
-            this, SLOT(newParticipant(QString)));
-    connect(&client, SIGNAL(participantLeft(QString)),
-            this, SLOT(participantLeft(QString)));
-            */
-
-    myNickName = "my name";
-    newParticipant(myNickName);
     tableFormat.setBorder(0);
 }
 

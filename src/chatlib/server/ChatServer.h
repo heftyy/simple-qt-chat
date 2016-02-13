@@ -12,6 +12,8 @@ class ChatServer : public Server {
 public:
     explicit ChatServer(const std::string& password);
 
+    virtual void chateeLeft(const std::shared_ptr<Chatee>& chatee) override;
+
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
                                       ChatConnection* connection) override;
 
@@ -25,9 +27,6 @@ public:
                                const std::shared_ptr<Chatee>& sender) override;
 
     virtual void handleMessage(std::unique_ptr<ChatMessage> chatMessage,
-                               const std::shared_ptr<Chatee>& sender) override;
-
-    virtual void handleMessage(std::unique_ptr<ChatAuthorize> chatAuthorize,
                                const std::shared_ptr<Chatee>& sender) override;
 
     virtual void handleMessage(std::unique_ptr<ChatCommand> chatCommand,

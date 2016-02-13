@@ -18,15 +18,17 @@ set(CHATLIB_SOURCE_FILES
         chat/Chatee.h
         chat/ChatConnection.h
 
+        chat/commands/SpecificChatCommand.h
         chat/commands/CommandParser.cpp
         chat/commands/CommandParser.h
         chat/commands/MotdChatCommand.cpp
         chat/commands/MotdChatCommand.h
-        chat/commands/SpecificChatCommand.h
         chat/commands/KickChatCommand.cpp
         chat/commands/KickChatCommand.h
         chat/commands/MuteChatCommand.cpp
         chat/commands/MuteChatCommand.h
+        chat/commands/AuthChatCommand.cpp
+        chat/commands/AuthChatCommand.h
 
         client/Client.h
         client/ChatClient.h

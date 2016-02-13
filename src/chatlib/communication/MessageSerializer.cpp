@@ -11,7 +11,7 @@ MessageSerializer::MessageSerializer(std::unique_ptr<AbstractMessage> abstractMe
 
 
 std::tuple<bool, std::string> MessageSerializer::serialize() const {
-    if (!abstractMessage_->isInitialized())
+    if (abstractMessage_ == nullptr || !abstractMessage_->isInitialized())
         return std::make_tuple(false, "");
 
     NetworkMessage networkMessage;

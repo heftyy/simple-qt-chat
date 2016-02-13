@@ -38,7 +38,7 @@ std::tuple<bool, std::string, std::shared_ptr<Chatee>> Chatroom::chateeJoined(co
     if (chateeExists(user.name()))
         return std::make_tuple(false, "That name is already taken", nullptr);
 
-    auto chatee = std::make_shared<Chatee>(user, connection);
+    auto chatee = std::make_shared<Chatee>(user, connection, shared_from_this());
     auto success = insertChatee(chatee);
 
     if (success) {
@@ -71,7 +71,7 @@ Chatroom::chateeLeft(const User& user) {
 
 void Chatroom::propagateMessage(std::unique_ptr<AbstractMessage> abstractMessage) const {
     for (auto& pair : chatees_) {
-        pair.second->sendMessage(std::move(abstractMessage));
+        pair.second->sendMessage(abstractMessage->clone());
     }
 }
 
@@ -119,7 +119,7 @@ std::string Chatroom::motd() {
     return motd_;
 }
 
-const ChateesMap& Chatroom::map() {
+const ChateesMap& Chatroom::map() const {
     return chatees_;
 }
 

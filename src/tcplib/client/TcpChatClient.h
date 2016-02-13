@@ -18,42 +18,45 @@ public:
     virtual bool login(const QString& address, quint16 port, const QString& name);
     virtual void logout();
 
-protected:
-    bool sendAnyMessage(std::unique_ptr<AbstractMessage> message) override;
-    bool isConnected() override;
-    ChatConnection* connection() override;
+    virtual bool connectToServer() override;
+    virtual void join() override;
+    virtual void requestUserList() override;
 
-    void chatMotdChanged(const std::string& motd) override;
-    void chatInfoReceived(const std::string& info) override;
-    void chatMessageReceived(const std::string& text, const std::string& from, const std::string& target) override;
-    void refreshChateeList() override;
+protected:
+    virtual bool sendAnyMessage(std::unique_ptr<AbstractMessage> message) override;
+    virtual bool isConnected() override;
+    virtual ChatConnection* connection() override;
+
+    virtual void chateeJoined(const std::string& name) override;
+    virtual void chateeLeft(const std::string& name) override;
+    virtual void chatMotdChanged(const std::string& motd) override;    
+    virtual void chatInfoReceived(const std::string& info) override;
+    virtual void chatMessageReceived(const std::string& text, const std::string& from, const std::string& target) override;
+    virtual void refreshChateeList() override;
 
 signals:
+    void chateeJoinedSignal(const QString& name);
+    void chateeLeftSignal(const QString& name);
     void chatMessageSignal(const QString& text, const QString& from, const QString& target);
     void chatInfoSignal(const QString& text);
     void chatMotdSignal(const QString& motd);
     void chatRefreshListSignal();
 
 private slots:
-    void handleUntypedMessage(const QString& serializedData);
-    void connectionLost();
+    virtual void handleUntypedMessage(const QString& serializedData);
+    virtual void connectionLost();
 
     void displayError(QAbstractSocket::SocketError socketError) const;
 
 private:
     TcpChatConnection* serverConnection_;
     QHostAddress serverAddress_;
-    quint16 serverPort_;
+    quint16 serverPort_;    
 
-    virtual bool connectToServer() override;
-
-    void join() override;
-    void requestUserList() override;
-
-    QString format(const std::string& info);
-    QString format(const User& user, const char* info);
-    QString format(const User& user, const std::string& info);
-    QString format(const User& user, const QString& info);
+    QString format(const std::string& info) const;
+    QString format(const User& user, const char* info) const;
+    QString format(const User& user, const std::string& info) const;
+    QString format(const User& user, const QString& info) const;
 };
 
 } // SimpleChat namespace

@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
-    SimpleChat::TcpChatServer server("abra kadabra", &app);
+    SimpleChat::TcpChatServer server("abra_kadabra", &app);
     server.listen(4441, QHostAddress::AnyIPv4);
     app.exec();   
 

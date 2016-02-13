@@ -23,7 +23,7 @@ class ChatClient : public Client {
 public:
     ChatClient();
 
-    virtual void sendCommand(const std::string& command) override;
+    virtual bool sendCommand(const std::string& command) override;
     virtual void sendMessage(const std::string& text, const std::string& target = "") override;
 
     virtual void handleUntypedMessage(const MessageDeserializer& deserializer) override;
@@ -39,6 +39,8 @@ public:
     virtual void join() = 0;
     virtual void requestUserList() = 0;
 
+    std::shared_ptr<Chatroom> chatroom();
+
 protected:
     std::string clientName_;
     std::shared_ptr<Chatroom> chatroom_;
@@ -47,11 +49,13 @@ protected:
     virtual bool isConnected() override = 0;
     virtual ChatConnection* connection() override = 0;
 
+    virtual void chateeJoined(const std::string& name) override = 0;
+    virtual void chateeLeft(const std::string& name) override = 0;
     virtual void chatMotdChanged(const std::string& motd) override = 0;
     virtual void chatInfoReceived(const std::string& info) override = 0;
     virtual void chatMessageReceived(const std::string& text, 
-                             const std::string& from, 
-                             const std::string& target) override = 0;
+                                     const std::string& from, 
+                                     const std::string& target) override = 0;
 
     virtual void refreshChateeList() override = 0;
     

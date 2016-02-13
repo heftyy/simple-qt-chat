@@ -8,7 +8,8 @@ enum CommandType {
     MOTD = 0;
     KICK = 1;
     MUTE = 2;
-    UNKNOWN = 3;
+    AUTH = 3;
+    UNKNOWN = 4;
 }
 
 message ChatTarget {
@@ -21,11 +22,6 @@ message ChatMessage {
 
     optional ChatTarget from = 2;
     optional ChatTarget target = 3;
-}
-
-message ChatAuthorize {
-    required ChatTarget from = 1;
-    required string password = 2;
 }
 
 message ChatCommand {
@@ -45,9 +41,8 @@ message GenericChatResponse {
 
 extend NetworkMessage {
   optional ChatMessage chatMessage = 20;
-  optional ChatAuthorize chatAuthorize = 21;
-  optional ChatCommand chatCommand = 22;
+  optional ChatCommand chatCommand = 21;
 
-  optional ChatroomChange chatroomChange = 23;
-  optional GenericChatResponse genericChatResponse = 24;
+  optional ChatroomChange chatroomChange = 22;
+  optional GenericChatResponse genericChatResponse = 23;
 }
