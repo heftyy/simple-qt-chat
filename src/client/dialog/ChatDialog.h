@@ -7,14 +7,14 @@
 namespace SimpleChat {
 
 class LoginDialog;
-class ChatClient;
+class TcpChatClient;
 
 class ChatDialog : public QDialog, private Ui::ChatDialog
 {
     Q_OBJECT
 
 public:
-    ChatDialog(QWidget *parent = 0);
+    explicit ChatDialog(QWidget *parent = 0);
     void start();
 
 public slots:
@@ -29,7 +29,7 @@ private slots:
 
 private:
     std::shared_ptr<LoginDialog> loginDialog;
-    std::shared_ptr<ChatClient > chatClient;
+    std::shared_ptr<TcpChatClient > chatClient;
 
     QString myNickName;
     QTextTableFormat tableFormat;

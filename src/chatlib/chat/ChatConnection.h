@@ -17,6 +17,8 @@ public:
     virtual bool isAlive() const = 0;
     virtual std::string getIdent() const = 0;
 
+    virtual void disconnectFromHost() = 0;
+
     virtual void setChatee(const std::shared_ptr<Chatee>& chatee) = 0;
     virtual std::shared_ptr<Chatee> chatee() const = 0;
 };

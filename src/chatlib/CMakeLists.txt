@@ -6,7 +6,6 @@ add_subdirectory(proto)
 
 set(CHATLIB_SOURCE_FILES
         communication/AbstractMessage.h
-        communication/Message.cpp
         communication/Message.h
         communication/MessageDeserializer.cpp
         communication/MessageDeserializer.h
@@ -28,6 +27,14 @@ set(CHATLIB_SOURCE_FILES
         chat/commands/KickChatCommand.h
         chat/commands/MuteChatCommand.cpp
         chat/commands/MuteChatCommand.h
+
+        client/Client.h
+        client/ChatClient.h
+        client/ChatClient.cpp
+
+        server/Server.h
+        server/ChatServer.h
+        server/ChatServer.cpp
 
         util/StringUtil.cpp
         util/StringUtil.h

@@ -1,6 +1,6 @@
 #include <QtWidgets>
 
-#include <client/ChatClient.h>
+#include <client/TcpChatClient.h>
 
 #include "ChatDialog.h"
 #include "LoginDialog.h"
@@ -10,7 +10,7 @@ namespace SimpleChat {
 ChatDialog::ChatDialog(QWidget* parent) :
         QDialog(parent),
         loginDialog(new LoginDialog),
-        chatClient(new ChatClient) {
+        chatClient(new TcpChatClient) {
 
 }
 
@@ -90,6 +90,10 @@ void ChatDialog::showInformation() {
     }
 }
 
+void ChatDialog::loginToChat(const QString& address, quint16 port, const QString& name) {
+    chatClient->login(address, port, name);
+}
+
 void ChatDialog::showChat(const QString& address, quint16 port, const QString& name) {
     setupUi(this);
 
@@ -112,10 +116,6 @@ void ChatDialog::showChat(const QString& address, quint16 port, const QString& n
     myNickName = "my name";
     newParticipant(myNickName);
     tableFormat.setBorder(0);
-}
-
-void ChatDialog::loginToChat(const QString& address, quint16 port, const QString& name) {
-    chatClient->login(address, port, name);
 }
 
 } // SimpleChat namespace

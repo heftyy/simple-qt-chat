@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QtWidgets>
-#include <QtNetwork>
 
 namespace SimpleChat {
 
@@ -9,7 +8,7 @@ class LoginDialog : public QDialog {
     Q_OBJECT
 
 public:
-    LoginDialog(QWidget *parent = 0);
+    explicit LoginDialog(QWidget *parent = 0);
 
     void setupDialog();
 

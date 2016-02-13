@@ -13,17 +13,18 @@ class MessageDeserializer;
 class Chatee;
 
 class TcpChatConnection : public QObject,
-                          public ChatConnection,
-                          public std::enable_shared_from_this<TcpChatConnection> {
+                          public ChatConnection {
     Q_OBJECT
 public:
     explicit TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_);
 
-    void init();
+    void init() const;
 
     virtual bool sendMessage(std::unique_ptr<AbstractMessage> message) override;
     virtual bool isAlive() const override;
     virtual std::string getIdent() const override;
+
+    void disconnectFromHost() override;
 
     virtual void setChatee(const std::shared_ptr<Chatee>& chatee) override;
     virtual std::shared_ptr<Chatee> chatee() const override;

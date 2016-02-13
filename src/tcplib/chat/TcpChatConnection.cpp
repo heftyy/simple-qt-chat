@@ -15,12 +15,16 @@ TcpChatConnection::TcpChatConnection(const std::shared_ptr<QTcpSocket>& socket_)
 
 }
 
-void TcpChatConnection::init() {
-    socket_->connect(socket_.get(), SIGNAL(disconnected()),
-                     this, SLOT(disconnected()));
+void TcpChatConnection::init() const {
+    socket_->connect(socket_.get(), 
+                     SIGNAL(disconnected()),
+                     this, 
+                     SLOT(disconnected()));
 
-    socket_->connect(socket_.get(), SIGNAL(readyRead()),
-                     this, SLOT(readyRead()));
+    socket_->connect(socket_.get(), 
+                     SIGNAL(readyRead()),
+                     this, 
+                     SLOT(readyRead()));
 }
 
 bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
@@ -62,6 +66,10 @@ bool TcpChatConnection::isAlive() const {
 std::string TcpChatConnection::getIdent() const {
     auto str = socket_->peerAddress().toString() + ":" + QString::number(socket_->peerPort());
     return str.toStdString();
+}
+
+void TcpChatConnection::disconnectFromHost() {
+    socket_->disconnectFromHost();
 }
 
 std::shared_ptr<QTcpSocket> TcpChatConnection::socket() {

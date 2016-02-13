@@ -1,37 +1,27 @@
 #pragma once
 
 #include <memory>
-#include <QtNetwork>
 
 namespace SimpleChat {
 
-class MessageDeserializer;
-
 class UserJoinRequest;
-class UserJoinResponse;
-
 class UserListRequest;
-class UserListResponse;
-
 class UserChange;
-
 class ChatMessage;
 class ChatAuthorize;
 class ChatCommand;
 
+class MessageDeserializer;
 class ChatConnection;
 class Chatee;
 
-class Server : public QObject {
+class Server {
 public:
-    virtual void listen(quint16 port, QHostAddress ipAddress = QHostAddress::LocalHost) = 0;
+    virtual ~Server() {}
 
-    virtual void handleUntypedMessage(const QString& serializedData) = 0;
+    virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
+                                      const std::shared_ptr<ChatConnection>& connection) = 0;
 
-    virtual QHostAddress getAddress() const = 0;
-    virtual ~Server() { }
-
-private:
     virtual void handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
                                const std::shared_ptr<ChatConnection>& connection) = 0;
 

@@ -37,7 +37,6 @@ void Chatee::sendChatMessage(const std::string& message, const std::string& from
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
     chatMessage->set_text(message);
-    chatMessage->set_timestamp(millis);
     if(target.empty())
         chatMessage->set_allocated_target(getSelf().release());
     else

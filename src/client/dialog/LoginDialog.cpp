@@ -1,3 +1,5 @@
+#include <QtNetwork>
+
 #include "LoginDialog.h"
 
 namespace SimpleChat {
@@ -69,24 +71,24 @@ void LoginDialog::createWidgets() {
     hostCombo = new QComboBox;
     hostCombo->setEditable(true);
     // find out name of this machine
-    QString name = QHostInfo::localHostName();
+    auto name = QHostInfo::localHostName();
     if (!name.isEmpty()) {
         hostCombo->addItem(name);
-        QString domain = QHostInfo::localDomainName();
+        auto domain = QHostInfo::localDomainName();
         if (!domain.isEmpty())
             hostCombo->addItem(name + QChar('.') + domain);
     }
     if (name != QString("localhost"))
         hostCombo->addItem(QString("localhost"));
     // find out IP addresses of this machine
-    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+    auto ipAddressesList = QNetworkInterface::allAddresses();
     // add non-localhost addresses
-    for (int i = 0; i < ipAddressesList.size(); ++i) {
+    for (auto i = 0; i < ipAddressesList.size(); ++i) {
         if (!ipAddressesList.at(i).isLoopback())
             hostCombo->addItem(ipAddressesList.at(i).toString());
     }
     // add localhost addresses
-    for (int i = 0; i < ipAddressesList.size(); ++i) {
+    for (auto i = 0; i < ipAddressesList.size(); ++i) {
         if (ipAddressesList.at(i).isLoopback())
             hostCombo->addItem(ipAddressesList.at(i).toString());
     }

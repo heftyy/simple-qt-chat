@@ -18,10 +18,9 @@ message ChatTarget {
 
 message ChatMessage {
     required string text = 1;
-    optional sfixed64 timestamp = 2;
 
-    optional ChatTarget from = 3;
-    optional ChatTarget target = 4;
+    optional ChatTarget from = 2;
+    optional ChatTarget target = 3;
 }
 
 message ChatAuthorize {
