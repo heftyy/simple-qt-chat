@@ -66,31 +66,29 @@ void Chatee::sendResponse(bool success, const std::string& message) {
 }
 
 void Chatee::mute(bool propagate) {
-    user_.set_status(MUTED);
+    if(propagate) {
+        auto response = std::make_unique<UserChange>();
+        response->set_status(MUTED);
+        response->mutable_user()->CopyFrom(user());
 
-    if(!propagate)
-        return;
-
-    auto response = std::make_unique<UserChange>();
-    response->set_status(MUTED);
-    response->mutable_user()->CopyFrom(user());
-
-    chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
+        chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
             std::move(response), USER_CHANGE));
+    }
+
+    user_.set_status(MUTED);
 }
 
-void Chatee::kick(bool propagate) {
-    chatroom_.lock()->chateeLeft(user_.name());
+void Chatee::kick(bool propagate) {   
+    if(propagate) {
+        auto response = std::make_unique<UserChange>();
+        response->set_action(KICKED);
+        response->mutable_user()->CopyFrom(user());
 
-    if(!propagate)
-        return;
-
-    auto response = std::make_unique<UserChange>();
-    response->set_action(KICKED);
-    response->mutable_user()->CopyFrom(user());
-
-    chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
+        chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
             std::move(response), USER_CHANGE));
+    }
+
+    chatroom_.lock()->chateeLeft(user_.name());
 }
 
 ChatConnection* Chatee::connection() const {
