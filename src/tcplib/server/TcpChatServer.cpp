@@ -112,7 +112,6 @@ void TcpChatServer::connectionLost() {
         qCritical() << "removing the chatee failed";
 
     connection->deleteLater();
-    QCoreApplication::exit();
 }
 
 void TcpChatServer::openSession(quint16 port, const QHostAddress& ipAddress) {

@@ -13,11 +13,16 @@
 
 namespace SimpleChat {
 
-TcpChatClient::TcpChatClient() :
-    serverConnection_(nullptr),
-    serverAddress_(QHostAddress::LocalHost),
-    serverPort_(0) {
+TcpChatClient::TcpChatClient(QObject* parent) :
+        QObject(parent),
+        serverConnection_(nullptr),
+        serverAddress_(QHostAddress::LocalHost),
+        serverPort_(0) {
 
+}
+
+TcpChatClient::~TcpChatClient() {
+    serverConnection_->deleteLater();
 }
 
 bool TcpChatClient::login(const QString& address, quint16 port, const QString& name) {

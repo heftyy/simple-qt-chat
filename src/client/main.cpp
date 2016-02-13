@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
 //    SimpleChat::ChatDialog dialog;
 //    dialog.start();
 
-    SimpleChat::TcpChatClient client;
+    SimpleChat::TcpChatClient client(&app);
     client.login("127.0.0.1", 4441, "FruFru");
     client.sendMessage("foo");
     client.sendMessage("bar");

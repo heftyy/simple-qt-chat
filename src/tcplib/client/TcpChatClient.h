@@ -12,7 +12,8 @@ class TcpChatConnection;
 class TcpChatClient : public QObject, public ChatClient {
     Q_OBJECT
 public:
-    TcpChatClient();
+    explicit TcpChatClient(QObject* parent = nullptr);
+    ~TcpChatClient();
 
     virtual bool login(const QString& address, quint16 port, const QString& name);
     virtual void logout();
