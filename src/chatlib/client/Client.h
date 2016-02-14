@@ -31,6 +31,8 @@ public:
     virtual void handleMessage(std::unique_ptr<ChatroomChange> chatroomChange) = 0;
     virtual void handleMessage(std::unique_ptr<GenericChatResponse> response) = 0;
 
+    virtual std::string name() = 0;
+
 protected:
     virtual bool sendAnyMessage(std::unique_ptr<AbstractMessage> message) = 0;
     virtual bool isConnected() = 0;

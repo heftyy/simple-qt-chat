@@ -51,7 +51,7 @@ private slots:
 private:
     TcpChatConnection* serverConnection_;
     QHostAddress serverAddress_;
-    quint16 serverPort_;    
+    quint16 serverPort_;
 
     QString format(const std::string& info) const;
     QString format(const User& user, const char* info) const;

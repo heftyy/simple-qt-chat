@@ -30,17 +30,25 @@ void ChatDialog::start() const {
             this, SLOT(loginToChat(QString, quint16, QString)));
 }
 
-void ChatDialog::appendMessage(const QString& message, const QString& from) const {
+void ChatDialog::appendMessage(const QString& message, const QString& from, const QString& target) const {
     if (from.isEmpty() || message.isEmpty())
         return;
 
-    auto cursor(textEdit->textCursor());
-    cursor.movePosition(QTextCursor::End);
-    auto table = cursor.insertTable(1, 2, tableFormat);
-    table->cellAt(0, 0).firstCursorPosition().insertText('<' + from + "> ");
-    table->cellAt(0, 1).firstCursorPosition().insertText(message);
-    auto bar = textEdit->verticalScrollBar();
-    bar->setValue(bar->maximum());
+    if(target.isEmpty()) { // global message
+        auto cursor(textEdit->textCursor());
+        cursor.movePosition(QTextCursor::End);
+        auto table = cursor.insertTable(1, 2, tableFormat);
+        table->cellAt(0, 0).firstCursorPosition().insertText('<' + from + "> ");
+        table->cellAt(0, 1).firstCursorPosition().insertText(message);
+        auto bar = textEdit->verticalScrollBar();
+        bar->setValue(bar->maximum());
+    }
+    else { // whisper message
+        auto color = textEdit->textColor();
+        textEdit->setTextColor(QColor(120, 0, 150, 155));
+        textEdit->append(tr("* %1: %2").arg(from, message));
+        textEdit->setTextColor(color);
+    }
 }
 
 void ChatDialog::appendInfo(const QString& info) const {
@@ -68,38 +76,58 @@ void ChatDialog::refreshList() {
     for (auto i = 0; i < listWidget->count(); ++i) {
         auto item = listWidget->item(i);
         auto name = item->text().toStdString();
-        if(!chatClient->chatroom()->chateeExists(name)) {
+        if (!chatClient->chatroom()->chateeExists(name)) {
             delete item;
         }
     }
 
     // add chatees to the widget list
-    for (auto const& entry : chatClient->chatroom()->map()) {        
+    for (auto const& entry : chatClient->chatroom()->map()) {
         auto name = QString::fromStdString(entry.second->user().name());
         auto items = listWidget->findItems(name,
                                            Qt::MatchExactly);
         if (items.isEmpty())
             listWidget->addItem(name);
-    }    
+    }
 }
 
 void ChatDialog::returnPressed() const {
     auto text = lineEdit->text();
     if (text.isEmpty())
         return;
-    
-    if (text.startsWith(QChar('/'))) {
-        qDebug() << "command" << text;
-        auto color = textEdit->textColor();
-        textEdit->setTextColor(Qt::red);
 
-        auto success = chatClient->sendCommand(text.toStdString());
-        if (success)
-            textEdit->append(tr("* sending command: %1").arg(text));
-        else
-            textEdit->append(tr("* commmand unrecognized, try /help"));
+    if (text.startsWith('/')) {
+        QString message;
 
-        textEdit->setTextColor(color);
+        if (text.startsWith("/w")) { // whisper
+            auto list = text.split(' ');
+
+            if (list.size() < 3)
+                message = tr("* sending a whisper failed, wrong number of arguments");
+            else if(list[1].toStdString() == chatClient->name())
+                message = tr("* can't send a whisper to yourself");
+            else {
+                auto target = list[1].toStdString();
+                list.removeFirst();
+                list.removeFirst();
+                chatClient->sendMessage(list.join(" ").toStdString(), target);
+            }
+        }
+        else { // command            
+            auto success = chatClient->sendCommand(text.toStdString());
+            if (success)
+                message = tr("* sending command: %1").arg(text);
+            else
+                message = tr("* commmand unrecognized, try /help");
+        }
+
+        if (!message.isEmpty()) {
+            qDebug() << "command" << text;
+            auto color = textEdit->textColor();
+            textEdit->setTextColor(Qt::red);
+            textEdit->append(message);
+            textEdit->setTextColor(color);
+        }
     }
     else {
         qDebug() << "message" << text;
@@ -132,9 +160,9 @@ void ChatDialog::showChat() {
     textEdit->setFocusPolicy(Qt::NoFocus);
     textEdit->setReadOnly(true);
     listWidget->setFocusPolicy(Qt::NoFocus);
-    
+
     connect(chatClient, SIGNAL(chatMessageSignal(QString, QString, QString)),
-            this, SLOT(appendMessage(QString, QString)));
+            this, SLOT(appendMessage(QString, QString, QString)));
     connect(chatClient, SIGNAL(chatInfoSignal(QString)),
             this, SLOT(appendInfo(QString)));
     connect(chatClient, SIGNAL(chatMotdSignal(QString)),

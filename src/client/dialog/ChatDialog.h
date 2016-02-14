@@ -18,7 +18,7 @@ public:
     void start() const;
 
 private slots:
-    void appendMessage(const QString &from, const QString &message) const;
+    void appendMessage(const QString &from, const QString &message, const QString& target = "") const;
     void appendInfo(const QString& info) const;
     void appendMotd(const QString& motd) const;
     void refreshList();

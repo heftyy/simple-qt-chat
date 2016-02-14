@@ -24,8 +24,7 @@ bool ChatClient::sendCommand(const std::string& command) {
 
     auto message = commandParser.chatCommand(chatroom_->getTarget(clientName_));
     if(message) {
-        auto result = sendAnyMessage(
-            MessageBuilder::build(std::move(message)));
+        auto result = sendAnyMessage(MessageBuilder::build(std::move(message)));
 
         if (!result) {
             std::cerr << "sending a command failed" << std::endl;
@@ -44,8 +43,7 @@ void ChatClient::sendMessage(const std::string& text, const std::string& target)
         chatMessage->set_allocated_target(chatroom_->getTarget(target).release());
     }
 
-    auto result = sendAnyMessage(
-            MessageBuilder::build(std::move(chatMessage)));
+    auto result = sendAnyMessage(MessageBuilder::build(std::move(chatMessage)));
 
     if (!result)
         std::cerr << "sending a message failed" << std::endl;
@@ -183,6 +181,10 @@ void ChatClient::requestUserList() {
 
 std::shared_ptr<Chatroom> ChatClient::chatroom() {
     return chatroom_;
+}
+
+std::string ChatClient::name() {
+    return clientName_;
 }
 
 } // SimpleChat namespace

@@ -41,6 +41,8 @@ public:
 
     std::shared_ptr<Chatroom> chatroom();
 
+    virtual std::string name() override;
+
 protected:
     std::string clientName_;
     std::shared_ptr<Chatroom> chatroom_;
