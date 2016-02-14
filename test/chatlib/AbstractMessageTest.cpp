@@ -3,19 +3,19 @@
 #include "resources/AbstractMessageTest.h"
 
 TEST_F(AbstractMessageTest, InvalidMessage) {
-    auto msg = invalidAbstractMessage();
+    auto msg = invalidChatMessage();
 
     EXPECT_FALSE(msg->isInitialized());
 }
 
 TEST_F(AbstractMessageTest, ValidMessage) {
-    auto msg = validAbstractMessage();
+    auto msg = validChatMessage();
 
     EXPECT_TRUE(msg->isInitialized());
 }
 
 TEST_F(AbstractMessageTest, CloneMessage) {
-    auto msg1 = validAbstractMessage();
+    auto msg1 = validChatMessage();
     auto msg2 = msg1->clone();
 
     EXPECT_EQ(msg1->type(), msg2->type());

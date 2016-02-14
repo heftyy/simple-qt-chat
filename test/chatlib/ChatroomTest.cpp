@@ -2,6 +2,7 @@
 
 #include <chat/Chatee.h>
 #include <User.pb.h>
+#include <communication/Message.h>
 
 #include "resources/ChatroomTest.h"
 #include "../mocks/MockChatConnection.h"
@@ -76,11 +77,12 @@ TEST_F(ChatroomTest, MessageSend) {
 
 TEST_F(ChatroomTest, PropagateMessage) {
     //    using ::testing::_;
-    using ::testing::Ne;
+    using ::testing::Ne;    
+    using ::testing::Return;
 
     auto connection = new MockChatConnection;
-    EXPECT_CALL(*connection, sendMessageProxy(Ne(nullptr))).Times(1);
-    EXPECT_CALL(*connection, setChatee(Ne(nullptr))).Times(1);
+    EXPECT_CALL(*connection, sendMessageProxy(Ne(nullptr))).Times(2).WillRepeatedly(Return(true));
+    EXPECT_CALL(*connection, setChatee(Ne(nullptr))).Times(2);
 
     bool success;
     std::string message;
@@ -89,7 +91,8 @@ TEST_F(ChatroomTest, PropagateMessage) {
     std::tie(success, message, chatee) = room1->chateeJoined("first_chatee", connection);
     std::tie(success, message, chatee) = room1->chateeJoined("second_chatee", connection);
 
-
-
-    room1->propagateMessage();
+    auto msg = std::make_unique<UserChange>();
+    msg->mutable_user()->CopyFrom(chatee->user());
+    msg->set_action(JOINED);
+    room1->propagateMessage(MessageBuilder::build(std::move(msg)));
 }

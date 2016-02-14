@@ -3,8 +3,6 @@
 #include <memory>
 #include <string>
 
-#include <google/protobuf/message.h>
-
 #include <User.pb.h>
 
 namespace SimpleChat {

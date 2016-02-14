@@ -6,45 +6,40 @@
 #include "SerializerTest.h"
 
 class DeserializerTest : public ::testing::Test {
+public:
+    DeserializerTest()
+        : deserializerSuccess(validChatMessage()),
+          deserializerFail(invalidChatMessage()) {}
+
     using deser = SimpleChat::MessageDeserializer;
 
 protected:
     virtual void SetUp() override {
-        // success
-        deserializerSuccess = getValidMessage();
-
-        // fail
-        deserializerFail = getInvalidMessage();
     }
 
     virtual void TearDown() override {
-        deserializerSuccess.reset();
-        deserializerFail.reset();
     }
 
-    std::shared_ptr<deser> deserializerSuccess;
-    std::shared_ptr<deser> deserializerFail;
+    deser deserializerSuccess;
+    deser deserializerFail;
 
-public:
-    static std::shared_ptr<deser> getValidMessage() {
+    deser validChatMessage() const {
+        bool success;
+        std::string result;
+        
+        MessageSerializer s(std::move(AbstractMessageTest::validChatMessage()));
+        std::tie(success, result) = s.serialize();
+
+        return deser(result);
+    }
+
+    deser invalidChatMessage() const {
         bool success;
         std::string result;
 
-        std::tie(success, result) = SerializerTest::getValidMessage()->serialize();
+        MessageSerializer s(std::move(AbstractMessageTest::invalidChatMessage()));
+        std::tie(success, result) = s.serialize();
 
-        return std::make_shared<deser>(
-                result
-        );
-    }
-
-    static std::shared_ptr<deser> getInvalidMessage() {
-        bool success;
-        std::string result;
-
-        std::tie(success, result) = SerializerTest::getInvalidMessage()->serialize();
-
-        return std::make_shared<deser>(
-                result
-        );
+        return deser(result);
     }
 };

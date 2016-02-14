@@ -16,13 +16,13 @@ protected:
     virtual void TearDown() override {}
 
 public:
-    static std::unique_ptr<am> invalidAbstractMessage() {
+    static std::unique_ptr<am> invalidChatMessage() {
         auto message = std::make_unique<SimpleChat::ChatMessage>();
 
         return MessageBuilder::build(std::move(message));
     }
 
-    static std::unique_ptr<am> validAbstractMessage() {
+    static std::unique_ptr<am> validChatMessage() {
         auto message = std::make_unique<SimpleChat::ChatMessage>();
         message->set_text("text_message1");
 

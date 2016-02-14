@@ -8,31 +8,27 @@
 class SerializerTest : public ::testing::Test {
     using ser = SimpleChat::MessageSerializer;
 
+public:
+    SerializerTest() : 
+        serializerFail(validChatMessage()),
+        serializerSuccess(invalidChatMessage()) {
+    }    
+
 protected:
     virtual void SetUp() override {
-        // success
-        serializerSuccess = getValidMessage();
-
-        // fail
-        serializerFail = getInvalidMessage();
     }
 
     virtual void TearDown() override {
-        serializerSuccess.reset();
-        serializerFail.reset();
     }
 
-    std::shared_ptr<ser> serializerSuccess;
-    std::shared_ptr<ser> serializerFail;
-
-public:
-    static std::shared_ptr<ser> getValidMessage() {
-        return std::make_shared<ser>(
-                AbstractMessageTest::validAbstractMessage());
+    ser validChatMessage() const {
+        return MessageSerializer(std::move(AbstractMessageTest::invalidChatMessage()));
     }
 
-    static std::shared_ptr<ser> getInvalidMessage() {
-        return std::make_shared<ser>(
-                AbstractMessageTest::invalidAbstractMessage());
+    ser invalidChatMessage() const {
+        return MessageSerializer(std::move(AbstractMessageTest::validChatMessage()));
     }
+
+    ser serializerSuccess;
+    ser serializerFail;
 };
