@@ -48,8 +48,7 @@ void Chatee::sendChatMessage(const std::string& message, const std::string& from
     chatMessage->set_allocated_from(getTarget(from).release());
 
     this->prepareAndSend(
-            std::move(chatMessage),
-            CHAT_MESSAGE
+            std::move(chatMessage)
     );
 }
 
@@ -60,8 +59,7 @@ void Chatee::sendResponse(bool success, const std::string& message) {
     genericResponse->set_message(message);
 
     this->prepareAndSend(
-            std::move(genericResponse),
-            GENERIC_CHAT_RESPONSE
+            std::move(genericResponse)
     );
 }
 
@@ -71,8 +69,8 @@ void Chatee::mute(bool propagate) {
         response->set_status(MUTED);
         response->mutable_user()->CopyFrom(user());
 
-        chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
-            std::move(response), USER_CHANGE));
+        chatroom_.lock()->propagateMessage(
+            MessageBuilder::build(std::move(response)));
     }
 
     user_.set_status(MUTED);
@@ -84,8 +82,10 @@ void Chatee::kick(bool propagate) {
         response->set_action(KICKED);
         response->mutable_user()->CopyFrom(user());
 
-        chatroom_.lock()->propagateMessage(std::make_unique<Message<UserChange>>(
-            std::move(response), USER_CHANGE));
+        chatroom_.lock()->propagateMessage(
+            MessageBuilder::build(std::move(response)));
+
+        connection_->disconnectFromHost();
     }
 
     chatroom_.lock()->chateeLeft(user_.name());
@@ -124,28 +124,23 @@ User& Chatee::user() {
 }
 
 template<typename MessageType>
-void Chatee::prepareAndSend(std::unique_ptr<MessageType> message, int type) {
-    auto abstractMessage = std::make_unique<Message<MessageType>>(
-            std::move(message),
-            type
-    );
-
-    sendMessage(std::move(abstractMessage));
+void Chatee::prepareAndSend(std::unique_ptr<MessageType> message) {
+    sendMessage(MessageBuilder::build(std::move(message)));
 }
 
-template void Chatee::prepareAndSend<UserJoinRequest>(std::unique_ptr<UserJoinRequest> message, int type);
-template void Chatee::prepareAndSend<UserJoinResponse>(std::unique_ptr<UserJoinResponse> message, int type);
+template void Chatee::prepareAndSend<UserJoinRequest>(std::unique_ptr<UserJoinRequest> message);
+template void Chatee::prepareAndSend<UserJoinResponse>(std::unique_ptr<UserJoinResponse> message);
 
-template void Chatee::prepareAndSend<UserListRequest>(std::unique_ptr<UserListRequest> message, int type);
-template void Chatee::prepareAndSend<UserListResponse>(std::unique_ptr<UserListResponse> message, int type);
+template void Chatee::prepareAndSend<UserListRequest>(std::unique_ptr<UserListRequest> message);
+template void Chatee::prepareAndSend<UserListResponse>(std::unique_ptr<UserListResponse> message);
 
-template void Chatee::prepareAndSend<UserChange>(std::unique_ptr<UserChange> message, int type);
+template void Chatee::prepareAndSend<UserChange>(std::unique_ptr<UserChange> message);
 
-template void Chatee::prepareAndSend<ChatMessage>(std::unique_ptr<ChatMessage> message, int type);
-template void Chatee::prepareAndSend<ChatCommand>(std::unique_ptr<ChatCommand> message, int type);
+template void Chatee::prepareAndSend<ChatMessage>(std::unique_ptr<ChatMessage> message);
+template void Chatee::prepareAndSend<ChatCommand>(std::unique_ptr<ChatCommand> message);
 
-template void Chatee::prepareAndSend<ChatroomChange>(std::unique_ptr<ChatroomChange> message, int type);
+template void Chatee::prepareAndSend<ChatroomChange>(std::unique_ptr<ChatroomChange> message);
 
-template void Chatee::prepareAndSend<GenericChatResponse>(std::unique_ptr<GenericChatResponse> message, int type);
+template void Chatee::prepareAndSend<GenericChatResponse>(std::unique_ptr<GenericChatResponse> message);
 
 } // SimpleChat namespace

@@ -121,7 +121,7 @@ void TcpChatConnection::readyRead() {
 }
 
 void TcpChatConnection::disconnected() {
-    emit disconnectSignal();    
+    emit disconnectSignal();
 }
 
 } //SimpleChat namespace

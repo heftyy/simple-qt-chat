@@ -49,7 +49,7 @@ private:
     virtual std::unique_ptr<ChatTarget> getTarget(const std::string& target);
 
     template<typename MessageType>
-    void prepareAndSend(std::unique_ptr<MessageType> message, int type);
+    void prepareAndSend(std::unique_ptr<MessageType> message);
 };
 
 } // SimpleChat namespace

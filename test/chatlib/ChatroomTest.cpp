@@ -58,7 +58,7 @@ TEST_F(ChatroomTest, DeleteChatee) {
     EXPECT_NE(chatee, nullptr);
 }
 
-TEST_F(ChatroomTest, TestMessageSend) {
+TEST_F(ChatroomTest, MessageSend) {
 //    using ::testing::_;
     using ::testing::Ne;
 
@@ -72,4 +72,24 @@ TEST_F(ChatroomTest, TestMessageSend) {
     std::tie(success, message, chatee) = room1->chateeJoined("first_chatee", connection);
 
     chatee->sendChatMessage("first message", "first_chatee");
+}
+
+TEST_F(ChatroomTest, PropagateMessage) {
+    //    using ::testing::_;
+    using ::testing::Ne;
+
+    auto connection = new MockChatConnection;
+    EXPECT_CALL(*connection, sendMessageProxy(Ne(nullptr))).Times(1);
+    EXPECT_CALL(*connection, setChatee(Ne(nullptr))).Times(1);
+
+    bool success;
+    std::string message;
+    std::shared_ptr<SimpleChat::Chatee> chatee;
+
+    std::tie(success, message, chatee) = room1->chateeJoined("first_chatee", connection);
+    std::tie(success, message, chatee) = room1->chateeJoined("second_chatee", connection);
+
+
+
+    room1->propagateMessage();
 }

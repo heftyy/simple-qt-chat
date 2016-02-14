@@ -111,8 +111,7 @@ void Chatroom::setMotd(const std::string& motd) {
     auto chatroomChanged = std::make_unique<ChatroomChange>();
     chatroomChanged->set_motd(motd);
 
-    propagateMessage(std::make_unique<Message<ChatroomChange>>(
-            std::move(chatroomChanged), CHATROOM_CHANGE));
+    propagateMessage(MessageBuilder::build(std::move(chatroomChanged)));
 }
 
 std::string Chatroom::motd() {

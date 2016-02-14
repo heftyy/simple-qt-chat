@@ -34,8 +34,7 @@ void ChatServer::chateeLeft(const std::shared_ptr<Chatee>& chatee) {
         userChange->set_action(UserAction::LEFT);
         userChange->mutable_user()->CopyFrom(chatee->user());
 
-        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-            std::move(userChange), USER_CHANGE));
+        chatroom_->propagateMessage(MessageBuilder::build(std::move(userChange)));
     }
     else
         std::cerr << "removing the chatee failed" << std::endl;
@@ -94,14 +93,12 @@ void ChatServer::handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
         auto userChange = std::make_unique<UserChange>();
         userChange->set_action(UserAction::JOINED);
         userChange->mutable_user()->CopyFrom(chatee->user());
-        chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-                std::move(userChange), USER_CHANGE));
+        chatroom_->propagateMessage(MessageBuilder::build(std::move(userChange)));
 
         std::cout << "SERVER: " << joinRequest->DebugString().c_str() << std::endl;
     }
 
-    connection->sendMessage(std::make_unique<Message<UserJoinResponse>>(
-            std::move(response), USER_JOIN_RESPONSE));
+    connection->sendMessage(MessageBuilder::build(std::move(response)));
 }
 
 void ChatServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
@@ -114,8 +111,7 @@ void ChatServer::handleMessage(std::unique_ptr<UserListRequest> listRequest,
                 pair.second->user());
     }
 
-    sender->sendMessage(std::make_unique<Message<UserListResponse>>(
-            std::move(response), USER_LIST_RESPONSE));
+    sender->sendMessage(MessageBuilder::build(std::move(response)));
 }
 
 void ChatServer::handleMessage(std::unique_ptr<UserChange> userChange,
@@ -125,8 +121,7 @@ void ChatServer::handleMessage(std::unique_ptr<UserChange> userChange,
     if (userChange->has_status())
         sender->user().set_status(userChange->status());
 
-    chatroom_->propagateMessage(std::make_unique<Message<UserChange>>(
-            std::move(userChange), USER_CHANGE));
+    chatroom_->propagateMessage(MessageBuilder::build(std::move(userChange)));
 }
 
 void ChatServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const std::shared_ptr<Chatee>& sender) {
@@ -153,8 +148,7 @@ void ChatServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const s
         chatMessage->set_allocated_from(chatroom_->getTarget(sender->user().name()).release());
         std::cout << "SERVER: " << chatMessage->DebugString().c_str() << std::endl;
 
-        chatroom_->propagateMessage(std::make_unique<Message<ChatMessage>>(
-                std::move(chatMessage), CHAT_MESSAGE));
+        chatroom_->propagateMessage(MessageBuilder::build(std::move(chatMessage)));
     }
 }
 

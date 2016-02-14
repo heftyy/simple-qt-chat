@@ -25,8 +25,7 @@ bool ChatClient::sendCommand(const std::string& command) {
     auto message = commandParser.chatCommand(chatroom_->getTarget(clientName_));
     if(message) {
         auto result = sendAnyMessage(
-                std::make_unique<Message<ChatCommand>>(
-                        std::move(message), CHAT_COMMAND));
+            MessageBuilder::build(std::move(message)));
 
         if (!result) {
             std::cerr << "sending a command failed" << std::endl;
@@ -46,7 +45,7 @@ void ChatClient::sendMessage(const std::string& text, const std::string& target)
     }
 
     auto result = sendAnyMessage(
-            std::make_unique<Message<ChatMessage>>(std::move(chatMessage), CHAT_MESSAGE));
+            MessageBuilder::build(std::move(chatMessage)));
 
     if (!result)
         std::cerr << "sending a message failed" << std::endl;
@@ -172,16 +171,14 @@ void ChatClient::join() {
 
     joinRequest->set_name(clientName_);
 
-    sendAnyMessage(std::make_unique<Message<UserJoinRequest>>(
-            std::move(joinRequest), USER_JOIN_REQUEST));
+    sendAnyMessage(MessageBuilder::build(std::move(joinRequest)));
 }
 
 void ChatClient::requestUserList() {
     auto userListRequest = std::make_unique<UserListRequest>();
     userListRequest->set_name(clientName_);
 
-    sendAnyMessage(std::make_unique<Message<UserListRequest>>(
-            std::move(userListRequest), USER_LIST_REQUEST));
+    sendAnyMessage(MessageBuilder::build(std::move(userListRequest)));
 }
 
 std::shared_ptr<Chatroom> ChatClient::chatroom() {

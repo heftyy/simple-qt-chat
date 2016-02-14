@@ -162,16 +162,14 @@ void TcpChatClient::join() {
 
     joinRequest->set_name(clientName_);
 
-    serverConnection_->sendMessage(std::make_unique<Message<UserJoinRequest>>(
-        std::move(joinRequest), USER_JOIN_REQUEST));
+    serverConnection_->sendMessage(MessageBuilder::build(std::move(joinRequest)));
 }
 
 void TcpChatClient::requestUserList() {
     auto userListRequest = std::make_unique<UserListRequest>();
     userListRequest->set_name(clientName_);
 
-    serverConnection_->sendMessage(std::make_unique<Message<UserListRequest>>(
-        std::move(userListRequest), USER_LIST_REQUEST));
+    serverConnection_->sendMessage(MessageBuilder::build(std::move(userListRequest)));
 }
 
 QString TcpChatClient::format(const std::string& info) const {
