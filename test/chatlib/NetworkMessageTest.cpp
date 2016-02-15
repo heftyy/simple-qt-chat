@@ -16,7 +16,6 @@ SimpleChat::NetworkMessage createNetworkMessage() {
 
     auto networkMessageHeader = networkMessage.mutable_header();
     networkMessageHeader->set_type(SimpleChat::USER_JOIN_REQUEST);
-    networkMessageHeader->set_size(networkMessage.serialized_data().size());
 
     EXPECT_TRUE(networkMessageHeader->IsInitialized());
     EXPECT_TRUE(networkMessage.IsInitialized());
