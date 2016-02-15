@@ -15,28 +15,31 @@ class MessageDeserializer;
 class ChatConnection;
 class Chatee;
 
+/*!
+ * Interface for all chat servers.
+ */
 class Server {
 public:
     virtual ~Server() {}
 
     virtual void chateeLeft(const std::shared_ptr<Chatee>& chatee) = 0;
 
-    virtual void handleUntypedMessage(const MessageDeserializer& deserializer,
+    virtual void receiveUntypedMessage(const MessageDeserializer& deserializer,
                                       ChatConnection* connection) = 0;
 
-    virtual void handleMessage(std::unique_ptr<UserJoinRequest> joinRequest,
+    virtual void receiveMessage(std::unique_ptr<UserJoinRequest> joinRequest,
                                ChatConnection* connection) = 0;
 
-    virtual void handleMessage(std::unique_ptr<UserListRequest> listRequest,
+    virtual void receiveMessage(std::unique_ptr<UserListRequest> listRequest,
                                const std::shared_ptr<Chatee>& sender) = 0;
 
-    virtual void handleMessage(std::unique_ptr<UserChange> change,
+    virtual void receiveMessage(std::unique_ptr<UserChange> change,
                                const std::shared_ptr<Chatee>& sender) = 0;
 
-    virtual void handleMessage(std::unique_ptr<ChatMessage> chatMessage,
+    virtual void receiveMessage(std::unique_ptr<ChatMessage> chatMessage,
                                const std::shared_ptr<Chatee>& sender) = 0;
 
-    virtual void handleMessage(std::unique_ptr<ChatCommand> chatCommand,
+    virtual void receiveMessage(std::unique_ptr<ChatCommand> chatCommand,
                                const std::shared_ptr<Chatee>& sender) = 0;
 };
 

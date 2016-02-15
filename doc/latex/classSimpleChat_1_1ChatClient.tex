@@ -1,0 +1,113 @@
+\hypertarget{classSimpleChat_1_1ChatClient}{\section{Simple\-Chat\-:\-:Chat\-Client Class Reference}
+\label{classSimpleChat_1_1ChatClient}\index{Simple\-Chat\-::\-Chat\-Client@{Simple\-Chat\-::\-Chat\-Client}}
+}
+Inheritance diagram for Simple\-Chat\-:\-:Chat\-Client\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=4.000000cm]{classSimpleChat_1_1ChatClient}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a3ca3b550ca39f0e467568d47c02528e0}{virtual bool {\bfseries send\-Command} (const std\-::string \&command) override}\label{classSimpleChat_1_1ChatClient_a3ca3b550ca39f0e467568d47c02528e0}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a0b36d2b71249b8aa1b6a57e6a0e2c6e8}{virtual void {\bfseries send\-Message} (const std\-::string \&text, const std\-::string \&target=\char`\"{}\char`\"{}) override}\label{classSimpleChat_1_1ChatClient_a0b36d2b71249b8aa1b6a57e6a0e2c6e8}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a3cda3fd789bd6862bdfa0409b09f43aa}{virtual void {\bfseries handle\-Untyped\-Message} (const \hyperlink{classSimpleChat_1_1MessageDeserializer}{Message\-Deserializer} \&deserializer) override}\label{classSimpleChat_1_1ChatClient_a3cda3fd789bd6862bdfa0409b09f43aa}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_aef22a40abcc5c04daa080146e9f8e493}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1UserJoinResponse}{User\-Join\-Response} $>$ join\-Response) override}\label{classSimpleChat_1_1ChatClient_aef22a40abcc5c04daa080146e9f8e493}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_af5dddaded163059d6f77531c368d52d7}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1UserListResponse}{User\-List\-Response} $>$ list\-Response) override}\label{classSimpleChat_1_1ChatClient_af5dddaded163059d6f77531c368d52d7}
+
+\item 
+virtual void \hyperlink{classSimpleChat_1_1ChatClient_a432edc64a95f480235df3d1d7f55fbce}{handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1UserChange}{User\-Change} $>$ user\-Change) override
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_ae9c20505289ce814b27299cfb3a7db77}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1ChatMessage}{Chat\-Message} $>$ chat\-Message) override}\label{classSimpleChat_1_1ChatClient_ae9c20505289ce814b27299cfb3a7db77}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a5d5645f4e9f2915b273b7cb60bbc61de}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1ChatroomChange}{Chatroom\-Change} $>$ chatroom\-Change) override}\label{classSimpleChat_1_1ChatClient_a5d5645f4e9f2915b273b7cb60bbc61de}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a5022c5d4eced511bcd127c53e1442b21}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1GenericChatResponse}{Generic\-Chat\-Response} $>$ response) override}\label{classSimpleChat_1_1ChatClient_a5022c5d4eced511bcd127c53e1442b21}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_ae7f07c0ce640dc5d379914ecab79af3c}{virtual bool {\bfseries connect\-To\-Server} ()=0}\label{classSimpleChat_1_1ChatClient_ae7f07c0ce640dc5d379914ecab79af3c}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_ade4303abd1dc4a069b088976d310f696}{virtual void {\bfseries join} ()=0}\label{classSimpleChat_1_1ChatClient_ade4303abd1dc4a069b088976d310f696}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a7ab65b6cf92b058242c9a163afa89fd8}{virtual void {\bfseries request\-User\-List} ()=0}\label{classSimpleChat_1_1ChatClient_a7ab65b6cf92b058242c9a163afa89fd8}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a15fc2e659a8d36d3012127e0abf37b8f}{std\-::shared\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1Chatroom}{Chatroom} $>$ {\bfseries chatroom} ()}\label{classSimpleChat_1_1ChatClient_a15fc2e659a8d36d3012127e0abf37b8f}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a321f3bb9f9254740731b22babe4bc744}{virtual std\-::string {\bfseries name} () override}\label{classSimpleChat_1_1ChatClient_a321f3bb9f9254740731b22babe4bc744}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a5ded6a9e1c646519402fac5d04d68859}{virtual bool {\bfseries send\-Any\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1AbstractMessage}{Abstract\-Message} $>$ message) override=0}\label{classSimpleChat_1_1ChatClient_a5ded6a9e1c646519402fac5d04d68859}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a6e715c23071858bc5c67b7146f9f18eb}{virtual bool {\bfseries is\-Connected} () override=0}\label{classSimpleChat_1_1ChatClient_a6e715c23071858bc5c67b7146f9f18eb}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a5a949c5938522983e0fee9d99fd10cb5}{virtual \hyperlink{classSimpleChat_1_1ChatConnection}{Chat\-Connection} $\ast$ {\bfseries connection} () override=0}\label{classSimpleChat_1_1ChatClient_a5a949c5938522983e0fee9d99fd10cb5}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a7284056b4774b6c04f11dc289f93805f}{virtual void {\bfseries chatee\-Joined} (const std\-::string \&name) override=0}\label{classSimpleChat_1_1ChatClient_a7284056b4774b6c04f11dc289f93805f}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a48b62cbb729cd0283f288caf6645d337}{virtual void {\bfseries chatee\-Left} (const std\-::string \&name) override=0}\label{classSimpleChat_1_1ChatClient_a48b62cbb729cd0283f288caf6645d337}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a13e625d13df8858301c14170292a9503}{virtual void {\bfseries chat\-Motd\-Changed} (const std\-::string \&motd) override=0}\label{classSimpleChat_1_1ChatClient_a13e625d13df8858301c14170292a9503}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_aac3558bb326904aee565d90cbd95e2c6}{virtual void {\bfseries chat\-Info\-Received} (const std\-::string \&info) override=0}\label{classSimpleChat_1_1ChatClient_aac3558bb326904aee565d90cbd95e2c6}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_ac56ed6f591d5a4843b1b0e017ed3ca2e}{virtual void {\bfseries chat\-Message\-Received} (const std\-::string \&text, const std\-::string \&from, const std\-::string \&target) override=0}\label{classSimpleChat_1_1ChatClient_ac56ed6f591d5a4843b1b0e017ed3ca2e}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a5591d713d7df3fe488c2df7b9b9d869a}{virtual void {\bfseries refresh\-Chatee\-List} () override=0}\label{classSimpleChat_1_1ChatClient_a5591d713d7df3fe488c2df7b9b9d869a}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_ab70046d19ca2c6cfc0ed522405fcbeaa}{std\-::string {\bfseries client\-Name\-\_\-}}\label{classSimpleChat_1_1ChatClient_ab70046d19ca2c6cfc0ed522405fcbeaa}
+
+\item 
+\hypertarget{classSimpleChat_1_1ChatClient_a46b558b9a65e8699d67ce7bda11681f0}{std\-::shared\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1Chatroom}{Chatroom} $>$ {\bfseries chatroom\-\_\-}}\label{classSimpleChat_1_1ChatClient_a46b558b9a65e8699d67ce7bda11681f0}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSimpleChat_1_1ChatClient_a432edc64a95f480235df3d1d7f55fbce}{\index{Simple\-Chat\-::\-Chat\-Client@{Simple\-Chat\-::\-Chat\-Client}!handle\-Message@{handle\-Message}}
+\index{handle\-Message@{handle\-Message}!SimpleChat::ChatClient@{Simple\-Chat\-::\-Chat\-Client}}
+\subsubsection[{handle\-Message}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Chat\-::\-Chat\-Client\-::handle\-Message (
+\begin{DoxyParamCaption}
+\item[{std\-::unique\-\_\-ptr$<$ {\bf User\-Change} $>$}]{user\-Change}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSimpleChat_1_1ChatClient_a432edc64a95f480235df3d1d7f55fbce}
+check for join first because chatee doesn't exist yet 
+
+Implements \hyperlink{classSimpleChat_1_1Client}{Simple\-Chat\-::\-Client}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+chatlib/client/Chat\-Client.\-h\item 
+chatlib/client/Chat\-Client.\-cpp\end{DoxyCompactItemize}

@@ -1,0 +1,54 @@
+\hypertarget{classSimpleChat_1_1Chatee}{\section{Simple\-Chat\-:\-:Chatee Class Reference}
+\label{classSimpleChat_1_1Chatee}\index{Simple\-Chat\-::\-Chatee@{Simple\-Chat\-::\-Chatee}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_aa83e4ea06b6ff0ec85410c1abb2cc62b}{{\bfseries Chatee} (const \hyperlink{classSimpleChat_1_1User}{User} \&user, \hyperlink{classSimpleChat_1_1ChatConnection}{Chat\-Connection} $\ast$connection, std\-::shared\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1Chatroom}{Chatroom} $>$ chatroom)}\label{classSimpleChat_1_1Chatee_aa83e4ea06b6ff0ec85410c1abb2cc62b}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_a7fbd4397978d0c603a9a485ad78d60ba}{\hyperlink{classSimpleChat_1_1User}{User} \& {\bfseries user} ()}\label{classSimpleChat_1_1Chatee_a7fbd4397978d0c603a9a485ad78d60ba}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_a50dd83ccddcb599fc6a9ed0dfb7f5f1e}{bool {\bfseries send\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1AbstractMessage}{Abstract\-Message} $>$ message)}\label{classSimpleChat_1_1Chatee_a50dd83ccddcb599fc6a9ed0dfb7f5f1e}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_a4678783008a283355896b32643b881bc}{void {\bfseries send\-Chat\-Message} (const std\-::string \&message, const std\-::string \&from, const std\-::string \&target=\char`\"{}\char`\"{})}\label{classSimpleChat_1_1Chatee_a4678783008a283355896b32643b881bc}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_ab06c30e73c50b3f0daa55834fc160e96}{void {\bfseries send\-Response} (bool success, const std\-::string \&message)}\label{classSimpleChat_1_1Chatee_ab06c30e73c50b3f0daa55834fc160e96}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_afe41bc771c6ed37cb46e05d81e8f8167}{void {\bfseries mute} (bool propagate)}\label{classSimpleChat_1_1Chatee_afe41bc771c6ed37cb46e05d81e8f8167}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_a51783a98bb0247d3590ce8bb1ba4ab71}{void {\bfseries unmute} (bool propagate)}\label{classSimpleChat_1_1Chatee_a51783a98bb0247d3590ce8bb1ba4ab71}
+
+\item 
+void \hyperlink{classSimpleChat_1_1Chatee_a6f559b4a9199f412a1daeb601b935ac9}{kick} (bool propagate)
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_ae12a6ade9ae6daca07608acc88d5cfc0}{\hyperlink{classSimpleChat_1_1ChatConnection}{Chat\-Connection} $\ast$ {\bfseries connection} () const }\label{classSimpleChat_1_1Chatee_ae12a6ade9ae6daca07608acc88d5cfc0}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_a8c22ba161574ce78241a1635ee214ee8}{bool {\bfseries authorized} () const }\label{classSimpleChat_1_1Chatee_a8c22ba161574ce78241a1635ee214ee8}
+
+\item 
+\hypertarget{classSimpleChat_1_1Chatee_a51edbd8720b88b68761c0ebcbd8cc4c0}{void {\bfseries set\-Authorized} (bool authorized)}\label{classSimpleChat_1_1Chatee_a51edbd8720b88b68761c0ebcbd8cc4c0}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSimpleChat_1_1Chatee_a6f559b4a9199f412a1daeb601b935ac9}{\index{Simple\-Chat\-::\-Chatee@{Simple\-Chat\-::\-Chatee}!kick@{kick}}
+\index{kick@{kick}!SimpleChat::Chatee@{Simple\-Chat\-::\-Chatee}}
+\subsubsection[{kick}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\-Chat\-::\-Chatee\-::kick (
+\begin{DoxyParamCaption}
+\item[{bool}]{propagate}
+\end{DoxyParamCaption}
+)}}\label{classSimpleChat_1_1Chatee_a6f559b4a9199f412a1daeb601b935ac9}
+propagate will be true when the server calls this function so we should drop the connection to the kicked client 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+chatlib/chat/Chatee.\-h\item 
+chatlib/chat/Chatee.\-cpp\end{DoxyCompactItemize}

@@ -34,7 +34,7 @@ void ChatDialog::appendMessage(const QString& message, const QString& from, cons
     if (from.isEmpty() || message.isEmpty())
         return;
 
-    if(target.isEmpty()) { //! global message
+    if(target.isEmpty()) { // global message
         auto cursor(textEdit->textCursor());
         cursor.movePosition(QTextCursor::End);
         auto table = cursor.insertTable(1, 2, tableFormat);
@@ -43,7 +43,7 @@ void ChatDialog::appendMessage(const QString& message, const QString& from, cons
         auto bar = textEdit->verticalScrollBar();
         bar->setValue(bar->maximum());
     }
-    else { //! whisper message
+    else { // whisper message
         auto color = textEdit->textColor();
         textEdit->setTextColor(QColor(120, 0, 150, 155));
         textEdit->append(tr("* %1: %2").arg(from, message));
@@ -72,7 +72,7 @@ void ChatDialog::appendMotd(const QString& motd) const {
 }
 
 void ChatDialog::refreshList() {
-    //! remove chatees from the widget list
+    // remove chatees from the widget list
     for (auto i = 0; i < userListWidget->count(); ++i) {
         auto item = userListWidget->item(i);
         auto name = item->text().toStdString();
@@ -81,7 +81,7 @@ void ChatDialog::refreshList() {
         }
     }
 
-    //! add chatees to the widget list
+    // add chatees to the widget list
     for (auto const& entry : chatClient->chatroom()->map()) {
         auto name = QString::fromStdString(entry.second->user().name());
         auto items = userListWidget->findItems(name,
@@ -99,7 +99,7 @@ void ChatDialog::returnPressed() const {
     if (text.startsWith('/')) {
         QString message;
 
-        if (text.startsWith("/w")) { //! whisper
+        if (text.startsWith("/w")) { // whisper
             auto list = text.split(' ');
 
             if (list.size() < 3)
@@ -113,7 +113,7 @@ void ChatDialog::returnPressed() const {
                 chatClient->sendMessage(list.join(" ").toStdString(), target);
             }
         }
-        else { //! command
+        else { // command
             auto success = chatClient->sendCommand(text.toStdString());
             if (success)
                 message = tr("* sending command: %1").arg(text);
@@ -155,7 +155,7 @@ void ChatDialog::showInformation() {
 
 void ChatDialog::loginToChat(const QString& address, quint16 port, const QString& name) {
     loginDialog->hide();
-    if(chatClient->login(address, port, name)) { //! if login succeeded show the chat window
+    if(chatClient->login(address, port, name)) { // if login succeeded show the chat window
         this->showChat();
     }
     else {

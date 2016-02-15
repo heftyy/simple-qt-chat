@@ -57,7 +57,6 @@ void LoginDialog::bindEvents() const {
 
     connect(loginButton, SIGNAL(clicked()),
             this, SLOT(login()));
-
     connect(quitButton, SIGNAL(clicked()),
             this, SLOT(close()));
 }

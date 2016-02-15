@@ -14,8 +14,8 @@
 namespace SimpleChat {
 
 Chatee::Chatee(const User& user,
-               ChatConnection* connection, 
-               std::shared_ptr<Chatroom> chatroom) :
+               ChatConnection* connection,
+               const std::shared_ptr<Chatroom>& chatroom) :
         user_(user),
         connection_(connection), 
         chatroom_(chatroom),
@@ -36,8 +36,6 @@ bool Chatee::sendMessage(std::unique_ptr<AbstractMessage> message) {
 
 void Chatee::sendChatMessage(const std::string& message, const std::string& from, const std::string& target) {
     auto chatMessage = std::make_unique<ChatMessage>();
-    auto duration = std::chrono::system_clock::now().time_since_epoch();
-    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
     chatMessage->set_text(message);
     if(target.empty())

@@ -1,0 +1,100 @@
+\hypertarget{classSimpleChat_1_1Client}{\section{Simple\-Chat\-:\-:Client Class Reference}
+\label{classSimpleChat_1_1Client}\index{Simple\-Chat\-::\-Client@{Simple\-Chat\-::\-Client}}
+}
+Inheritance diagram for Simple\-Chat\-:\-:Client\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=4.000000cm]{classSimpleChat_1_1Client}
+\end{center}
+\end{figure}
+\subsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1Client_af340df83298809f010245e79848566ff}{void {\bfseries new\-Message} (const Q\-String \&from, const Q\-String \&message)}\label{classSimpleChat_1_1Client_af340df83298809f010245e79848566ff}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_ad5cb656ab4f18f8299ece913c880e484}{void {\bfseries new\-Participant} (const Q\-String \&nick)}\label{classSimpleChat_1_1Client_ad5cb656ab4f18f8299ece913c880e484}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a84c8aa20f1476230237234bc0d35df28}{void {\bfseries participant\-Left} (const Q\-String \&nick)}\label{classSimpleChat_1_1Client_a84c8aa20f1476230237234bc0d35df28}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1Client_afc4e5a32a2c8b9c9522ead7f101a3629}{virtual bool {\bfseries send\-Command} (const std\-::string \&command)=0}\label{classSimpleChat_1_1Client_afc4e5a32a2c8b9c9522ead7f101a3629}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_ad0504f9d44fc4a2e9bc467aa7beb0950}{virtual void {\bfseries send\-Message} (const std\-::string \&text, const std\-::string \&target)=0}\label{classSimpleChat_1_1Client_ad0504f9d44fc4a2e9bc467aa7beb0950}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_ad0b8c66ae9d8eb6a03922381da5cacb7}{virtual void {\bfseries handle\-Untyped\-Message} (const \hyperlink{classSimpleChat_1_1MessageDeserializer}{Message\-Deserializer} \&deserializer)=0}\label{classSimpleChat_1_1Client_ad0b8c66ae9d8eb6a03922381da5cacb7}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a8de58147fb0d696d936fb890de16532b}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1UserJoinResponse}{User\-Join\-Response} $>$ join\-Response)=0}\label{classSimpleChat_1_1Client_a8de58147fb0d696d936fb890de16532b}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a217efb7a31801a0b67513f88a45bd008}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1UserListResponse}{User\-List\-Response} $>$ list\-Response)=0}\label{classSimpleChat_1_1Client_a217efb7a31801a0b67513f88a45bd008}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a764eb53f0c377f3a6b7bd7e969ed3836}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1UserChange}{User\-Change} $>$ user\-Change)=0}\label{classSimpleChat_1_1Client_a764eb53f0c377f3a6b7bd7e969ed3836}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_af23c5866ac9992d98afd4cd6a71da0cd}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1ChatMessage}{Chat\-Message} $>$ chat\-Message)=0}\label{classSimpleChat_1_1Client_af23c5866ac9992d98afd4cd6a71da0cd}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a235dfb2fb833d30ae89b45d137e2b213}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1ChatroomChange}{Chatroom\-Change} $>$ chatroom\-Change)=0}\label{classSimpleChat_1_1Client_a235dfb2fb833d30ae89b45d137e2b213}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_abb550a7e0ca6b2cd238ac260280554f6}{virtual void {\bfseries handle\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1GenericChatResponse}{Generic\-Chat\-Response} $>$ response)=0}\label{classSimpleChat_1_1Client_abb550a7e0ca6b2cd238ac260280554f6}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_ae43df7f8403aa1f21ef11e3ded5f808f}{virtual std\-::string {\bfseries name} ()=0}\label{classSimpleChat_1_1Client_ae43df7f8403aa1f21ef11e3ded5f808f}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a288256d4752a558bbaeb5923b5764f31}{void {\bfseries send\-Message} (const Q\-String \&message)}\label{classSimpleChat_1_1Client_a288256d4752a558bbaeb5923b5764f31}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a9c42ea3b937cd82970e45ab8f54e3f4a}{Q\-String {\bfseries nick\-Name} () const }\label{classSimpleChat_1_1Client_a9c42ea3b937cd82970e45ab8f54e3f4a}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a11d8ef0ed9f8b3faf08f300452d334fd}{bool {\bfseries has\-Connection} (const Q\-Host\-Address \&sender\-Ip, int sender\-Port=-\/1) const }\label{classSimpleChat_1_1Client_a11d8ef0ed9f8b3faf08f300452d334fd}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1Client_a19905e07f2ac81e2ca87d34f3c33b644}{virtual bool {\bfseries send\-Any\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1AbstractMessage}{Abstract\-Message} $>$ message)=0}\label{classSimpleChat_1_1Client_a19905e07f2ac81e2ca87d34f3c33b644}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a4f93456c5efced8bf96daef1bb0610d3}{virtual bool {\bfseries is\-Connected} ()=0}\label{classSimpleChat_1_1Client_a4f93456c5efced8bf96daef1bb0610d3}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_aee36c38a69fe31cfb4c8d72c01ddd800}{virtual \hyperlink{classSimpleChat_1_1ChatConnection}{Chat\-Connection} $\ast$ {\bfseries connection} ()=0}\label{classSimpleChat_1_1Client_aee36c38a69fe31cfb4c8d72c01ddd800}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_add3430eee8109327eed83af837a83cb2}{virtual void {\bfseries chatee\-Joined} (const std\-::string \&name)=0}\label{classSimpleChat_1_1Client_add3430eee8109327eed83af837a83cb2}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a53c4e72ce4e4507bfa39618ca8c8fd85}{virtual void {\bfseries chatee\-Left} (const std\-::string \&name)=0}\label{classSimpleChat_1_1Client_a53c4e72ce4e4507bfa39618ca8c8fd85}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a5a2d88daf56fa9f4d902640de2a05cec}{virtual void {\bfseries chat\-Motd\-Changed} (const std\-::string \&motd)=0}\label{classSimpleChat_1_1Client_a5a2d88daf56fa9f4d902640de2a05cec}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_a52f9ef387936a4c4016d08b76acf01ae}{virtual void {\bfseries chat\-Info\-Received} (const std\-::string \&info)=0}\label{classSimpleChat_1_1Client_a52f9ef387936a4c4016d08b76acf01ae}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_af0f9d6bb94b8c9e298b5d096076ef4b4}{virtual void {\bfseries chat\-Message\-Received} (const std\-::string \&text, const std\-::string \&from, const std\-::string \&target)=0}\label{classSimpleChat_1_1Client_af0f9d6bb94b8c9e298b5d096076ef4b4}
+
+\item 
+\hypertarget{classSimpleChat_1_1Client_ac84496dbdb46724afb643ebbacb7e06d}{virtual void {\bfseries refresh\-Chatee\-List} ()=0}\label{classSimpleChat_1_1Client_ac84496dbdb46724afb643ebbacb7e06d}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+chatlib/client/Client.\-h\item 
+client/client\-\_\-old.\-h\item 
+client/client.\-cpp\end{DoxyCompactItemize}

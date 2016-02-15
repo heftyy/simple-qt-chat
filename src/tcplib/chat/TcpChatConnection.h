@@ -12,6 +12,12 @@ namespace SimpleChat {
 class MessageDeserializer;
 class Chatee;
 
+/*!
+ * A ChatConnection implementation using Qt.
+ * Holds a QTcpSocket to write to and read from.
+ *
+ * TcpChatConnection is a QObject and emits signals.
+ */
 class TcpChatConnection : public QObject,
                           public ChatConnection {
     Q_OBJECT
@@ -21,6 +27,13 @@ public:
 
     void init() const;
 
+    /*!
+     * Non blocking.
+     * Serializes the AbstractMessage interface and writes to socket.
+     *
+     * Returns true if serialization succeeded, doesn't wait for all
+     * bytes to be sent.
+     */
     virtual bool sendMessage(std::unique_ptr<AbstractMessage> message) override;
     virtual bool isAlive() const override;
     virtual std::string getIdent() const override;

@@ -9,13 +9,27 @@ namespace SimpleChat {
 class User;
 class TcpChatConnection;
 
+/*!
+ * Implements all virtual networking related methods in ChatClient.
+ * Provides multiple signals to be used by the GUI.
+ *
+ * Holds a TcpChatConnection to the server.
+ */
 class TcpChatClient : public QObject, public ChatClient {
     Q_OBJECT
 public:
     explicit TcpChatClient(QObject* parent = nullptr);
     ~TcpChatClient();
 
+    /*!
+     * Creates a connection to the server and attempts to join the chat.
+     * Joining the server is non-blocking.
+     * Returns true if the connection has been established.
+     */
     virtual bool login(const QString& address, quint16 port, const QString& name);
+    /*!
+     * Disconnects from server.
+     */
     virtual void logout();
 
     virtual bool connectToServer() override;

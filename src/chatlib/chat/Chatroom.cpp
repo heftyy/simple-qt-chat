@@ -13,10 +13,6 @@ Chatroom::Chatroom() :
     nextUserId(1) {
 }
 
-
-Chatroom::~Chatroom() {
-}
-
 std::tuple<bool, std::string, std::shared_ptr<Chatee>>
 Chatroom::chateeJoined(const std::string& name,
                        ChatConnection* connection) {

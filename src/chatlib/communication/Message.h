@@ -11,6 +11,10 @@
 
 namespace SimpleChat {
 
+/*!
+ * Container class for any protobuf message type.
+ * Stores type of the message.
+ */
 template
 <
     typename MessageType,
@@ -55,6 +59,11 @@ private:
     int type_;
 };
 
+/*!
+ * Helper class with static methods for building a Message.
+ * Has overloads for all message types used in this chat and
+ * sets their types accordingly.
+ */
 class MessageBuilder {
 public:
     static std::unique_ptr<Message<UserJoinRequest>> build(std::unique_ptr<UserJoinRequest> message) {

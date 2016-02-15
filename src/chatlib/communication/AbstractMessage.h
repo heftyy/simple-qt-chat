@@ -9,6 +9,9 @@ namespace SimpleChat {
 
 using ProtobufMsg = google::protobuf::Message;
 
+/*!
+ * Interface for all protobuf messages.
+ */
 class AbstractMessage {
 public:
     virtual ~AbstractMessage() {};

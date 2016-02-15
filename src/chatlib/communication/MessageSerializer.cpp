@@ -21,7 +21,6 @@ std::tuple<bool, std::string> MessageSerializer::serialize() const {
     networkMessageHeader->set_type(
         static_cast<NetworkMessageType>(abstractMessage_->type())
     );
-    networkMessageHeader->set_size(1);
 
     return std::make_tuple(true, networkMessage.SerializeAsString());
 }

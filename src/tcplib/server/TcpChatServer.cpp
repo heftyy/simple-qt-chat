@@ -30,7 +30,7 @@ TcpChatServer::~TcpChatServer() {
 }
 
 void TcpChatServer::listen(quint16 port, const QHostAddress& ipAddress) {
-    openSession(port, ipAddress);
+    start(port, ipAddress);
 
     connect(tcpServer_, SIGNAL(newConnection()),
             this, SLOT(connectionEstablished()));
@@ -41,7 +41,7 @@ void TcpChatServer::handleUntypedMessage(const QString& serializedMessage) {
 
     auto deserializer = MessageDeserializer(serializedMessage.toStdString());
 
-    ChatServer::handleUntypedMessage(deserializer, connection);
+    receiveUntypedMessage(deserializer, connection);
 }
 
 void TcpChatServer::connectionEstablished() {
@@ -92,7 +92,7 @@ void TcpChatServer::connectionLost() {
     connection->deleteLater();
 }
 
-void TcpChatServer::openSession(quint16 port, const QHostAddress& ipAddress) {
+void TcpChatServer::start(quint16 port, const QHostAddress& ipAddress) {
     tcpServer_ = new QTcpServer(this);
     if (!tcpServer_->listen(ipAddress, port)) {
         qCritical() << "opening listening port failed";

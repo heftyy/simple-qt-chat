@@ -4,11 +4,22 @@
 
 namespace SimpleChat {
 
+/*!
+ * Simple dialog for logging into the chat.
+ *
+ * Shows a form with:
+ *   - host address
+ *   - host port
+ *   - nickname
+ */
 class LoginDialog : public QDialog {
     Q_OBJECT
 public:
     explicit LoginDialog(QWidget *parent = nullptr);
 
+    /*!
+     * Setup method that creates all necessary widgets and connects signals.
+     */
     void setupDialog();
     void setEnableLogin(bool enabled) const;
 

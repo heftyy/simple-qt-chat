@@ -15,6 +15,9 @@ class AbstractMessage;
 class MessageDeserializer;
 class ChatConnection;
 
+/*!
+ * Interface for all chat clients.
+ */
 class Client {
 public:
     virtual ~Client() { }
@@ -22,14 +25,14 @@ public:
     virtual bool sendCommand(const std::string& command) = 0;
     virtual void sendMessage(const std::string& text, const std::string& target) = 0;
 
-    virtual void handleUntypedMessage(const MessageDeserializer& deserializer) = 0;
+    virtual void receiveUntypedMessage(const MessageDeserializer& deserializer) = 0;
 
-    virtual void handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) = 0;
-    virtual void handleMessage(std::unique_ptr<UserListResponse> listResponse) = 0;
-    virtual void handleMessage(std::unique_ptr<UserChange> userChange) = 0;
-    virtual void handleMessage(std::unique_ptr<ChatMessage> chatMessage) = 0;
-    virtual void handleMessage(std::unique_ptr<ChatroomChange> chatroomChange) = 0;
-    virtual void handleMessage(std::unique_ptr<GenericChatResponse> response) = 0;
+    virtual void receiveMessage(std::unique_ptr<UserJoinResponse> joinResponse) = 0;
+    virtual void receiveMessage(std::unique_ptr<UserListResponse> listResponse) = 0;
+    virtual void receiveMessage(std::unique_ptr<UserChange> userChange) = 0;
+    virtual void receiveMessage(std::unique_ptr<ChatMessage> chatMessage) = 0;
+    virtual void receiveMessage(std::unique_ptr<ChatroomChange> chatroomChange) = 0;
+    virtual void receiveMessage(std::unique_ptr<GenericChatResponse> response) = 0;
 
     virtual std::string name() = 0;
 

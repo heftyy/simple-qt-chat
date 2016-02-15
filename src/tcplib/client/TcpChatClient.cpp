@@ -93,7 +93,7 @@ void TcpChatClient::refreshChateeList() {
 void TcpChatClient::handleUntypedMessage(const QString& serializedData) {
 
     auto deserializer = MessageDeserializer(serializedData.toStdString());
-    ChatClient::handleUntypedMessage(deserializer);
+    receiveUntypedMessage(deserializer);
 }
 
 void TcpChatClient::connectionLost() {

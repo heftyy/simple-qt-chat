@@ -20,7 +20,6 @@ enum NetworkMessageType {
 
 message NetworkMessageHeader {
     required NetworkMessageType type = 1;
-    required int32 size = 2;
 }
 
 message NetworkMessage {

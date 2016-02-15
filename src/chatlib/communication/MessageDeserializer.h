@@ -18,7 +18,9 @@ public:
     explicit MessageDeserializer(const std::string& serializedMessage);
 
     /*!
-     *
+     * Uses the given template to create a message and fills the data.
+     * You must make sure that the message type matches the template
+     * before calling this method.
      */
     template<typename MessageType>
     auto getMessage() const -> std::unique_ptr<MessageType>;

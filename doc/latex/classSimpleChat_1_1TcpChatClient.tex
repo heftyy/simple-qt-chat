@@ -1,0 +1,89 @@
+\hypertarget{classSimpleChat_1_1TcpChatClient}{\section{Simple\-Chat\-:\-:Tcp\-Chat\-Client Class Reference}
+\label{classSimpleChat_1_1TcpChatClient}\index{Simple\-Chat\-::\-Tcp\-Chat\-Client@{Simple\-Chat\-::\-Tcp\-Chat\-Client}}
+}
+Inheritance diagram for Simple\-Chat\-:\-:Tcp\-Chat\-Client\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=4.000000cm]{classSimpleChat_1_1TcpChatClient}
+\end{center}
+\end{figure}
+\subsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_ad227e90be4ba4c6c4ca05e6dc0f910ee}{void {\bfseries chatee\-Joined\-Signal} (const Q\-String \&name)}\label{classSimpleChat_1_1TcpChatClient_ad227e90be4ba4c6c4ca05e6dc0f910ee}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a9b92c990073439c47e147b3e6f2bfc2c}{void {\bfseries chatee\-Left\-Signal} (const Q\-String \&name)}\label{classSimpleChat_1_1TcpChatClient_a9b92c990073439c47e147b3e6f2bfc2c}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a361335d681dd4de2bb0b2ce4e34ff95f}{void {\bfseries chat\-Message\-Signal} (const Q\-String \&text, const Q\-String \&from, const Q\-String \&target)}\label{classSimpleChat_1_1TcpChatClient_a361335d681dd4de2bb0b2ce4e34ff95f}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a78428ed1c3f1dd6f9c28497c7f2bfa2a}{void {\bfseries chat\-Info\-Signal} (const Q\-String \&text)}\label{classSimpleChat_1_1TcpChatClient_a78428ed1c3f1dd6f9c28497c7f2bfa2a}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_ae36b13ea9eaa5787c75f3f911e2afd68}{void {\bfseries chat\-Motd\-Signal} (const Q\-String \&motd)}\label{classSimpleChat_1_1TcpChatClient_ae36b13ea9eaa5787c75f3f911e2afd68}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a3d7860281a1ab069e5eaf367ba93b54d}{void {\bfseries chat\-Refresh\-List\-Signal} ()}\label{classSimpleChat_1_1TcpChatClient_a3d7860281a1ab069e5eaf367ba93b54d}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_acd13e1bf8749dd0395e51ceabc7fdaf5}{{\bfseries Tcp\-Chat\-Client} (Q\-Object $\ast$parent=nullptr)}\label{classSimpleChat_1_1TcpChatClient_acd13e1bf8749dd0395e51ceabc7fdaf5}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a5f6302e6e92f8fc60721d5f042a2bd0a}{virtual bool {\bfseries login} (const Q\-String \&address, quint16 port, const Q\-String \&name)}\label{classSimpleChat_1_1TcpChatClient_a5f6302e6e92f8fc60721d5f042a2bd0a}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a7d582f1bee13aeaf77829fcdfef1cca4}{virtual void {\bfseries logout} ()}\label{classSimpleChat_1_1TcpChatClient_a7d582f1bee13aeaf77829fcdfef1cca4}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a4140c1693b4b675a4510f39ae51f593c}{virtual bool {\bfseries connect\-To\-Server} () override}\label{classSimpleChat_1_1TcpChatClient_a4140c1693b4b675a4510f39ae51f593c}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_aef8015e0b6b273e671e7dcfd56dda837}{virtual void {\bfseries join} () override}\label{classSimpleChat_1_1TcpChatClient_aef8015e0b6b273e671e7dcfd56dda837}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_abd27db3215c87dad68dbd2fd3c801ab8}{virtual void {\bfseries request\-User\-List} () override}\label{classSimpleChat_1_1TcpChatClient_abd27db3215c87dad68dbd2fd3c801ab8}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_ab2f4d6615bdb673a6f754aaff462a967}{virtual bool {\bfseries send\-Any\-Message} (std\-::unique\-\_\-ptr$<$ \hyperlink{classSimpleChat_1_1AbstractMessage}{Abstract\-Message} $>$ message) override}\label{classSimpleChat_1_1TcpChatClient_ab2f4d6615bdb673a6f754aaff462a967}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a05f4734c927c055a6c0a261d6639e55d}{virtual bool {\bfseries is\-Connected} () override}\label{classSimpleChat_1_1TcpChatClient_a05f4734c927c055a6c0a261d6639e55d}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a2ac493213fa789c77acc23b7e03ce535}{virtual \hyperlink{classSimpleChat_1_1ChatConnection}{Chat\-Connection} $\ast$ {\bfseries connection} () override}\label{classSimpleChat_1_1TcpChatClient_a2ac493213fa789c77acc23b7e03ce535}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_abc3d3475944f9000fa37af0e74ef1eda}{virtual void {\bfseries chatee\-Joined} (const std\-::string \&name) override}\label{classSimpleChat_1_1TcpChatClient_abc3d3475944f9000fa37af0e74ef1eda}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a0ff71a80179c4d0306fc09ed4a475bcc}{virtual void {\bfseries chatee\-Left} (const std\-::string \&name) override}\label{classSimpleChat_1_1TcpChatClient_a0ff71a80179c4d0306fc09ed4a475bcc}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a1d62652f659ae0a4608ec90f86ac3fea}{virtual void {\bfseries chat\-Motd\-Changed} (const std\-::string \&motd) override}\label{classSimpleChat_1_1TcpChatClient_a1d62652f659ae0a4608ec90f86ac3fea}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a69db86b7aa3a140ad5d7ae108ae90668}{virtual void {\bfseries chat\-Info\-Received} (const std\-::string \&info) override}\label{classSimpleChat_1_1TcpChatClient_a69db86b7aa3a140ad5d7ae108ae90668}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_ad554ab47a5e5b5876769af6cf3241665}{virtual void {\bfseries chat\-Message\-Received} (const std\-::string \&text, const std\-::string \&from, const std\-::string \&target) override}\label{classSimpleChat_1_1TcpChatClient_ad554ab47a5e5b5876769af6cf3241665}
+
+\item 
+\hypertarget{classSimpleChat_1_1TcpChatClient_a87835c8bcce725938c6dc470a8711232}{virtual void {\bfseries refresh\-Chatee\-List} () override}\label{classSimpleChat_1_1TcpChatClient_a87835c8bcce725938c6dc470a8711232}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+tcplib/client/Tcp\-Chat\-Client.\-h\item 
+tcplib/client/Tcp\-Chat\-Client.\-cpp\item 
+tcplib/moc\-\_\-\-Tcp\-Chat\-Client.\-cpp\end{DoxyCompactItemize}

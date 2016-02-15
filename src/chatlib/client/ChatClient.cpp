@@ -49,7 +49,7 @@ void ChatClient::sendMessage(const std::string& text, const std::string& target)
         std::cerr << "sending a message failed" << std::endl;
 }
 
-void ChatClient::handleUntypedMessage(const MessageDeserializer& deserializer) {
+void ChatClient::receiveUntypedMessage(const MessageDeserializer& deserializer) {
 
     if (!isConnected()) {
         std::cerr << "chat connection is invalid" << std::endl;
@@ -60,26 +60,26 @@ void ChatClient::handleUntypedMessage(const MessageDeserializer& deserializer) {
         return;
 
     if (deserializer.type() == USER_JOIN_RESPONSE) {
-        handleMessage(deserializer.getMessage<UserJoinResponse>());
+        receiveMessage(deserializer.getMessage<UserJoinResponse>());
     }
     else if (deserializer.type() == USER_LIST_RESPONSE) {
-        handleMessage(deserializer.getMessage<UserListResponse>());
+        receiveMessage(deserializer.getMessage<UserListResponse>());
     }
     else if (deserializer.type() == USER_CHANGE) {
-        handleMessage(deserializer.getMessage<UserChange>());
+        receiveMessage(deserializer.getMessage<UserChange>());
     }
     else if (deserializer.type() == CHAT_MESSAGE) {
-        handleMessage(deserializer.getMessage<ChatMessage>());
+        receiveMessage(deserializer.getMessage<ChatMessage>());
     }
     else if(deserializer.type() == CHATROOM_CHANGE) {
-        handleMessage(deserializer.getMessage<ChatroomChange>());
+        receiveMessage(deserializer.getMessage<ChatroomChange>());
     }
     else if(deserializer.type() == GENERIC_CHAT_RESPONSE) {
-        handleMessage(deserializer.getMessage<GenericChatResponse>());
+        receiveMessage(deserializer.getMessage<GenericChatResponse>());
     }
 }
 
-void ChatClient::handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) {
+void ChatClient::receiveMessage(std::unique_ptr<UserJoinResponse> joinResponse) {
     std::cout << "joined successfully: " <<
         joinResponse->DebugString().c_str() << std::endl;;
 
@@ -94,7 +94,7 @@ void ChatClient::handleMessage(std::unique_ptr<UserJoinResponse> joinResponse) {
     }
 }
 
-void ChatClient::handleMessage(std::unique_ptr<UserListResponse> listResponse) {
+void ChatClient::receiveMessage(std::unique_ptr<UserListResponse> listResponse) {
     for(auto const& user : listResponse->users()) {
         chatroom_->chateeJoined(user, connection());
     }
@@ -102,11 +102,11 @@ void ChatClient::handleMessage(std::unique_ptr<UserListResponse> listResponse) {
     refreshChateeList();
 }
 
-void ChatClient::handleMessage(std::unique_ptr<UserChange> userChange) {
+void ChatClient::receiveMessage(std::unique_ptr<UserChange> userChange) {
     std::cout << "user change " <<
         userChange->DebugString().c_str() << std::endl;
 
-    //! check for join first because chatee doesn't exist yet
+    // check for join first because chatee doesn't exist yet
     if (userChange->has_action()) {
         if (userChange->action() == JOINED) {
             chatroom_->chateeJoined(userChange->user(), connection());
@@ -148,18 +148,18 @@ void ChatClient::handleMessage(std::unique_ptr<UserChange> userChange) {
     }
 }
 
-void ChatClient::handleMessage(std::unique_ptr<ChatMessage> chatMessage) {
+void ChatClient::receiveMessage(std::unique_ptr<ChatMessage> chatMessage) {
     chatMessageReceived(chatMessage->text(), 
                         chatMessage->from().user_name(), 
                         chatMessage->has_target() ? chatMessage->target().user_name() : "");
 }
 
-void ChatClient::handleMessage(std::unique_ptr<ChatroomChange> chatroomChange) {
+void ChatClient::receiveMessage(std::unique_ptr<ChatroomChange> chatroomChange) {
     if (chatroomChange->has_motd())
         chatMotdChanged(chatroomChange->motd());
 }
 
-void ChatClient::handleMessage(std::unique_ptr<GenericChatResponse> response) {
+void ChatClient::receiveMessage(std::unique_ptr<GenericChatResponse> response) {
     if(response->has_message()) {
         chatInfoReceived(response->message());
     }

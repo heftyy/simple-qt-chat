@@ -50,6 +50,8 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
         chatCommand = std::make_unique<UnmuteChatCommand>();
     else if (AUTH == commandType)
         chatCommand = std::make_unique<AuthChatCommand>();
+    else
+        return nullptr;
 
     chatCommand->set_type(static_cast<CommandType>(commandType));
     chatCommand->insertData(commandArgs);
