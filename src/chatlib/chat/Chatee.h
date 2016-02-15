@@ -24,12 +24,13 @@ public:
 
     User& user();
 
-    virtual bool sendMessage(std::unique_ptr<AbstractMessage> message);
+    bool sendMessage(std::unique_ptr<AbstractMessage> message);
 
     void sendChatMessage(const std::string& message, const std::string& from, const std::string& target = "");
     void sendResponse(bool success, const std::string& message);
 
     void mute(bool propagate);
+    void unmute(bool propagate);
     void kick(bool propagate);
 
     ChatConnection* connection() const;
@@ -43,8 +44,10 @@ private:
     std::weak_ptr<Chatroom> chatroom_;
     bool authorized_;
 
-    virtual std::unique_ptr<ChatTarget> getSelf();
-    virtual std::unique_ptr<ChatTarget> getTarget(const std::string& target);
+    void propagateChange(int type);
+
+    std::unique_ptr<ChatTarget> getSelf();
+    std::unique_ptr<ChatTarget> getTarget(const std::string& target);
 
     template<typename MessageType>
     void prepareAndSend(std::unique_ptr<MessageType> message);

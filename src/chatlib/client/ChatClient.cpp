@@ -126,15 +126,16 @@ void ChatClient::handleMessage(std::unique_ptr<UserChange> userChange) {
         chatInfoReceived(
             userChange->user().name() + " is now " + UserPresence_Name(userChange->presence()));
     }
-    if(userChange->has_status()) {
-        chatee->user().set_status(userChange->status());
-        if(userChange->status() == MUTED) {
+    if(userChange->has_action()) {
+        if(userChange->action() == MUTED) {
             chatee->mute(false);
             chatInfoReceived(userChange->user().name() + " has been muted");
         }
-    }
-    if(userChange->has_action()) {
-        if(userChange->action() == LEFT) {
+        else if(userChange->action() == UNMUTED) {
+            chatee->unmute(false);
+            chatInfoReceived(userChange->user().name() + " has been unmuted");
+        }
+        else if(userChange->action() == LEFT) {
             chatroom_->chateeLeft(userChange->user().name());
             chatInfoReceived(userChange->user().name() + " left");
             refreshChateeList();

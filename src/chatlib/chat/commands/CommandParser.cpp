@@ -6,6 +6,7 @@
 #include "SpecificChatCommand.h"
 #include "MotdChatCommand.h"
 #include "MuteChatCommand.h"
+#include "UnmuteChatCommand.h"
 #include "KickChatCommand.h"
 #include "AuthChatCommand.h"
 
@@ -45,6 +46,8 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
         chatCommand = std::make_unique<KickChatCommand>();
     else if (MUTE == commandType)
         chatCommand = std::make_unique<MuteChatCommand>();
+    else if (UNMUTE == commandType)
+        chatCommand = std::make_unique<UnmuteChatCommand>();
     else if (AUTH == commandType)
         chatCommand = std::make_unique<AuthChatCommand>();
 
@@ -59,6 +62,9 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
 int CommandParser::getCommandType(const std::string& type) const {
     if (type == "mute") {
         return MUTE;
+    }
+    if (type == "unmute") {
+        return UNMUTE;
     }
     if (type == "kick") {
         return KICK;

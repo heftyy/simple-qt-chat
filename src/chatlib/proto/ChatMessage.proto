@@ -8,8 +8,9 @@ enum CommandType {
     MOTD = 0;
     KICK = 1;
     MUTE = 2;
-    AUTH = 3;
-    UNKNOWN = 4;
+    UNMUTE = 3;
+    AUTH = 4;
+    UNKNOWN = 5;
 }
 
 message ChatTarget {

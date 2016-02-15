@@ -28,7 +28,6 @@ Chatroom::chateeJoined(const std::string& name,
     user.set_id(nextUserId++);
     user.set_name(name);
     user.set_presence(ONLINE);
-    user.set_status(NONE);
 
     return chateeJoined(user, connection);
 }

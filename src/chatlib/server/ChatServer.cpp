@@ -118,8 +118,6 @@ void ChatServer::handleMessage(std::unique_ptr<UserChange> userChange,
                                const std::shared_ptr<Chatee>& sender) {
     if (userChange->has_presence())
         sender->user().set_presence(userChange->presence());
-    if (userChange->has_status())
-        sender->user().set_status(userChange->status());
 
     chatroom_->propagateMessage(MessageBuilder::build(std::move(userChange)));
 }
@@ -144,11 +142,19 @@ void ChatServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const s
                                           sender->user().name());
         }
     }
-    else { // send a public message        
-        chatMessage->set_allocated_from(chatroom_->getTarget(sender->user().name()).release());
-        std::cout << "SERVER: " << chatMessage->DebugString().c_str() << std::endl;
+    else { // send a public message
+        if(sender->user().mute()) { // check if the user is muted
+            auto response = std::make_unique<GenericChatResponse>();
+            response->set_success(false);
+            response->set_message("you are muted");
+            sender->sendMessage(MessageBuilder::build(std::move(response)));
+        }
+        else {
+            chatMessage->set_allocated_from(chatroom_->getTarget(sender->user().name()).release());
+            std::cout << "SERVER: " << chatMessage->DebugString().c_str() << std::endl;
 
-        chatroom_->propagateMessage(MessageBuilder::build(std::move(chatMessage)));
+            chatroom_->propagateMessage(MessageBuilder::build(std::move(chatMessage)));
+        }
     }
 }
 
@@ -171,6 +177,12 @@ void ChatServer::handleMessage(std::unique_ptr<ChatCommand> chatCommand, const s
             if (targetChatee == nullptr)
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
             targetChatee->mute(true);
+        }
+        else if (chatCommand->type() == CommandType::UNMUTE) {
+            auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
+            if (targetChatee == nullptr)
+                sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
+            targetChatee->unmute(true);
         }
         else if (chatCommand->type() == CommandType::KICK) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));

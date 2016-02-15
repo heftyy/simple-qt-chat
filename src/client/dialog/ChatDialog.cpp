@@ -73,8 +73,8 @@ void ChatDialog::appendMotd(const QString& motd) const {
 
 void ChatDialog::refreshList() {
     // remove chatees from the widget list
-    for (auto i = 0; i < listWidget->count(); ++i) {
-        auto item = listWidget->item(i);
+    for (auto i = 0; i < userListWidget->count(); ++i) {
+        auto item = userListWidget->item(i);
         auto name = item->text().toStdString();
         if (!chatClient->chatroom()->chateeExists(name)) {
             delete item;
@@ -84,10 +84,10 @@ void ChatDialog::refreshList() {
     // add chatees to the widget list
     for (auto const& entry : chatClient->chatroom()->map()) {
         auto name = QString::fromStdString(entry.second->user().name());
-        auto items = listWidget->findItems(name,
+        auto items = userListWidget->findItems(name,
                                            Qt::MatchExactly);
         if (items.isEmpty())
-            listWidget->addItem(name);
+            userListWidget->addItem(name);
     }
 }
 
@@ -113,7 +113,7 @@ void ChatDialog::returnPressed() const {
                 chatClient->sendMessage(list.join(" ").toStdString(), target);
             }
         }
-        else { // command            
+        else { // command
             auto success = chatClient->sendCommand(text.toStdString());
             if (success)
                 message = tr("* sending command: %1").arg(text);
@@ -124,7 +124,7 @@ void ChatDialog::returnPressed() const {
         if (!message.isEmpty()) {
             qDebug() << "command" << text;
             auto color = textEdit->textColor();
-            textEdit->setTextColor(Qt::red);
+            textEdit->setTextColor(QColor(30, 150, 0, 170));
             textEdit->append(message);
             textEdit->setTextColor(color);
         }
@@ -137,8 +137,14 @@ void ChatDialog::returnPressed() const {
     lineEdit->clear();
 }
 
+void ChatDialog::appendWhisper(QListWidgetItem* item) {
+    if(item->text().toStdString() != chatClient->name()) {
+        lineEdit->setText(tr("/w %1 ").arg(item->text()));
+    }
+}
+
 void ChatDialog::showInformation() {
-    if (listWidget->count() == 1) {
+    if (userListWidget->count() == 1) {
         QMessageBox::information(this, tr("Chat"),
                                  tr("Launch several instances of this "
                                  "program on your local network and "
@@ -159,7 +165,7 @@ void ChatDialog::showChat() {
     lineEdit->setFocusPolicy(Qt::StrongFocus);
     textEdit->setFocusPolicy(Qt::NoFocus);
     textEdit->setReadOnly(true);
-    listWidget->setFocusPolicy(Qt::NoFocus);
+    userListWidget->setFocusPolicy(Qt::NoFocus);
 
     connect(chatClient, SIGNAL(chatMessageSignal(QString, QString, QString)),
             this, SLOT(appendMessage(QString, QString, QString)));
@@ -171,6 +177,8 @@ void ChatDialog::showChat() {
             this, SLOT(refreshList()));
     connect(lineEdit, SIGNAL(returnPressed()),
             this, SLOT(returnPressed()));
+    connect(userListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
+            this, SLOT(appendWhisper(QListWidgetItem*)));
 
     tableFormat.setBorder(0);
 }

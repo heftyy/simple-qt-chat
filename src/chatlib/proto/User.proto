@@ -10,22 +10,19 @@ enum UserPresence {
     BUSY = 2;
 }
 
-enum UserStatus {
-    NONE = 0;
-    MUTED = 1;
-}
-
 enum UserAction {
     JOINED = 0;
     LEFT = 1;
     KICKED = 2;
+    MUTED = 3;
+    UNMUTED = 4;
 }
 
 message User {
     required int32 id = 1;
     required string name = 2;
     required UserPresence presence = 3 [default = ONLINE];
-    required UserStatus status = 4 [default = NONE];
+    optional bool mute = 4 [default = false];
 }
 
 message UserJoinRequest {
@@ -52,8 +49,7 @@ message UserListResponse {
 message UserChange {
     required User user = 1;
     optional UserPresence presence = 2;
-    optional UserStatus status = 3;
-    optional UserAction action = 4;
+    optional UserAction action = 3;
 }
 
 extend NetworkMessage {

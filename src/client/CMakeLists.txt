@@ -11,7 +11,8 @@ set(CLIENT_SOURCE_FILES
         main.cpp
         dialog/ChatDialog.cpp
         dialog/ChatDialog.h
-        dialog/LoginDialog.cpp dialog/LoginDialog.h)
+        dialog/LoginDialog.cpp
+        dialog/LoginDialog.h)
 
 add_executable(chat_client ${CLIENT_SOURCE_FILES})
 target_link_libraries(chat_client Qt5::Network Qt5::Widgets chatlib tcplib)

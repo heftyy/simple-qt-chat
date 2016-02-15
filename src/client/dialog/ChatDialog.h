@@ -24,6 +24,7 @@ private slots:
     void refreshList();
 
     void returnPressed() const;
+    void appendWhisper(QListWidgetItem* item);
     void showInformation();
     void loginToChat(const QString& address, quint16 port, const QString& name);
 
@@ -31,7 +32,6 @@ private:
     LoginDialog* loginDialog;
     TcpChatClient* chatClient;
 
-    QString myNickName;
     QTextTableFormat tableFormat;
 
     void showChat();

@@ -65,26 +65,26 @@ void Chatee::sendResponse(bool success, const std::string& message) {
 
 void Chatee::mute(bool propagate) {
     if(propagate) {
-        auto response = std::make_unique<UserChange>();
-        response->set_status(MUTED);
-        response->mutable_user()->CopyFrom(user());
-
-        chatroom_.lock()->propagateMessage(
-            MessageBuilder::build(std::move(response)));
+        propagateChange(MUTED);
     }
 
-    user_.set_status(MUTED);
+    user_.set_mute(true);
+}
+
+void Chatee::unmute(bool propagate) {
+    if(propagate) {
+        propagateChange(UNMUTED);
+    }
+
+    user_.set_mute(false);
 }
 
 void Chatee::kick(bool propagate) {   
     if(propagate) {
-        auto response = std::make_unique<UserChange>();
-        response->set_action(KICKED);
-        response->mutable_user()->CopyFrom(user());
+        propagateChange(KICKED);
 
-        chatroom_.lock()->propagateMessage(
-            MessageBuilder::build(std::move(response)));
-
+        // propagate will be true when the server calls this function
+        // so we should drop the connection to the kicked client
         connection_->disconnectFromHost();
     }
 
@@ -101,6 +101,15 @@ bool Chatee::authorized() const {
 
 void Chatee::setAuthorized(bool authorized) {
     authorized_ = authorized;
+}
+
+void Chatee::propagateChange(int type) {
+    auto response = std::make_unique<UserChange>();
+    response->set_action(static_cast<UserAction>(type));
+    response->mutable_user()->CopyFrom(user());
+
+    chatroom_.lock()->propagateMessage(
+            MessageBuilder::build(std::move(response)));
 }
 
 std::unique_ptr<ChatTarget> Chatee::getSelf() {

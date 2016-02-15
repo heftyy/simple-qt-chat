@@ -29,6 +29,8 @@ set(CHATLIB_SOURCE_FILES
         chat/commands/MuteChatCommand.h
         chat/commands/AuthChatCommand.cpp
         chat/commands/AuthChatCommand.h
+        chat/commands/UnmuteChatCommand.cpp
+        chat/commands/UnmuteChatCommand.h
 
         client/Client.h
         client/ChatClient.h
