@@ -83,8 +83,8 @@ void Chatee::kick(bool propagate) {
     if(propagate) {
         propagateChange(KICKED);
 
-        // propagate will be true when the server calls this function
-        // so we should drop the connection to the kicked client
+        /*! propagate will be true when the server calls this function
+         * so we should drop the connection to the kicked client */
         connection_->disconnectFromHost();
     }
 

@@ -123,27 +123,27 @@ void ChatServer::handleMessage(std::unique_ptr<UserChange> userChange,
 }
 
 void ChatServer::handleMessage(std::unique_ptr<ChatMessage> chatMessage, const std::shared_ptr<Chatee>& sender) {
-    if (chatMessage->has_target()) { // send a private message
+    if (chatMessage->has_target()) { //! send a private message
         auto targetChatee = chatroom_->getChatee(chatMessage->target().user_name());
-        if (targetChatee == nullptr) { // let the sender know that target doesn't exist
+        if (targetChatee == nullptr) { //! let the sender know that target doesn't exist
             auto message = "user with name " + chatMessage->target().user_name() + " doesn't exit";
             std::cout << message.c_str() << std::endl;
 
             sender->sendResponse(false, message);
         }
         else {
-            // tell sender - message from sender to target was sent
+            //! tell sender - message from sender to target was sent
             sender->sendChatMessage(chatMessage->text(),
                                     sender->user().name(),
                                     chatMessage->target().user_name());
 
-            // tell target - message from sender was received
+            //! tell target - message from sender was received
             targetChatee->sendChatMessage(chatMessage->text(),
                                           sender->user().name());
         }
     }
-    else { // send a public message
-        if(sender->user().mute()) { // check if the user is muted
+    else { //! send a public message
+        if(sender->user().mute()) { //! check if the user is muted
             auto response = std::make_unique<GenericChatResponse>();
             response->set_success(false);
             response->set_message("you are muted");
@@ -198,4 +198,4 @@ void ChatServer::handleMessage(std::unique_ptr<ChatCommand> chatCommand, const s
         sender->sendResponse(false, "you are not authorized to use this command");
 }
 
-} //SimpleChat namespace
+} // SimpleChat namespace

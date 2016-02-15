@@ -37,4 +37,4 @@ protected:
     std::string password_;
 };
 
-} //SimpleChat namespace
+} // SimpleChat namespace

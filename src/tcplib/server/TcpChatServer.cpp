@@ -105,4 +105,4 @@ void TcpChatServer::openSession(quint16 port, const QHostAddress& ipAddress) {
         "\nport: " << tcpServer_->serverPort();
 }
 
-} //SimpleChat namespace
+} // SimpleChat namespace

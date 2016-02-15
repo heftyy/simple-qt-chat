@@ -31,4 +31,4 @@ private:
     void openSession(quint16 port, const QHostAddress& ipAddress);
 };
 
-} //SimpleChat namespace
+} // SimpleChat namespace

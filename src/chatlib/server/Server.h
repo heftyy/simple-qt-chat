@@ -40,4 +40,4 @@ public:
                                const std::shared_ptr<Chatee>& sender) = 0;
 };
 
-} //SimpleChat namespace
+} // SimpleChat namespace

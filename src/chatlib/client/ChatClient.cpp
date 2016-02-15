@@ -106,7 +106,7 @@ void ChatClient::handleMessage(std::unique_ptr<UserChange> userChange) {
     std::cout << "user change " <<
         userChange->DebugString().c_str() << std::endl;
 
-    // check for join first because chatee doesn't exist yet
+    //! check for join first because chatee doesn't exist yet
     if (userChange->has_action()) {
         if (userChange->action() == JOINED) {
             chatroom_->chateeJoined(userChange->user(), connection());

@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.2)
 set(PROJECT_NAME_STR simple_chat)
 
+# The project version number.
+set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
+set(VERSION_MINOR   4   CACHE STRING "Project minor version number.")
+set(VERSION_PATCH   3   CACHE STRING "Project patch version number.")
+mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
+
 project(${PROJECT_NAME_STR})
 
 if(MSVC)
@@ -57,9 +63,10 @@ enable_testing()
 
 add_subdirectory(${EXT_PROJECTS_DIR}/gtest)
 add_subdirectory(test)
+add_subdirectory(doc)
 
 if(WIN32)
-    add_custom_target(Qt5CopyBinaries
+    add_custom_target(Qt5CopyBinaries ALL
         # todo: check if debug and release folder exist
         # debug version
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug

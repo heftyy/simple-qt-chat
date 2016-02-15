@@ -47,7 +47,7 @@ private:
     std::weak_ptr<Chatee> chatee_;
 };
 
-} //SimpleChat namespace
+} // SimpleChat namespace
 
 
 

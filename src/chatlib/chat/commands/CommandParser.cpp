@@ -35,7 +35,7 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
     if(commandType == UNKNOWN)
         return nullptr;
 
-    // remove the command type from vector
+    //! remove the command type from vector
     commandArgs.erase(commandArgs.begin());
 
     std::unique_ptr<SpecificChatCommand> chatCommand;

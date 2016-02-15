@@ -110,7 +110,7 @@ void TcpChatConnection::readyRead() {
         if (socket()->bytesAvailable() < blockSize_)
             return;
 
-        // full message received, reset blockSize to 0
+        //! full message received, reset blockSize to 0
         blockSize_ = 0;
 
         QString serializedMessage;
@@ -124,4 +124,4 @@ void TcpChatConnection::disconnected() {
     emit disconnectSignal();
 }
 
-} //SimpleChat namespace
+} // SimpleChat namespace
