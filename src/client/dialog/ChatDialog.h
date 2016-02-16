@@ -51,6 +51,12 @@ private slots:
     void refreshList();
 
     /*!
+     * Activates when user chooses a new status from QComboBox.
+     * Sends a UserChange message to the server.
+     */
+    void updateStatus(const QString& currentSelection);
+
+    /*!
      * Checks if the lineEdit contains a '/' at the beginning and sends a message using TcpChatClient.
      * if '/':
      *   - /w send a private message

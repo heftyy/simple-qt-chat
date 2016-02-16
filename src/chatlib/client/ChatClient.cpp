@@ -49,6 +49,17 @@ void ChatClient::sendMessage(const std::string& text, const std::string& target)
         std::cerr << "sending a message failed" << std::endl;
 }
 
+void ChatClient::updatePresence(int presence) {
+    auto chatee = chatroom_->getChatee(clientName_);
+    if(chatee != nullptr) {
+        auto userChange = std::make_unique<UserChange>();
+        userChange->mutable_user()->CopyFrom(chatee->user());
+        userChange->set_presence(static_cast<UserPresence>(presence));
+
+        sendAnyMessage(MessageBuilder::build(std::move(userChange)));
+    }
+}
+
 void ChatClient::receiveUntypedMessage(const MessageDeserializer& deserializer) {
 
     if (!isConnected()) {
@@ -125,6 +136,7 @@ void ChatClient::receiveMessage(std::unique_ptr<UserChange> userChange) {
         chatee->user().set_presence(userChange->presence());
         chatInfoReceived(
             userChange->user().name() + " is now " + UserPresence_Name(userChange->presence()));
+        refreshChateeList();
     }
     if(userChange->has_action()) {
         if(userChange->action() == MUTED) {

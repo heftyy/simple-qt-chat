@@ -85,9 +85,36 @@ void ChatDialog::refreshList() {
     for (auto const& entry : chatClient->chatroom()->map()) {
         auto name = QString::fromStdString(entry.second->user().name());
         auto items = userListWidget->findItems(name,
-                                           Qt::MatchExactly);
+                                               Qt::MatchExactly);
         if (items.isEmpty())
             userListWidget->addItem(name);
+    }
+
+    // update user background color on the list
+    for(auto i = 0; i < userListWidget->count(); i++) {
+        auto item = userListWidget->item(i);
+        auto chatee = chatClient->chatroom()->getChatee(item->text().toStdString());
+        if(chatee->user().presence() == UserPresence::ONLINE) {
+            item->setBackground(QBrush(QColor(0, 220, 0, 180))); // green
+        }
+        else if(chatee->user().presence() == UserPresence::AWAY) {
+            item->setBackground(QBrush(QColor(220, 220, 0, 180))); // yellow
+        }
+        else if(chatee->user().presence() == UserPresence::BUSY) {
+            item->setBackground(QBrush(QColor(220, 0, 0, 180))); // red
+        }
+    }
+}
+
+void ChatDialog::updateStatus(const QString& currentSelection) {
+    if(currentSelection == "Online") {
+        chatClient->updatePresence(UserPresence::ONLINE);
+    }
+    else if(currentSelection == "Away") {
+        chatClient->updatePresence(UserPresence::AWAY);
+    }
+    else if(currentSelection == "Busy") {
+        chatClient->updatePresence(UserPresence::BUSY);
     }
 }
 
@@ -187,6 +214,8 @@ void ChatDialog::showChat() {
             this, SLOT(returnPressed()));
     connect(userListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
             this, SLOT(appendWhisper(QListWidgetItem*)));
+    connect(userStatus, SIGNAL(currentIndexChanged(QString)),
+            this, SLOT(updateStatus(QString)));
 
     tableFormat.setBorder(0);
 }

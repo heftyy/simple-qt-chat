@@ -38,17 +38,49 @@
                         </widget>
                     </item>
                     <item>
-                        <widget class="QListWidget" name="userListWidget" >
-                            <property name="maximumSize" >
-                                <size>
-                                    <width>180</width>
-                                    <height>16777215</height>
-                                </size>
+                        <layout class="QVBoxLayout" >
+                            <property name="margin" >
+                                <number>0</number>
                             </property>
-                            <property name="focusPolicy" >
-                                <enum>Qt::NoFocus</enum>
+                            <property name="spacing" >
+                                <number>0</number>
                             </property>
-                        </widget>
+                            <item>
+                                <widget class="QListWidget" name="userListWidget" >
+                                    <property name="maximumSize" >
+                                        <size>
+                                            <width>180</width>
+                                            <height>16777215</height>
+                                        </size>
+                                    </property>
+                                    <property name="focusPolicy" >
+                                        <enum>Qt::NoFocus</enum>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="QComboBox" name="userStatus">
+                                    <property name="editable">
+                                        <bool>false</bool>
+                                    </property>
+                                    <item>
+                                        <property name="text">
+                                            <string>Online</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Away</string>
+                                        </property>
+                                    </item>
+                                    <item>
+                                        <property name="text">
+                                            <string>Busy</string>
+                                        </property>
+                                    </item>
+                                </widget>
+                            </item>
+                        </layout>
                     </item>
                 </layout>
             </item>

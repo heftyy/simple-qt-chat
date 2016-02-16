@@ -31,6 +31,7 @@ public:
 
     virtual bool sendCommand(const std::string& command) override;
     virtual void sendMessage(const std::string& text, const std::string& target = "") override;
+    virtual void updatePresence(int presence) override;
 
     /*!
      * Uses the deserializer to find the type of a received message and

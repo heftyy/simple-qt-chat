@@ -24,6 +24,7 @@ public:
 
     virtual bool sendCommand(const std::string& command) = 0;
     virtual void sendMessage(const std::string& text, const std::string& target) = 0;
+    virtual void updatePresence(int presence) = 0;
 
     virtual void receiveUntypedMessage(const MessageDeserializer& deserializer) = 0;
 
