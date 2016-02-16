@@ -82,25 +82,29 @@ void ChatDialog::refreshList() {
     }
 
     // add chatees to the widget list
+    // update user background color on the list
     for (auto const& entry : chatClient->chatroom()->map()) {
-        auto name = QString::fromStdString(entry.second->user().name());
+        auto name = QString::fromStdString(entry.first);
         auto items = userListWidget->findItems(name,
                                                Qt::MatchExactly);
-        if (items.isEmpty())
-            userListWidget->addItem(name);
-    }
+        QListWidgetItem* item;
 
-    // update user background color on the list
-    for(auto i = 0; i < userListWidget->count(); i++) {
-        auto item = userListWidget->item(i);
-        auto chatee = chatClient->chatroom()->getChatee(item->text().toStdString());
-        if(chatee->user().presence() == UserPresence::ONLINE) {
+        if (items.isEmpty()) {
+            item = new QListWidgetItem();
+            item->setText(name);
+            userListWidget->addItem(item);
+        }
+        else {
+            item = items[0];
+        }
+
+        if(entry.second->user().presence() == UserPresence::ONLINE) {
             item->setBackground(QBrush(QColor(0, 220, 0, 180))); // green
         }
-        else if(chatee->user().presence() == UserPresence::AWAY) {
+        else if(entry.second->user().presence() == UserPresence::AWAY) {
             item->setBackground(QBrush(QColor(220, 220, 0, 180))); // yellow
         }
-        else if(chatee->user().presence() == UserPresence::BUSY) {
+        else if(entry.second->user().presence() == UserPresence::BUSY) {
             item->setBackground(QBrush(QColor(220, 0, 0, 180))); // red
         }
     }
