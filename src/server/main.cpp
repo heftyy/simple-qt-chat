@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QtNetwork>
 
+#include <SimpleChatConfig.h>
 #include <server/TcpChatServer.h>
 
 std::tuple<QHostAddress, quint16, std::string> serverParams(const QCoreApplication& app) {
@@ -57,6 +58,7 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
     auto localMsg = msg.toLocal8Bit();
     switch (type) {
     case QtDebugMsg:
+        // hide debug messages
         // std::cout << "Debug: " << localMsg.constData() << std::endl;
         break;
     case QtInfoMsg:
@@ -85,7 +87,10 @@ int main(int argc, char* argv[]) {
 
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName("simple chat server");
-    QCoreApplication::setApplicationVersion("1.0");
+    QCoreApplication::setApplicationVersion(QString("%1.%2.%3")
+                                                    .arg(SimpleChat_VERSION_MAJOR)
+                                                    .arg(SimpleChat_VERSION_MINOR)
+                                                    .arg(SimpleChat_VERSION_PATCH));
 
     QHostAddress address;
     quint16 port;

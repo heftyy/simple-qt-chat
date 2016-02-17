@@ -1,0 +1,3 @@
+#define SimpleChat_VERSION_MAJOR @VERSION_MAJOR@
+#define SimpleChat_VERSION_MINOR @VERSION_MINOR@
+#define SimpleChat_VERSION_PATCH @VERSION_PATCH@

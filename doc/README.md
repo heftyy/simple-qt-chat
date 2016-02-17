@@ -36,8 +36,10 @@ Users can change their status using the dropdown below the list of chat particip
 * ```red``` busy
 
 
+
 dependencies:
 * cmake >= 3.2
 * Qt >= 5.5
 * google protocol buffers >= 2.6.1
 * gtest & gmock
+* doxygen (only if you want to use make doc)

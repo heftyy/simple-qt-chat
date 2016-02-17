@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.2)
 set(PROJECT_NAME_STR simple_chat)
 
 # The project version number.
-set(VERSION_MAJOR   0   CACHE STRING "Project major version number.")
-set(VERSION_MINOR   9   CACHE STRING "Project minor version number.")
-set(VERSION_PATCH   3   CACHE STRING "Project patch version number.")
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 9)
+set(VERSION_PATCH 4)
 mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
 project(${PROJECT_NAME_STR})
