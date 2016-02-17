@@ -36,6 +36,9 @@ Users can change their status using the dropdown below the list of chat particip
 * ```red``` busy
 
 
+toolchains tested:
+* gcc >= 4.9
+* msvc 14
 
 dependencies:
 * cmake >= 3.2
