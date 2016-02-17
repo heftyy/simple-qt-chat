@@ -96,7 +96,7 @@ void TcpChatServer::start(quint16 port, const QHostAddress& ipAddress) {
         return;
     }
 
-    std::cout() <<
+    std::cout <<
         "The server is running on" <<
         "\nIP: " << ipAddress.toString().toStdString() <<
         "\nport: " << tcpServer_->serverPort() <<
