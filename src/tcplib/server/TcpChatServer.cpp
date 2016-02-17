@@ -96,11 +96,11 @@ void TcpChatServer::start(quint16 port, const QHostAddress& ipAddress) {
         return;
     }
 
-    qInfo() <<
+    std::cout() <<
         "The server is running on" <<
-        "\nIP: " << ipAddress.toString() <<
+        "\nIP: " << ipAddress.toString().toStdString() <<
         "\nport: " << tcpServer_->serverPort() <<
-        "\nsecret: " << password_.c_str();
+        "\nsecret: " << password_.c_str() << std::endl;
 }
 
 } // SimpleChat namespace

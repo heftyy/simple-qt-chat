@@ -50,7 +50,7 @@ bool TcpChatConnection::sendMessage(std::unique_ptr<AbstractMessage> message) {
 
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_5);
+    out.setVersion(QDataStream::Qt_5_0);
 
     out << static_cast<quint16>(0);
     out << QString::fromStdString(result);
@@ -96,7 +96,7 @@ void TcpChatConnection::readyRead() {
     qDebug() << getIdent().c_str() << " readyRead";
 
     QDataStream inStream(socket());
-    inStream.setVersion(QDataStream::Qt_5_5);
+    inStream.setVersion(QDataStream::Qt_5_0);
 
     while(socket()->bytesAvailable() > 0) {
         if (blockSize_ == 0) {
