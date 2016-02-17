@@ -28,12 +28,12 @@ public:
 
     virtual ~Chatee();
 
-    User& user();
+    virtual User& user();
 
     /*!
      * Sends a message to this chatee using the underlying ChatConnection.
      */
-    bool sendMessage(std::unique_ptr<AbstractMessage> message);
+    virtual bool sendMessage(std::unique_ptr<AbstractMessage> message);
 
     /*!
      * Sends a chat message to this chatee.
@@ -42,28 +42,28 @@ public:
      * object included in the message. You must make sure that the target
      * exists before using this method.
      */
-    void sendChatMessage(const std::string& message, const std::string& from, const std::string& target = "");
+    virtual void sendChatMessage(const std::string& message, const std::string& from, const std::string& target = "");
 
     /*!
      * Send a GenericChatResponse to this chatee.
      */
-    void sendResponse(bool success, const std::string& message);
+    virtual void sendResponse(bool success, const std::string& message);
 
     /*!
      * Sets a mute flag to true.
      * If propagate is true sends a UserChange message to all other chatees.
      */
-    void mute(bool propagate);
+    virtual void mute(bool propagate);
     /*!
      * Sets a mute flag to false.
      * If propagate is true sends a UserChange message to all other chatees.
      */
-    void unmute(bool propagate);
+    virtual void unmute(bool propagate);
     /*!
      * Removes chatee and closes the connection.
      * If propagate is true sends a UserChange message to all other chatees.
      */
-    void kick(bool propagate);
+    virtual void kick(bool propagate);
 
     ChatConnection* connection() const;
 

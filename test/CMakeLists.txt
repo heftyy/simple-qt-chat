@@ -9,23 +9,28 @@ include_directories(${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
 
 set(TEST_SRC_FILES
         mocks/MockChatConnection.h
+        mocks/MockChatee.h
+        mocks/MockClient.h
 
-        server/ServerTest.cpp
-        server/ClientServerTest.cpp
+        resources/SerializerTest.h
+        resources/DeserializerTest.h
+        resources/MessageTest.h
+        resources/AbstractMessageTest.h
+        resources/ChatroomTest.h
+        resources/ChatServerTest.h
+        resources/ChatClientTest.h
+        resources/CommandParserTest.h
+        resources/ChatCommandTest.h
 
-        chatlib/resources/SerializerTest.h
-        chatlib/resources/DeserializerTest.h
-        chatlib/resources/AbstractMessageTest.h
-        chatlib/resources/ChatroomTest.h
-        chatlib/resources/CommandParserTest.h
-
-        chatlib/SerializerTest.cpp
-        chatlib/DeserializerTest.cpp
-        chatlib/NetworkMessageTest.cpp
-        chatlib/AbstractMessageTest.cpp
-        chatlib/ChatroomTest.cpp
-        chatlib/CommandParserTest.cpp
-        chatlib/ChatCommandTest.cpp
+        SerializerTest.cpp
+        DeserializerTest.cpp
+        NetworkMessageTest.cpp
+        AbstractMessageTest.cpp
+        CommandParserTest.cpp
+        ChatCommandTest.cpp
+        ChatroomTest.cpp
+        ChatServerTest.cpp
+        ChatClientTest.cpp
         )
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})

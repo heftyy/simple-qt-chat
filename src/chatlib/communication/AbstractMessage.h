@@ -18,8 +18,8 @@ public:
 
     virtual std::string serialize() = 0;
 
-    virtual int type() = 0;
-    virtual bool isInitialized() = 0;    
+    virtual int type() const = 0;
+    virtual bool isInitialized() const = 0;
 
     virtual std::unique_ptr<AbstractMessage> clone() = 0;
 };

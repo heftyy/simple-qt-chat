@@ -35,6 +35,8 @@ public:
     virtual void receiveMessage(std::unique_ptr<ChatCommand> chatCommand,
                                const std::shared_ptr<Chatee>& sender) override;
 
+    std::shared_ptr<Chatroom> chatroom();
+
 protected:
     std::shared_ptr<Chatroom> chatroom_;
     std::string password_;

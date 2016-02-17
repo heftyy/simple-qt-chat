@@ -39,11 +39,11 @@ public:
         return nullptr;
     }
 
-    virtual int type() override {
+    virtual int type() const override {
         return type_;
     };
 
-    virtual bool isInitialized() override {
+    virtual bool isInitialized() const override {
         return message_ != nullptr &&
             message_->IsInitialized() &&
             NetworkMessageType_IsValid(type_);

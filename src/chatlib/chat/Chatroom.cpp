@@ -42,6 +42,17 @@ std::tuple<bool, std::string, std::shared_ptr<Chatee>> Chatroom::chateeJoined(co
         return std::make_tuple(true, "", chatee);
     }
 
+    return std::make_tuple(false, "Failed to add chatee.", nullptr);
+}
+
+std::tuple<bool, std::string, std::shared_ptr<Chatee>> Chatroom::chateeJoined(const std::shared_ptr<Chatee>& chatee) {
+    if (chateeExists(chatee->user().name()))
+        return std::make_tuple(false, "That name is already taken", nullptr);
+
+    auto success = insertChatee(chatee);
+    if (success) {
+        return std::make_tuple(true, "", chatee);
+    }
 
     return std::make_tuple(false, "Failed to add chatee.", nullptr);
 }
@@ -117,7 +128,7 @@ const ChateesMap& Chatroom::map() const {
     return chatees_;
 }
 
-bool Chatroom::insertChatee(std::shared_ptr<Chatee> chatee) {
+bool Chatroom::insertChatee(const std::shared_ptr<Chatee>& chatee) {
     if (!chateeExists(chatee->user().name())) {
         std::lock_guard<std::mutex> guard(this->chatees_mutex_);
         auto result = chatees_.insert(std::make_pair(chatee->user().name(), std::move(chatee)));

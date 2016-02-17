@@ -3,12 +3,9 @@
 #include <QtNetwork>
 
 #include <NetworkMessage.pb.h>
-#include <User.pb.h>
-#include <ChatMessage.pb.h>
 
 #include <chat/Chatroom.h>
 #include <chat/Chatee.h>
-#include <communication/Message.h>
 #include <communication/MessageDeserializer.h>
 
 #include "../chat/TcpChatConnection.h"
@@ -48,7 +45,7 @@ void TcpChatServer::connectionEstablished() {
     auto socket = tcpServer_->nextPendingConnection();
     auto connection = new TcpChatConnection(socket, this);
 
-    qDebug() << "SERVER: " << "new connection from" << socket->peerAddress().toString();    
+    qDebug() << "New connection from" << socket->peerAddress().toString();
 
     connection->init();
 
@@ -69,12 +66,12 @@ void TcpChatServer::connectionLost() {
     auto connection = static_cast<TcpChatConnection*>(sender());
 
     if (connection == nullptr) {
-        qCritical() << "disconnected called with empty connection";
+        qCritical() << "Disconnected called with empty connection";
         return;
     }
     
     if (connection->chatee() == nullptr) {
-        qCritical() << "disconnected called with empty chatee";
+        qCritical() << "Disconnected called with empty chatee";
         connection->deleteLater();
         return;
     }
@@ -99,10 +96,11 @@ void TcpChatServer::start(quint16 port, const QHostAddress& ipAddress) {
         return;
     }
 
-    qDebug() << "SERVER: " <<
-        "The server is running on\nIP: " <<
-        ipAddress.toString() <<
-        "\nport: " << tcpServer_->serverPort();
+    qInfo() <<
+        "The server is running on" <<
+        "\nIP: " << ipAddress.toString() <<
+        "\nport: " << tcpServer_->serverPort() <<
+        "\nsecret: " << password_.c_str();
 }
 
 } // SimpleChat namespace

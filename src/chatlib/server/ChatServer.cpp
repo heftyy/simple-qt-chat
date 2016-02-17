@@ -28,7 +28,7 @@ void ChatServer::chateeLeft(const std::shared_ptr<Chatee>& chatee) {
     std::tie(success, message) = chatroom_->chateeLeft(chatee->user().name());
 
     if (success) {
-        std::cout << "SERVER:" << chatee->user().DebugString().c_str() << "left" << std::endl;
+        std::cout << chatee->user().name() << " left" << std::endl;
 
         auto userChange = std::make_unique<UserChange>();
         userChange->set_action(UserAction::LEFT);
@@ -37,13 +37,13 @@ void ChatServer::chateeLeft(const std::shared_ptr<Chatee>& chatee) {
         chatroom_->propagateMessage(MessageBuilder::build(std::move(userChange)));
     }
     else
-        std::cerr << "removing the chatee failed" << std::endl;
+        std::cerr << "Removing " << chatee->user().name() << " failed" << std::endl;
 }
 
 void ChatServer::receiveUntypedMessage(const MessageDeserializer& deserializer,
                                       ChatConnection* connection) {
     if (connection == nullptr || !connection->isAlive()) {
-        std::cerr << "chat connection is invalid" << std::endl;
+        std::cerr << "Chat connection is invalid" << std::endl;
         return;
     }
 
@@ -56,8 +56,7 @@ void ChatServer::receiveUntypedMessage(const MessageDeserializer& deserializer,
     }
 
     if (connection->chatee() == nullptr) {
-        std::cerr << "chatee not found for connection from " << 
-            connection->getIdent().c_str() << std::endl;
+        std::cerr << "Chatee not found for connection from " << connection->getIdent() << std::endl;
         return;
     }
 
@@ -95,7 +94,7 @@ void ChatServer::receiveMessage(std::unique_ptr<UserJoinRequest> joinRequest,
         userChange->mutable_user()->CopyFrom(chatee->user());
         chatroom_->propagateMessage(MessageBuilder::build(std::move(userChange)));
 
-        std::cout << "SERVER: " << joinRequest->DebugString().c_str() << std::endl;
+        std::cout << chatee->user().name() << " joined" << std::endl;
     }
 
     connection->sendMessage(MessageBuilder::build(std::move(response)));
@@ -116,8 +115,11 @@ void ChatServer::receiveMessage(std::unique_ptr<UserListRequest> listRequest,
 
 void ChatServer::receiveMessage(std::unique_ptr<UserChange> userChange,
                                const std::shared_ptr<Chatee>& sender) {
-    if (userChange->has_presence())
+    if (userChange->has_presence()) {
         sender->user().set_presence(userChange->presence());
+        std::cout << sender->user().name() << " is now " <<
+                UserPresence_Name(userChange->presence()) << std::endl;
+    }
 
     chatroom_->propagateMessage(MessageBuilder::build(std::move(userChange)));
 }
@@ -126,8 +128,8 @@ void ChatServer::receiveMessage(std::unique_ptr<ChatMessage> chatMessage, const 
     if (chatMessage->has_target()) { // send a private message
         auto targetChatee = chatroom_->getChatee(chatMessage->target().user_name());
         if (targetChatee == nullptr) { // let the sender know that target doesn't exist
-            auto message = "user with name " + chatMessage->target().user_name() + " doesn't exit";
-            std::cout << message.c_str() << std::endl;
+            auto message = "User " + chatMessage->target().user_name() + " doesn't exist";
+            std::cout << message << std::endl;
 
             sender->sendResponse(false, message);
         }
@@ -140,6 +142,9 @@ void ChatServer::receiveMessage(std::unique_ptr<ChatMessage> chatMessage, const 
             // tell target - message from sender was received
             targetChatee->sendChatMessage(chatMessage->text(),
                                           sender->user().name());
+
+            std::cout << "<" << sender->user().name() << " to " << targetChatee->user().name() << "> " <<
+                    chatMessage->text() << std::endl;
         }
     }
     else { // send a public message
@@ -148,7 +153,7 @@ void ChatServer::receiveMessage(std::unique_ptr<ChatMessage> chatMessage, const 
         }
         else {
             chatMessage->set_allocated_from(chatroom_->getTarget(sender->user().name()).release());
-            std::cout << "SERVER: " << chatMessage->DebugString().c_str() << std::endl;
+            std::cout << "<" << sender->user().name() << "> " << chatMessage->text() << std::endl;
 
             chatroom_->propagateMessage(MessageBuilder::build(std::move(chatMessage)));
         }
@@ -171,28 +176,45 @@ void ChatServer::receiveMessage(std::unique_ptr<ChatCommand> chatCommand, const 
     if (sender->authorized()) {
         if (chatCommand->type() == CommandType::MUTE) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
-            if (targetChatee == nullptr)
+            if (targetChatee == nullptr) {
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
+                return;
+            }
+
             targetChatee->mute(true);
+            std::cout << targetChatee->user().name() << " has been muted" << std::endl;
         }
         else if (chatCommand->type() == CommandType::UNMUTE) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
-            if (targetChatee == nullptr)
+            if (targetChatee == nullptr) {
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
+                return;
+            }
+
             targetChatee->unmute(true);
+            std::cout << targetChatee->user().name() << " has been unmuted" << std::endl;
         }
         else if (chatCommand->type() == CommandType::KICK) {
             auto targetChatee = chatroom_->getChatee(chatCommand->arguments(0));
-            if (targetChatee == nullptr)
+            if (targetChatee == nullptr) {
                 sender->sendResponse(false, "user " + chatCommand->arguments(0) + " doesn't exist");
+                return;
+            }
+
             targetChatee->kick(true);
+            std::cout << targetChatee->user().name() << " has been kicked" << std::endl;
         }
         else if (chatCommand->type() == CommandType::MOTD) {
             chatroom_->setMotd(chatCommand->arguments(0));
+            std::cout << "New motd: " << chatroom_->motd() << std::endl;
         }
     }
     else
         sender->sendResponse(false, "you are not authorized to use this command");
+}
+
+std::shared_ptr<Chatroom> ChatServer::chatroom() {
+    return chatroom_;
 }
 
 } // SimpleChat namespace

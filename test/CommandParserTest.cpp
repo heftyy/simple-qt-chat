@@ -41,6 +41,18 @@ TEST_F(CommandParserTest, MuteWorks) {
     EXPECT_EQ(cmd->arguments(0), "this_user");
 }
 
+TEST_F(CommandParserTest, UnmuteWorks) {
+    CommandParser parser("/unmute this_user");
+
+    auto cmd = parser.chatCommand(std::unique_ptr<ChatTarget>(chatTarget));
+    ASSERT_NE(cmd, nullptr);
+
+    EXPECT_TRUE(cmd->IsInitialized());
+
+    EXPECT_EQ(cmd->type(), CommandType::UNMUTE);
+    EXPECT_EQ(cmd->arguments(0), "this_user");
+}
+
 TEST_F(CommandParserTest, UnknownType) {
     CommandParser parser("/foo this_user");
 

@@ -5,7 +5,7 @@
 #include <communication/Message.h>
 
 #include "resources/ChatroomTest.h"
-#include "../mocks/MockChatConnection.h"
+#include "mocks/MockChatConnection.h"
 
 using namespace SimpleChat;
 
@@ -77,7 +77,7 @@ TEST_F(ChatroomTest, MessageSend) {
 
 TEST_F(ChatroomTest, PropagateMessage) {
     //    using ::testing::_;
-    using ::testing::Ne;    
+    using ::testing::Ne;
     using ::testing::Return;
 
     auto connection = new MockChatConnection;

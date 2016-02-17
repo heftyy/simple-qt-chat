@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include <gtest/gtest.h>
 #include <chat/Chatroom.h>
@@ -15,5 +15,8 @@ protected:
         room1.reset();
     }
 
+    /*!
+     * chatroom has to be a shared_ptr because it uses std::shared_from_this()
+     */
     std::shared_ptr<room> room1;
 };

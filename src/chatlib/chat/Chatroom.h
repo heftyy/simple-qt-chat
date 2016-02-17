@@ -42,6 +42,12 @@ public:
                  ChatConnection* connection);
 
     /*!
+     * Checks if the chatee already exists and adds it if not.
+     */
+    std::tuple<bool, std::string, std::shared_ptr<Chatee>>
+    chateeJoined(const std::shared_ptr<Chatee>& chatee);
+
+    /*!
      * Removes the chatee with the given name from map.
      */
     std::tuple<bool, std::string>
@@ -72,7 +78,7 @@ private:
     ChateesMap chatees_;
     std::string motd_;
 
-    bool insertChatee(std::shared_ptr<Chatee> chatee);
+    bool insertChatee(const std::shared_ptr<Chatee>& chatee);
     bool removeChatee(const std::string& userName);
 };
 
