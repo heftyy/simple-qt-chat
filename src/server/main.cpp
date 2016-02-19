@@ -61,9 +61,6 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         // hide debug messages
         // std::cout << "Debug: " << localMsg.constData() << std::endl;
         break;
-    case QtInfoMsg:
-        std::cout << "Info: " << localMsg.constData() << std::endl;
-        break;
     case QtWarningMsg:
         std::cout << "Warning: " << localMsg.constData() << std::endl;
         break;
