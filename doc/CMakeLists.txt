@@ -9,12 +9,12 @@ if (BUILD_DOCUMENTATION)
 
     set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
     set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-    set(doxy_main_page README.md)
+    set(doxy_main_page ../README.md)
 
     configure_file(${doxyfile_in} ${doxyfile} @ONLY)
 
     add_custom_target(doc
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_BINARY_DIR}/README.md
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/README.md ${CMAKE_BINARY_DIR}/README.md
             COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "Generating API documentation with Doxygen"

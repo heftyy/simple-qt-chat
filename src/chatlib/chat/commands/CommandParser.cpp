@@ -17,10 +17,7 @@ CommandParser::CommandParser(const std::string& command):
 
 }
 
-std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarget> from) {
-    if(from == nullptr)
-        return nullptr;
-
+std::unique_ptr<ChatCommand> CommandParser::chatCommand() {
     if(command_.empty())
         return nullptr;
 
@@ -55,8 +52,6 @@ std::unique_ptr<ChatCommand> CommandParser::chatCommand(std::unique_ptr<ChatTarg
 
     chatCommand->set_type(static_cast<CommandType>(commandType));
     chatCommand->insertData(commandArgs);
-
-    chatCommand->set_allocated_from(from.release());
 
     return std::move(chatCommand);
 }

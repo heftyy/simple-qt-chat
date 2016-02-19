@@ -41,16 +41,12 @@ protected:
     virtual bool isConnected() override;
     virtual ChatConnection* connection() override;
 
-    virtual void chateeJoined(const std::string& name) override;
-    virtual void chateeLeft(const std::string& name) override;
     virtual void chatMotdChanged(const std::string& motd) override;    
     virtual void chatInfoReceived(const std::string& info) override;
     virtual void chatMessageReceived(const std::string& text, const std::string& from, const std::string& target) override;
     virtual void refreshChateeList() override;
 
 signals:
-    void chateeJoinedSignal(const QString& name);
-    void chateeLeftSignal(const QString& name);
     void chatMessageSignal(const QString& text, const QString& from, const QString& target);
     void chatInfoSignal(const QString& text);
     void chatMotdSignal(const QString& motd);

@@ -17,8 +17,9 @@ TcpChatConnection::TcpChatConnection(QTcpSocket* socket, QObject* parent) :
 }
 
 TcpChatConnection::~TcpChatConnection() {
-    socket_->deleteLater();
     qDebug() << "connection deleted";
+    // socket_ is deleted by qt's memory management system
+//    socket_->deleteLater();
 }
 
 void TcpChatConnection::init() const {

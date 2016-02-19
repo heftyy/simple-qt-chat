@@ -8,7 +8,7 @@ using namespace SimpleChat;
 TEST_F(CommandParserTest, MotdWorks) {
     CommandParser parser("/motd this is a new motd");
 
-    auto cmd = parser.chatCommand(std::unique_ptr<ChatTarget>(chatTarget));
+    auto cmd = parser.chatCommand();
     ASSERT_NE(cmd, nullptr);
 
     EXPECT_TRUE(cmd->IsInitialized());
@@ -20,7 +20,7 @@ TEST_F(CommandParserTest, MotdWorks) {
 TEST_F(CommandParserTest, KickWorks) {
     CommandParser parser("/kick this_user");
 
-    auto cmd = parser.chatCommand(std::unique_ptr<ChatTarget>(chatTarget));
+    auto cmd = parser.chatCommand();
     ASSERT_NE(cmd, nullptr);
 
     EXPECT_TRUE(cmd->IsInitialized());
@@ -32,7 +32,7 @@ TEST_F(CommandParserTest, KickWorks) {
 TEST_F(CommandParserTest, MuteWorks) {
     CommandParser parser("/mute this_user");
 
-    auto cmd = parser.chatCommand(std::unique_ptr<ChatTarget>(chatTarget));
+    auto cmd = parser.chatCommand();
     ASSERT_NE(cmd, nullptr);
 
     EXPECT_TRUE(cmd->IsInitialized());
@@ -44,7 +44,7 @@ TEST_F(CommandParserTest, MuteWorks) {
 TEST_F(CommandParserTest, UnmuteWorks) {
     CommandParser parser("/unmute this_user");
 
-    auto cmd = parser.chatCommand(std::unique_ptr<ChatTarget>(chatTarget));
+    auto cmd = parser.chatCommand();
     ASSERT_NE(cmd, nullptr);
 
     EXPECT_TRUE(cmd->IsInitialized());
@@ -56,6 +56,6 @@ TEST_F(CommandParserTest, UnmuteWorks) {
 TEST_F(CommandParserTest, UnknownType) {
     CommandParser parser("/foo this_user");
 
-    auto cmd = parser.chatCommand(std::unique_ptr<ChatTarget>(chatTarget));
+    auto cmd = parser.chatCommand();
     EXPECT_EQ(cmd, nullptr);
 }

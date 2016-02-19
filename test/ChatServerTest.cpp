@@ -133,7 +133,7 @@ TEST_F(ChatServerTest, ChatCommandTest) {
     EXPECT_TRUE(std::get<0>(server->chatroom()->chateeJoined(chatee)));
     EXPECT_FALSE(std::get<0>(server->chatroom()->chateeJoined(chatee)));
 
-    server->receiveMessage(ChatCommandTest::getCommand("/auth " + password), chatee);
+    server->receiveMessage(ChatCommandTest::getCommand("/auth " + secret), chatee);
     server->receiveMessage(ChatCommandTest::getCommand("/mute first_user"), chatee);
     server->receiveMessage(ChatCommandTest::getCommand("/unmute first_user"), chatee);
     server->receiveMessage(ChatCommandTest::getCommand("/kick first_user"), chatee);

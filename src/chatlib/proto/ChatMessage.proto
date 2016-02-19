@@ -26,7 +26,6 @@ message ChatMessage {
 }
 
 message ChatCommand {
-    required ChatTarget from = 1;
     required CommandType type = 2;
     repeated string arguments = 3;
 }

@@ -27,4 +27,20 @@ protected:
 
         return deserializer(result);
     }
+
+    template<typename T>
+    void deserializerWorks(std::unique_ptr<AbstractMessage> msg, int expectedType) {
+        deserializer d1 = getDeserializer(std::move(msg));
+        EXPECT_EQ(d1.type(), expectedType);
+        auto m1 = d1.getMessage<T>();
+        EXPECT_TRUE(m1->IsInitialized());
+    }
+
+    template<typename T>
+    void deserializerFails(std::unique_ptr<AbstractMessage> msg) {
+        deserializer d1 = getDeserializer(std::move(msg));
+        EXPECT_EQ(d1.type(), -1);
+        auto m1 = d1.getMessage<T>();
+        EXPECT_EQ(m1, nullptr);
+    }
 };

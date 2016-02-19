@@ -81,9 +81,6 @@ protected:
     virtual bool isConnected() override = 0;
     virtual ChatConnection* connection() override = 0;
 
-    // event definitions
-    virtual void chateeJoined(const std::string& name) override = 0;
-    virtual void chateeLeft(const std::string& name) override = 0;
     virtual void chatMotdChanged(const std::string& motd) override = 0;
     virtual void chatInfoReceived(const std::string& info) override = 0;
     virtual void chatMessageReceived(const std::string& text, 

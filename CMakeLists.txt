@@ -4,7 +4,7 @@ set(PROJECT_NAME_STR simple_chat)
 # The project version number.
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 9)
-set(VERSION_PATCH 4)
+set(VERSION_PATCH 5)
 mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
 project(${PROJECT_NAME_STR})
@@ -47,15 +47,16 @@ endif(UNIX)
 
 set(EXT_PROJECTS_DIR ${PROJECT_SOURCE_DIR}/ext)
 
-find_package(Qt5Network)
-find_package(Qt5Widgets)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Test REQUIRED)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(src)
 

@@ -51,18 +51,6 @@ ChatConnection* TcpChatClient::connection() {
     return serverConnection_;
 }
 
-void TcpChatClient::chateeJoined(const std::string& name) {
-    emit chateeJoinedSignal(format(name));
-
-    qDebug() << name.c_str() << "joined";
-}
-
-void TcpChatClient::chateeLeft(const std::string& name) {
-    emit chateeLeftSignal(format(name));
-
-    qDebug() << name.c_str() << "left";
-}
-
 void TcpChatClient::chatMotdChanged(const std::string& motd) {
     emit chatMotdSignal(format(motd));
 

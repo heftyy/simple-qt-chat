@@ -21,6 +21,7 @@ set(TEST_SRC_FILES
         resources/ChatClientTest.h
         resources/CommandParserTest.h
         resources/ChatCommandTest.h
+        resources/ClientServerTest.h
 
         SerializerTest.cpp
         DeserializerTest.cpp
@@ -31,10 +32,10 @@ set(TEST_SRC_FILES
         ChatroomTest.cpp
         ChatServerTest.cpp
         ChatClientTest.cpp
-        )
+        ClientServerTest.cpp)
 
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})
-add_dependencies(${PROJECT_TEST_NAME} googletest chatlib tcplib)
+add_dependencies(${PROJECT_TEST_NAME} googletest Qt5::Test chatlib tcplib)
 
 find_package(Threads)
 
@@ -62,6 +63,6 @@ else ()
             )
 endif ()
 
-target_link_libraries(${PROJECT_TEST_NAME} ${CMAKE_THREAD_LIBS_INIT} chatlib tcplib)
+target_link_libraries(${PROJECT_TEST_NAME} ${CMAKE_THREAD_LIBS_INIT} Qt5::Test chatlib tcplib)
 
 add_test(test1 ${PROJECT_TEST_NAME})

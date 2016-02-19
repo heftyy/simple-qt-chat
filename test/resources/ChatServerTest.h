@@ -7,8 +7,8 @@
 class ChatServerTest : public ::testing::Test {
 protected:
     virtual void SetUp() override {
-        password = "super_secret";
-        server = new SimpleChat::ChatServer(password);
+        secret = "super_secret";
+        server = new SimpleChat::ChatServer(secret);
     }
 
     virtual void TearDown() override {
@@ -16,5 +16,5 @@ protected:
     }
 
     SimpleChat::ChatServer* server;
-    std::string password;
+    std::string secret;
 };

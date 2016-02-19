@@ -23,7 +23,7 @@ public:
         target->set_user_id(1);
 
         auto parser = CommandParser(command);
-        return parser.chatCommand(std::move(target));
+        return parser.chatCommand();
     }
 
 };

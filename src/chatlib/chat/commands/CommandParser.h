@@ -16,7 +16,7 @@ public:
     explicit CommandParser(const std::string& command);
 
     /*!
-     * Creates and returns a correct instance of ChatCommand with ChatTarget.
+     * Creates and returns a correct instance of ChatCommand.
      * If the parsing fails this method returns nullptr.
      *
      * Supported command types:
@@ -26,7 +26,7 @@ public:
      *   - motd
      *   - auth
      */
-    std::unique_ptr<ChatCommand> chatCommand(std::unique_ptr<ChatTarget> from);
+    std::unique_ptr<ChatCommand> chatCommand();
 
 private:
     std::string command_;

@@ -22,7 +22,7 @@ ChatClient::ChatClient() :
 bool ChatClient::sendCommand(const std::string& command) {
     CommandParser commandParser(command);
 
-    auto message = commandParser.chatCommand(chatroom_->getTarget(clientName_));
+    auto message = commandParser.chatCommand();
     if(message) {
         auto result = sendAnyMessage(MessageBuilder::build(std::move(message)));
 
