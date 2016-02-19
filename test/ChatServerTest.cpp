@@ -34,6 +34,8 @@ TEST_F(ChatServerTest, UserJoinRequestTest) {
                 setChatee(Ne(nullptr))).Times(1);
 
     server->receiveMessage(MessageTest::validUserJoinRequest(), connection);
+
+    delete connection;
 }
 
 TEST_F(ChatServerTest, UserListRequestTest) {
@@ -42,13 +44,15 @@ TEST_F(ChatServerTest, UserListRequestTest) {
     user.set_name("first_user");
 
     auto connection = new MockChatConnection;
-    auto chatee = new MockChatee(user, connection, server->chatroom());
+    auto chatee = std::make_shared<MockChatee>(user, connection, server->chatroom());
 
     EXPECT_CALL(*chatee,
                 sendMessageProxy(Property(&AbstractMessage::type, Eq(USER_LIST_RESPONSE)))
     ).Times(1);
 
     server->receiveMessage(MessageTest::validUserListRequest(), std::shared_ptr<MockChatee>(chatee));
+
+    delete connection;
 }
 
 TEST_F(ChatServerTest, UserChangeTest) {
@@ -68,6 +72,8 @@ TEST_F(ChatServerTest, UserChangeTest) {
     EXPECT_FALSE(std::get<0>(server->chatroom()->chateeJoined(chatee)));
 
     server->receiveMessage(MessageTest::validUserChange(), chatee);
+
+    delete connection;
 }
 
 TEST_F(ChatServerTest, ChatMessageTest) {
@@ -100,6 +106,8 @@ TEST_F(ChatServerTest, ChatMessageTest) {
     auto whisperMessage = MessageTest::validChatMessage();
     whisperMessage->set_allocated_target(target.release());
     server->receiveMessage(std::move(whisperMessage), chatee);
+
+    delete connection;
 }
 
 TEST_F(ChatServerTest, ChatCommandTest) {
@@ -137,4 +145,6 @@ TEST_F(ChatServerTest, ChatCommandTest) {
     server->receiveMessage(ChatCommandTest::getCommand("/mute first_user"), chatee);
     server->receiveMessage(ChatCommandTest::getCommand("/unmute first_user"), chatee);
     server->receiveMessage(ChatCommandTest::getCommand("/kick first_user"), chatee);
+
+    delete connection;
 }

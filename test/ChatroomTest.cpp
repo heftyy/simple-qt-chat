@@ -73,6 +73,8 @@ TEST_F(ChatroomTest, MessageSend) {
     std::tie(success, message, chatee) = room1->chateeJoined("first_chatee", connection);
 
     chatee->sendChatMessage("first message", "first_chatee");
+
+    delete connection;
 }
 
 TEST_F(ChatroomTest, PropagateMessage) {
@@ -95,4 +97,6 @@ TEST_F(ChatroomTest, PropagateMessage) {
     msg->mutable_user()->CopyFrom(chatee->user());
     msg->set_action(JOINED);
     room1->propagateMessage(MessageBuilder::build(std::move(msg)));
+
+    delete connection;
 }
