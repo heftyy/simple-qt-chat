@@ -14,7 +14,7 @@ protected:
         int argc = 1;
         char *argv[] = {"client_server_test"};
 
-        app = new QCoreApplication(argc, argv);
+        app = new QApplication(argc, argv);
 
         secret = "super_secret";
         server = new TcpChatServer(secret, app);
@@ -26,11 +26,12 @@ protected:
     virtual void TearDown() override {
         delete server;
         delete client;
+        delete app;
     }
 
     TcpChatServer* server;
     TcpChatClient* client;
-    QCoreApplication* app;
+    QApplication* app;
 
     std::string secret;
 };

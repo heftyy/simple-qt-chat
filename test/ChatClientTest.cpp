@@ -51,8 +51,8 @@ TEST_F(ChatClientTest, UserChangeTest) {
     user.set_id(1);
     user.set_name("my_first_user");
 
-    auto connection = new MockChatConnection;
-    auto chatee = std::make_shared<MockChatee>(user, connection, client->chatroom());
+    MockChatConnection connection;
+    auto chatee = std::make_shared<MockChatee>(user, &connection, client->chatroom());
 
     EXPECT_TRUE(std::get<0>(client->chatroom()->chateeJoined(chatee)));
 

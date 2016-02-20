@@ -24,7 +24,6 @@ Chatee::Chatee(const User& user,
 }
 
 Chatee::~Chatee() {
-
 }
 
 bool Chatee::sendMessage(std::unique_ptr<AbstractMessage> message) {

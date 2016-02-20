@@ -21,26 +21,6 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 endif()
 
-#disable compiler warnings from the protobuf library
-option(PROTOBUF_DISABLE_COMPILER_WARNINGS "Disable compiler warnings" ON)
-mark_as_advanced(PROTOBUF_DISABLE_COMPILER_WARNINGS)
-if(PROTOBUF_DISABLE_COMPILER_WARNINGS)
-  if(WIN32)
-    if (MSVC)
-      string(REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " "
-          CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-      set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /w")
-
-      string(REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " "
-          CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w")
-    endif(MSVC)
-  else(WIN32)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-  endif(WIN32)
-endif(PROTOBUF_DISABLE_COMPILER_WARNINGS)
-
 if(UNIX)
     add_definitions(-std=c++14)
 endif(UNIX)
@@ -56,7 +36,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(src)
 
@@ -77,6 +57,7 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Cored.dll                   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Networkd.dll                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Widgetsd.dll                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
+        COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Testd.dll                   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Guid.dll                    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/libEGLd.dll                    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug
 
@@ -84,6 +65,7 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Core.dll                    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Network.dll                 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Widgets.dll                 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
+        COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Test.dll                    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/Qt5Gui.dll                     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
         COMMAND ${CMAKE_COMMAND} -E copy ${Qt5Core_DIR}/../../../bin/libEGL.dll                     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
 
