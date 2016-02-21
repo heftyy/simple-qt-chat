@@ -2,6 +2,7 @@ Simple Chat Docs
 ======
 
 Server
+-----
 
 Simple Chat server is a single-threaded command line application.
 
@@ -13,6 +14,7 @@ Available command line options:
 * -s, --secret, --password <secret>  Secret used by users to authorize.
 
 Client
+-----
 Simple Chat client is a single-threaded GUI application.
 
 After starting the client you have to provide
