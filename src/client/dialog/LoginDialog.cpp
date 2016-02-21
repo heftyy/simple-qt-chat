@@ -75,11 +75,11 @@ void LoginDialog::createWidgets() {
 
     hostLineEdit = new QLineEdit;
     hostLineEdit->setText("127.0.0.1");
-//    hostLineEdit->setValidator(new QRegularExpressionValidator(
-//        ipRegex, this));
+    hostLineEdit->setValidator(new QRegularExpressionValidator(
+        ipRegex, this));
 
     portLineEdit = new QLineEdit;
-//    portLineEdit->setText("4441");
+    portLineEdit->setText("4441");
     portLineEdit->setValidator(new QIntValidator(1, 65535, this));
 
     nameLineEdit = new QLineEdit;

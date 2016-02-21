@@ -25,6 +25,4 @@ message NetworkMessageHeader {
 message NetworkMessage {
     required NetworkMessageHeader header = 1;
     required bytes serialized_data = 2;
-
-    extensions 10 to 200;
 }

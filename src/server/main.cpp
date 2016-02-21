@@ -6,6 +6,19 @@
 #include <SimpleChatConfig.h>
 #include <server/TcpChatServer.h>
 
+QString getRandomSecret() {
+    const QString possibleCharacters("abcdefghijklmnopqrstuvwxyz");
+    const auto randomStringLength = 6; // assuming you want random strings of 12 characters
+
+    QString randomString;
+    for (auto i = 0; i<randomStringLength; ++i) {
+        auto index = qrand() % possibleCharacters.length();
+        auto nextChar = possibleCharacters.at(index);
+        randomString.append(nextChar);
+    }
+    return randomString;
+}
+
 std::tuple<QHostAddress, quint16, std::string> serverParams(const QCoreApplication& app) {
     QCommandLineParser parser;
     parser.setApplicationDescription("Simple chat server");
@@ -34,20 +47,21 @@ std::tuple<QHostAddress, quint16, std::string> serverParams(const QCoreApplicati
     quint16 port = 0;
     QString secret;
 
-    if(parser.isSet(ipOption))
+    if (parser.isSet(ipOption))
         hostAddress = QHostAddress(parser.value(ipOption));
 
-    if(parser.isSet(portOption))
+    if (parser.isSet(portOption))
         port = parser.value(portOption).toUShort();
+    else
+        port = 4441;
 
-    if(parser.isSet(secretOption))
+    if (parser.isSet(secretOption))
         secret = parser.value(secretOption);
     else {
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Must specify a secret.")));
-        parser.showHelp(1);
+        secret = getRandomSecret();
     }
 
-    if(hostAddress.isNull())
+    if (hostAddress.isNull())
         hostAddress = QHostAddress::Any;
 
     return std::make_tuple(hostAddress, port, secret.toStdString());
@@ -81,6 +95,9 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char* argv[]) {
     qInstallMessageHandler(myMessageOutput);
+
+    auto now = QTime::currentTime();
+    qsrand(now.msec());
 
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName("simple chat server");

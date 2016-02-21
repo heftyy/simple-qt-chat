@@ -17,9 +17,8 @@
 
 using namespace SimpleChat;
 
-#ifndef WIN32
 /*
-these tests fail on windows where i used msvc14 + compiled qt 5.6
+these tests fail on windows where i used msvc14 + binaries for qt 5.6
 they work with gcc and qt5.5 on linux
 
 app->processEvents() doesn't seem to work on windows
@@ -101,5 +100,3 @@ TEST_F(ClientServerTest, CommandTest) {
 
     client->logout();
 }
-
-#endif
