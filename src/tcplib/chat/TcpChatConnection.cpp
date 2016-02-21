@@ -101,7 +101,7 @@ void TcpChatConnection::readyRead() {
 
     while(socket()->bytesAvailable() > 0) {
         if (blockSize_ == 0) {
-            if (socket()->bytesAvailable() < sizeof(quint16))
+            if (static_cast<unsigned long long>(socket()->bytesAvailable()) < sizeof(quint16))
                 return;
 
             inStream >> blockSize_;
