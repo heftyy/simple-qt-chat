@@ -1,7 +1,7 @@
 Simple Chat Docs
 ======
 
-##Server
+Server
 
 Simple Chat server is a single-threaded command line application.
 
@@ -12,7 +12,7 @@ Available command line options:
 * -p, --port <port>                  Port for server to listen on.
 * -s, --secret, --password <secret>  Secret used by users to authorize.
 
-##Client
+Client
 Simple Chat client is a single-threaded GUI application.
 
 After starting the client you have to provide
