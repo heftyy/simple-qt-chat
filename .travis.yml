@@ -1,0 +1,23 @@
+language: cpp
+
+compiler:
+  - gcc
+
+sudo: required
+dist: trusty
+
+before_install:
+  - sudo add-apt-repository ppa:beineri/opt-qt56-trusty -y; fi
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh; fi
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+
+script:
+  - qmake -r
+  - make && ./bin/simple_chat_test
