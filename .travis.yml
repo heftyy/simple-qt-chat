@@ -12,7 +12,7 @@ before_install:
 
 install:
   - sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh
-  - sudo apt-get install autoconf automake libtool curl make g++ unzip
+  - sudo apt-get install autoconf automake libtool curl make g++ unzip -y
   - wget https://github.com/google/protobuf/archive/master.zip -O protobuf.zip
   - unzip protobuf.zip
   - cd protobuf-master
