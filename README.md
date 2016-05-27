@@ -1,4 +1,4 @@
-Simple Chat Docs
+Simple Chat Docs [![Build Status](https://travis-ci.org/heftyy/simple-qt-chat.svg?branch=master)](https://travis-ci.org/heftyy/simple-qt-chat)
 ======
 
 Server
