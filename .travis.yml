@@ -7,11 +7,11 @@ sudo: required
 dist: trusty
 
 before_install:
-  - sudo add-apt-repository ppa:beineri/opt-qt56-trusty -y; fi
+  - sudo add-apt-repository ppa:beineri/opt-qt56-trusty -y
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh; fi
+  - sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh
 
 before_script:
   - mkdir build
