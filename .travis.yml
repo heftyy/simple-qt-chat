@@ -13,7 +13,7 @@ before_install:
 install:
   - sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh
   - sudo apt-get install autoconf automake libtool curl make g++ unzip -y
-  - sudo apt-get install libprotobuf8 libprotoc8 protobuf-compiler python-protobuf -y
+  - sudo apt-get install libprotobuf-dev libprotobuf8 libprotoc8 protobuf-compiler python-protobuf -y
 #  - wget https://github.com/google/protobuf/archive/master.zip -O protobuf.zip
 #  - unzip protobuf.zip
 #  - cd protobuf-master
