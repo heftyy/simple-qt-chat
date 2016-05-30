@@ -41,3 +41,6 @@ before_script:
 
 script:
   - make && ./bin/simple_chat_test
+
+notifications:
+  email: false
